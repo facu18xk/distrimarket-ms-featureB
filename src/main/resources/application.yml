@@ -1,0 +1,35 @@
+server:
+  port: 8081 # Inventario correrá en el puerto 8081
+
+spring:
+  application:
+    name: distrimarket-inventario
+
+  # Configuración de la Base de Datos (PostgreSQL)
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:pos_db}?sslmode=require
+    username: ${DB_USER:postgres}
+    password: ${DB_PASSWORD:postgres}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true # Útil tenerlo en true durante el desarrollo para ver las consultas en consola
+
+  # Configuración de Liquibase (Hereda los changelogs de commons)
+  liquibase:
+    enabled: true
+    change-log: classpath:db/changelog/db.changelog-master.yaml
+
+# Configuración de Spring Cloud OpenFeign
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: method
+
+info:
+  app:
+    version: '@project.version@'
