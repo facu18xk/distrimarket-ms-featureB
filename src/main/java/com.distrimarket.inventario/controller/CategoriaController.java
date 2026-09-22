@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/categorias")
+@Tag(name = "Categorías", description = "Endpoints para la gestión de categorías de productos")
 public class CategoriaController extends BaseController<Categoria, CategoriaRequestDTO, CategoriaResponseDTO> {
 
     public CategoriaController(CategoriaService categoriaService) {

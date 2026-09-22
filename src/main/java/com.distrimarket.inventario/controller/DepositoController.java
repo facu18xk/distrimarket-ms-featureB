@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/depositos")
+@Tag(name = "Depósitos", description = "Endpoints para la gestión de depósitos de productos")
 public class DepositoController extends BaseController<Deposito, DepositoRequestDTO, DepositoResponseDTO> {
 
     public DepositoController(DepositoService depositoService) {

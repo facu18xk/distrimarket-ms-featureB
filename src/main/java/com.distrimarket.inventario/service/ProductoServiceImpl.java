@@ -1,7 +1,7 @@
 package com.distrimarket.inventario.service;
 
-import com.distrimarket.commons.dto.ProductoCreateDTO;
-import com.distrimarket.commons.dto.ProductoDetailResponseDTO;
+import com.distrimarket.commons.dto.ProductoRequestDTO;
+import com.distrimarket.commons.dto.ProductoResponseDTO;
 import com.distrimarket.commons.entity.Producto;
 import com.distrimarket.inventario.service.BaseServiceImpl;
 import com.distrimarket.inventario.mapper.ProductoMapper;
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class ProductoServiceImpl
-        extends BaseServiceImpl<Producto, ProductoCreateDTO, ProductoDetailResponseDTO>
+        extends BaseServiceImpl<Producto, ProductoRequestDTO, ProductoResponseDTO>
         implements ProductoService {
 
     private final ProductoRepository productoRepository;
