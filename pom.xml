@@ -25,14 +25,14 @@
         <lombok.version>1.18.30</lombok.version>
         <org.mapstruct.version>1.5.5.Final</org.mapstruct.version>
         <lombok-mapstruct-binding.version>0.2.0</lombok-mapstruct-binding.version>
-        <org.springdoc.version>2.3.0</org.springdoc.version>
+        <org.springdoc.version>2.5.0</org.springdoc.version>
 
     </properties>
 
     <dependencies>
         <!-- 1. Módulo Común (distrimarket-common) -->
         <dependency>
-            <groupId>org.example</groupId>
+            <groupId>com.distrimarket</groupId>
             <artifactId>distrimarket-common</artifactId>
             <version>${distrimarket-common.version}</version>
         </dependency>
@@ -78,6 +78,19 @@
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
             <version>${org.springdoc.version}</version>
+        </dependency>
+
+        <!-- 8. Spring Data JPA (Resuelve Page, Pageable y @Transactional) -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+
+        <!-- 9. Driver de PostgreSQL (Necesario para que el Starter de JPA levante) -->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>runtime</scope>
         </dependency>
     </dependencies>
 

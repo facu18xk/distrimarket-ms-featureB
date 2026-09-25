@@ -25,10 +25,4 @@ public interface CategoriaMapper extends BaseMapper<Categoria, CategoriaRequestD
 
     @Override
     List<CategoriaResponseDTO> toDTOList(List<Categoria> entityList);
-
-    @Override
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "fechaCreacion", ignore = true)
-    @Mapping(target = "fechaModificacion", ignore = true)
-    void updateEntityFromDTO(CategoriaRequestDTO createDto, @MappingTarget Categoria entity);
 }

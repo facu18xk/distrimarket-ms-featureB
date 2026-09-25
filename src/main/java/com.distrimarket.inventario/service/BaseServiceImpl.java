@@ -3,6 +3,7 @@ package com.distrimarket.inventario.service;
 import com.distrimarket.commons.entity.BaseEntity;
 import com.distrimarket.inventario.mapper.BaseMapper;
 import com.distrimarket.inventario.repository.BaseRepository;
+import com.distrimarket.inventario.exception.ResourceNotFoundException;
 import com.distrimarket.inventario.service.BaseService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -30,9 +31,16 @@ public abstract class BaseServiceImpl<E extends BaseEntity, CREATE_DTO, RESPONSE
 
     @Override
     @Transactional(readOnly = true)
+    public Page<RESPONSE_DTO> findAll(Pageable pageable) {
+        Page<E> entityPage = repository.findAll(pageable);
+        return entityPage.map(mapper::toDTO);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public RESPONSE_DTO findById(Long id) {
         E entity = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Recurso no encontrado con ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Recurso no encontrado con ID: " + id));
         return mapper.toDTO(entity);
     }
 
@@ -48,7 +56,7 @@ public abstract class BaseServiceImpl<E extends BaseEntity, CREATE_DTO, RESPONSE
     @Transactional
     public RESPONSE_DTO update(Long id, CREATE_DTO createDTO) {
         if (!repository.existsById(id)) {
-            throw new RuntimeException("No se encuentra el registro para actualizar con ID: " + id);
+            throw new ResourceNotFoundException("No se encuentra el registro para actualizar con ID: " + id);
         }
         E entity = mapper.toEntity(createDTO);
         entity.setId(id);
@@ -60,7 +68,7 @@ public abstract class BaseServiceImpl<E extends BaseEntity, CREATE_DTO, RESPONSE
     @Transactional
     public void deleteById(Long id) {
         if (!repository.existsById(id)) {
-            throw new RuntimeException("No se encuentra el registro con ID: " + id);
+            throw new ResourceNotFoundException("No se encuentra el registro con ID: " + id);
         }
         repository.deleteById(id);
     }

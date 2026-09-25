@@ -19,7 +19,7 @@ public class OpenApiConfig {
                 .info(new Info()
                         .title("DistriMarket - Microservicio de Inventario")
                         .version(appVersion)
-                        .description("API REST para la gestión de productos, categorías y marcas de DistriMarket.")
+                        .description("API REST para la gestión del microservicio inventario de DistriMarket.")
                         .contact(new Contact()
                                 .name("Soporte DistriMarket")
                                 .email("soporte@distrimarket.com")));

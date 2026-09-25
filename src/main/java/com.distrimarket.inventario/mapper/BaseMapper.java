@@ -9,5 +9,4 @@ public interface BaseMapper<E extends BaseEntity, CREATE_DTO, RESPONSE_DTO> {
     E toEntity(CREATE_DTO dto);
     RESPONSE_DTO toDTO(E entity);
     List<RESPONSE_DTO> toDTOList(List<E> entityList);
-    void updateEntityFromDTO(CREATE_DTO createDto, @MappingTarget E entity);
 }

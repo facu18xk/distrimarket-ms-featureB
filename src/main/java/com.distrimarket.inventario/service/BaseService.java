@@ -7,6 +7,7 @@ import java.util.List;
 
 public interface BaseService<E extends BaseEntity, CREATE_DTO, RESPONSE_DTO> {
     List<RESPONSE_DTO> findAll();
+    Page<RESPONSE_DTO> findAll(Pageable pageable);
     RESPONSE_DTO findById(Long id);
     RESPONSE_DTO create(CREATE_DTO createDTO);
     RESPONSE_DTO update(Long id, CREATE_DTO createDTO);

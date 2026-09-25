@@ -13,6 +13,7 @@ public interface BaseRepository<E extends BaseEntity> extends JpaRepository<E, L
     //E save(E entity);
     //Optional<E> findById(Long id);
     //List<E> findAll();
+    //Page<E> findAll(Pageable pageable);
     //void deleteById(Long id);
     //boolean existsById(Long id);
     //OBS: estos métodos ya vienen integrados con JpaRepository

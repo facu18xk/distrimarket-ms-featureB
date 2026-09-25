@@ -18,7 +18,7 @@ import java.util.List;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity handleResourceNotFound(ResourceNotFoundException ex, HttpServletRequest request) {
+    public ResponseEntity<ErrorResponseDTO> handleResourceNotFound(ResourceNotFoundException ex, HttpServletRequest request) {
         ErrorResponseDTO error = new ErrorResponseDTO();
         error.setTimestamp(OffsetDateTime.now());
         error.setStatus(HttpStatus.NOT_FOUND.value());
@@ -30,7 +30,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(BadRequestException.class)
-    public ResponseEntity handleBadRequest(BadRequestException ex, HttpServletRequest request) {
+    public ResponseEntity<ErrorResponseDTO> handleBadRequest(BadRequestException ex, HttpServletRequest request) {
         ErrorResponseDTO error = new ErrorResponseDTO();
         error.setTimestamp(OffsetDateTime.now());
         error.setStatus(HttpStatus.BAD_REQUEST.value());
@@ -42,8 +42,8 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity handleValidationExceptions(MethodArgumentNotValidException ex, HttpServletRequest request) {
-        List details = new ArrayList<>();
+    public ResponseEntity<ErrorResponseDTO> handleValidationExceptions(MethodArgumentNotValidException ex, HttpServletRequest request) {
+        List<FieldErrorDTO> details = new ArrayList<>();
 
         for (FieldError fieldError : ex.getBindingResult().getFieldErrors()) {
             FieldErrorDTO detail = new FieldErrorDTO();
@@ -64,7 +64,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity handleGlobalException(Exception ex, HttpServletRequest request) {
+    public ResponseEntity<ErrorResponseDTO> handleGlobalException(Exception ex, HttpServletRequest request) {
         ErrorResponseDTO error = new ErrorResponseDTO();
         error.setTimestamp(OffsetDateTime.now());
         error.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
