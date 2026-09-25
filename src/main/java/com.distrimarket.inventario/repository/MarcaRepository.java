@@ -1,9 +1,9 @@
 package com.distrimarket.inventario.repository;
 
-import com.distrimarket.commons.entity.Categoria;
+import com.distrimarket.commons.entity.Marca;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface CategoriaRepository extends BaseRepository<Categoria> {
+public interface MarcaRepository extends BaseRepository<Marca> {
     boolean existsByNombreIgnoreCase(String nombre);
 }

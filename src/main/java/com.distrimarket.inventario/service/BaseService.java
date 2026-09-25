@@ -6,7 +6,7 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 public interface BaseService<E extends BaseEntity, CREATE_DTO, RESPONSE_DTO> {
-    List<RESPONSE_DTO> findAll();
+    //List<RESPONSE_DTO> findAll();
     Page<RESPONSE_DTO> findAll(Pageable pageable);
     RESPONSE_DTO findById(Long id);
     RESPONSE_DTO create(CREATE_DTO createDTO);

@@ -22,12 +22,12 @@ public abstract class BaseServiceImpl<E extends BaseEntity, CREATE_DTO, RESPONSE
         this.mapper = mapper;
     }
 
-    @Override
+    /*@Override
     @Transactional(readOnly = true)
     public List<RESPONSE_DTO> findAll() {
         List<E> entityList = repository.findAll();
         return mapper.toDTOList(entityList);
-    }
+    }*/
 
     @Override
     @Transactional(readOnly = true)
