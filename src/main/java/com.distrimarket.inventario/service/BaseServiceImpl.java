@@ -8,6 +8,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 public abstract class BaseServiceImpl<E extends BaseEntity, CREATE_DTO, RESPONSE_DTO>
         implements BaseService<E, CREATE_DTO, RESPONSE_DTO> {
 
@@ -21,8 +23,9 @@ public abstract class BaseServiceImpl<E extends BaseEntity, CREATE_DTO, RESPONSE
 
     @Override
     @Transactional(readOnly = true)
-    public Page<RESPONSE_DTO> findAll(Pageable pageable) {
-        return repository.findAll(pageable).map(mapper::toDTO);
+    public List<RESPONSE_DTO> findAll() {
+        List<E> entityList = repository.findAll();
+        return mapper.toDTOList(entityList);
     }
 
     @Override
@@ -48,7 +51,7 @@ public abstract class BaseServiceImpl<E extends BaseEntity, CREATE_DTO, RESPONSE
             throw new RuntimeException("No se encuentra el registro para actualizar con ID: " + id);
         }
         E entity = mapper.toEntity(createDTO);
-        entity.setId(id); // Al heredar de BaseEntity, podemos asignar el ID directamente
+        entity.setId(id);
         E updatedEntity = repository.save(entity);
         return mapper.toDTO(updatedEntity);
     }

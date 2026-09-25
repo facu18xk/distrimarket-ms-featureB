@@ -7,5 +7,4 @@ import java.util.Optional;
 @Repository
 public interface CategoriaRepository extends BaseRepository<Categoria> {
     boolean existsByNombreIgnoreCase(String nombre);
-    Optional<Categoria> findByNombreIgnoreCase(String nombre);
 }

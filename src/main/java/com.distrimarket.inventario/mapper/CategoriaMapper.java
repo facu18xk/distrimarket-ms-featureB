@@ -8,6 +8,8 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
+import java.util.List;
+
 @Mapper(componentModel = "spring", builder = @Builder(disableBuilder = true))
 public interface CategoriaMapper extends BaseMapper<Categoria, CategoriaRequestDTO, CategoriaResponseDTO> {
 
@@ -18,8 +20,11 @@ public interface CategoriaMapper extends BaseMapper<Categoria, CategoriaRequestD
     Categoria toEntity(CategoriaRequestDTO dto);
 
     @Override
-    @Mapping(target = "idCategoria", source = "id")
+    //@Mapping(target = "id", source = "id")
     CategoriaResponseDTO toDTO(Categoria entity);
+
+    @Override
+    List<CategoriaResponseDTO> toDTOList(List<Categoria> entityList);
 
     @Override
     @Mapping(target = "id", ignore = true)

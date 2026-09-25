@@ -22,11 +22,37 @@ public class CategoriaServiceImpl extends BaseServiceImpl<Categoria, CategoriaRe
 
     @Override
     @Transactional
+    public CategoriaResponseDTO findById(Long id) {
+        if (!categoriaRepository.existsById(id)) {
+            throw new RuntimeException("No existe una categoría con el ID: " + id);
+        }
+        return super.findById(id);
+    }
+
+    @Override
+    @Transactional
     public CategoriaResponseDTO create(CategoriaRequestDTO createDTO) {
-        // Validación de duplicados por nombre
         if (categoriaRepository.existsByNombreIgnoreCase(createDTO.getNombre())) {
             throw new RuntimeException("Ya existe una categoría con el nombre: " + createDTO.getNombre());
         }
         return super.create(createDTO);
+    }
+
+    @Override
+    @Transactional
+    public CategoriaResponseDTO update(Long id, CategoriaRequestDTO createDTO) {
+        if (!categoriaRepository.existsById(id)) {
+            throw new RuntimeException("No existe una categoría con el ID: " + id);
+        }
+        return super.update(id, createDTO);
+    }
+
+    @Override
+    @Transactional
+    public void deleteById(Long id) {
+        if (!categoriaRepository.existsById(id)) {
+            throw new RuntimeException("No existe una categoría con el ID: " + id);
+        }
+        super.deleteById(id);
     }
 }

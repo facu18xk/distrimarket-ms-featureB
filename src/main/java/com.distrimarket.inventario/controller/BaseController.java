@@ -3,13 +3,10 @@ package com.distrimarket.inventario.controller;
 import com.distrimarket.commons.entity.BaseEntity;
 import com.distrimarket.inventario.service.BaseService;
 import jakarta.validation.Valid;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import java.util.List;
 
 public abstract class BaseController<E extends BaseEntity, CREATE_DTO, RESPONSE_DTO> {
 
@@ -20,17 +17,8 @@ public abstract class BaseController<E extends BaseEntity, CREATE_DTO, RESPONSE_
     }
 
     @GetMapping
-    public ResponseEntity<Page<RESPONSE_DTO>> getAll(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "id") String sortBy,
-            @RequestParam(defaultValue = "asc") String sortDir) {
-
-        Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ?
-                Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
-        Pageable pageable = PageRequest.of(page, size, sort);
-
-        return ResponseEntity.ok(service.findAll(pageable));
+    public ResponseEntity<List<RESPONSE_DTO>> getAll(){
+        return ResponseEntity.ok(service.findAll());
     }
 
     @GetMapping("/{id}")
