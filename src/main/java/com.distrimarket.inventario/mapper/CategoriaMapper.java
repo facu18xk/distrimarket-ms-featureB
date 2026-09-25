@@ -20,7 +20,6 @@ public interface CategoriaMapper extends BaseMapper<Categoria, CategoriaRequestD
     Categoria toEntity(CategoriaRequestDTO dto);
 
     @Override
-    //@Mapping(target = "id", source = "id")
     CategoriaResponseDTO toDTO(Categoria entity);
 
     @Override

@@ -22,7 +22,7 @@ public class MarcaServiceImpl extends BaseServiceImpl<Marca, MarcaRequestDTO, Ma
     @Transactional
     public MarcaResponseDTO findById(Long id) {
         if (!marcaRepository.existsById(id)) {
-            throw new RuntimeException("No existe una categoría con el ID: " + id);
+            throw new RuntimeException("No existe una marca con el ID: " + id);
         }
         return super.findById(id);
     }
@@ -31,7 +31,7 @@ public class MarcaServiceImpl extends BaseServiceImpl<Marca, MarcaRequestDTO, Ma
     @Transactional
     public MarcaResponseDTO create(MarcaRequestDTO createDTO) {
         if (marcaRepository.existsByNombreIgnoreCase(createDTO.getNombre())) {
-            throw new RuntimeException("Ya existe una categoría con el nombre: " + createDTO.getNombre());
+            throw new RuntimeException("Ya existe una marca con el nombre: " + createDTO.getNombre());
         }
         return super.create(createDTO);
     }
@@ -40,7 +40,7 @@ public class MarcaServiceImpl extends BaseServiceImpl<Marca, MarcaRequestDTO, Ma
     @Transactional
     public MarcaResponseDTO update(Long id, MarcaRequestDTO createDTO) {
         if (!marcaRepository.existsById(id)) {
-            throw new RuntimeException("No existe una categoría con el ID: " + id);
+            throw new RuntimeException("No existe una marca con el ID: " + id);
         }
         return super.update(id, createDTO);
     }
@@ -49,7 +49,7 @@ public class MarcaServiceImpl extends BaseServiceImpl<Marca, MarcaRequestDTO, Ma
     @Transactional
     public void deleteById(Long id) {
         if (!marcaRepository.existsById(id)) {
-            throw new RuntimeException("No existe una categoría con el ID: " + id);
+            throw new RuntimeException("No existe una marca con el ID: " + id);
         }
         super.deleteById(id);
     }
