@@ -3,6 +3,7 @@ package com.distrimarket.inventario.service;
 import com.distrimarket.commons.entity.Marca;
 import com.distrimarket.commons.dto.MarcaRequestDTO;
 import com.distrimarket.commons.dto.MarcaResponseDTO;
+import com.distrimarket.inventario.exception.DuplicateResourceException;
 import com.distrimarket.inventario.mapper.MarcaMapper;
 import com.distrimarket.inventario.repository.MarcaRepository;
 import org.springframework.stereotype.Service;
@@ -20,18 +21,9 @@ public class MarcaServiceImpl extends BaseServiceImpl<Marca, MarcaRequestDTO, Ma
 
     @Override
     @Transactional
-    public MarcaResponseDTO findById(Long id) {
-        if (!marcaRepository.existsById(id)) {
-            throw new RuntimeException("No existe una marca con el ID: " + id);
-        }
-        return super.findById(id);
-    }
-
-    @Override
-    @Transactional
     public MarcaResponseDTO create(MarcaRequestDTO createDTO) {
         if (marcaRepository.existsByNombreIgnoreCase(createDTO.getNombre())) {
-            throw new RuntimeException("Ya existe una marca con el nombre: " + createDTO.getNombre());
+            throw new DuplicateResourceException("Ya existe una marca con el nombre: " + createDTO.getNombre());
         }
         return super.create(createDTO);
     }
@@ -39,18 +31,9 @@ public class MarcaServiceImpl extends BaseServiceImpl<Marca, MarcaRequestDTO, Ma
     @Override
     @Transactional
     public MarcaResponseDTO update(Long id, MarcaRequestDTO createDTO) {
-        if (!marcaRepository.existsById(id)) {
-            throw new RuntimeException("No existe una marca con el ID: " + id);
+        if (marcaRepository.existsByNombreIgnoreCaseAndIdNot(createDTO.getNombre(), id)) {
+            throw new DuplicateResourceException("Ya existe otra marca con el nombre: " + createDTO.getNombre());
         }
         return super.update(id, createDTO);
-    }
-
-    @Override
-    @Transactional
-    public void deleteById(Long id) {
-        if (!marcaRepository.existsById(id)) {
-            throw new RuntimeException("No existe una marca con el ID: " + id);
-        }
-        super.deleteById(id);
     }
 }

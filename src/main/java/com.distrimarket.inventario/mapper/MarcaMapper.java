@@ -24,4 +24,10 @@ public interface MarcaMapper extends BaseMapper<Marca, MarcaRequestDTO, MarcaRes
 
     @Override
     List<MarcaResponseDTO> toDTOList(List<Marca> entityList);
+
+    @Override
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "fechaCreacion", ignore = true)
+    @Mapping(target = "fechaModificacion", ignore = true)
+    void updateEntityFromDto(MarcaRequestDTO dto, @MappingTarget Marca entity);
 }

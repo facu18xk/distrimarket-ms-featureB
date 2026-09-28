@@ -5,6 +5,11 @@ import com.distrimarket.commons.dto.MarcaRequestDTO;
 import com.distrimarket.commons.dto.MarcaResponseDTO;
 import com.distrimarket.inventario.service.MarcaService;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -15,5 +20,10 @@ public class MarcaController extends BaseController<Marca, MarcaRequestDTO, Marc
 
     public MarcaController(MarcaService marcaService) {
         super(marcaService);
+    }
+
+    @GetMapping
+    public ResponseEntity<Page<MarcaResponseDTO>> getAll(@PageableDefault(size = 10, sort = "id") Pageable pageable) {
+        return doGetAll(pageable);
     }
 }

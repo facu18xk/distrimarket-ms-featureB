@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface DepositoRepository extends BaseRepository<Deposito> {
     boolean existsByNombreIgnoreCase(String nombre);
+    boolean existsByNombreIgnoreCaseAndIdNot(String nombre, Long id);
 }

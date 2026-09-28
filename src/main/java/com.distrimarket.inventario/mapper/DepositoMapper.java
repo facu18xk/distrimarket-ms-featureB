@@ -24,4 +24,10 @@ public interface DepositoMapper extends BaseMapper<Deposito, DepositoRequestDTO,
 
     @Override
     List<DepositoResponseDTO> toDTOList(List<Deposito> entityList);
+
+    @Override
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "fechaCreacion", ignore = true)
+    @Mapping(target = "fechaModificacion", ignore = true)
+    void updateEntityFromDto(DepositoRequestDTO dto, @MappingTarget Deposito entity);
 }

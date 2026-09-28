@@ -32,6 +32,14 @@ public interface ProductoMapper extends BaseMapper<Producto, ProductoRequestDTO,
     @Override
     List<ProductoResponseDTO> toDTOList(List<Producto> entityList);
 
+    @Override
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "fechaCreacion", ignore = true)
+    @Mapping(target = "fechaModificacion", ignore = true)
+    @Mapping(target = "categoria.id", source = "idCategoria")
+    @Mapping(target = "marca.id", source = "idMarca")
+    void updateEntityFromDto(ProductoRequestDTO dto, @MappingTarget Producto entity);
+
     default BigDecimal mapPorcentajeIva(PorcentajeIvaEnum value) {
         if (value == null) {
             return null;

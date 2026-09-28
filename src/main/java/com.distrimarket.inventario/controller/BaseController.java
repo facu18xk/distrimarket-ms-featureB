@@ -25,14 +25,14 @@ public abstract class BaseController<E extends BaseEntity, CREATE_DTO, RESPONSE_
         return ResponseEntity.ok(service.findAll());
     }*/
 
-    @GetMapping
-    public ResponseEntity<Page<RESPONSE_DTO>> getAll(
-            @RequestParam(name = "page", required = false, defaultValue = "0") int page,
-            @RequestParam(name = "size", required = false, defaultValue = "10") int size) {
+    /*@GetMapping
+    public ResponseEntity<Page<RESPONSE_DTO>> getAll(@PageableDefault(size = 10, sort = "id") Pageable pageable) {
+        return ResponseEntity.ok(service.findAll(pageable));
+    }*/
 
-        Pageable pageable = PageRequest.of(page, size);
-        Page<RESPONSE_DTO> pagedResult = service.findAll(pageable);
-        return ResponseEntity.ok(pagedResult);
+    // Método reutilizable sin @GetMapping directo para no colisionar con firmas hijas
+    protected ResponseEntity<Page<RESPONSE_DTO>> doGetAll(Pageable pageable) {
+        return ResponseEntity.ok(service.findAll(pageable));
     }
 
     @GetMapping("/{id}")

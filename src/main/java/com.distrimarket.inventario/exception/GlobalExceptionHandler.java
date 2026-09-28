@@ -3,12 +3,19 @@ package com.distrimarket.inventario.exception;
 import com.distrimarket.commons.dto.ErrorResponseDTO;
 import com.distrimarket.commons.dto.FieldErrorDTO;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+//import org.springframework.security.access.AccessDeniedException;
+//import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import com.distrimarket.inventario.exception.ResourceNotFoundException;
+import com.distrimarket.inventario.exception.DuplicateResourceException;
+import com.distrimarket.inventario.exception.BadRequestException;
+import com.distrimarket.inventario.exception.IllegalArgumentException;
 
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
@@ -17,40 +24,10 @@ import java.util.List;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<ErrorResponseDTO> handleResourceNotFound(ResourceNotFoundException ex, HttpServletRequest request) {
-        ErrorResponseDTO error = new ErrorResponseDTO();
-        error.setTimestamp(OffsetDateTime.now());
-        error.setStatus(HttpStatus.NOT_FOUND.value());
-        error.setError(HttpStatus.NOT_FOUND.getReasonPhrase());
-        error.setMessage(ex.getMessage());
-        error.setPath(request.getRequestURI());
-
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
-    }
-
-    @ExceptionHandler(BadRequestException.class)
-    public ResponseEntity<ErrorResponseDTO> handleBadRequest(BadRequestException ex, HttpServletRequest request) {
-        ErrorResponseDTO error = new ErrorResponseDTO();
-        error.setTimestamp(OffsetDateTime.now());
-        error.setStatus(HttpStatus.BAD_REQUEST.value());
-        error.setError(HttpStatus.BAD_REQUEST.getReasonPhrase());
-        error.setMessage(ex.getMessage());
-        error.setPath(request.getRequestURI());
-
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
-    }
-
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<ErrorResponseDTO> handleIllegalArgumentException(IllegalArgumentException ex, HttpServletRequest request) {
-        ErrorResponseDTO error = new ErrorResponseDTO();
-        error.setTimestamp(OffsetDateTime.now());
-        error.setStatus(HttpStatus.BAD_REQUEST.value());
-        error.setError(HttpStatus.BAD_REQUEST.getReasonPhrase());
-        error.setMessage(ex.getMessage());
-        error.setPath(request.getRequestURI());
-
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    // --- 400 BAD REQUEST ---
+    @ExceptionHandler({BadRequestException.class, IllegalArgumentException.class})
+    public ResponseEntity<ErrorResponseDTO> handleBadRequest(RuntimeException ex, HttpServletRequest request) {
+        return buildResponse(HttpStatus.BAD_REQUEST, ex.getMessage(), request, null);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -64,26 +41,60 @@ public class GlobalExceptionHandler {
             details.add(detail);
         }
 
-        ErrorResponseDTO error = new ErrorResponseDTO();
-        error.setTimestamp(OffsetDateTime.now());
-        error.setStatus(HttpStatus.BAD_REQUEST.value());
-        error.setError(HttpStatus.BAD_REQUEST.getReasonPhrase());
-        error.setMessage("Validación de formulario fallida");
-        error.setPath(request.getRequestURI());
-        error.setDetails(details);
-
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+        return buildResponse(HttpStatus.BAD_REQUEST, "Validación de formulario fallida", request, details);
     }
 
+    // --- 401 UNAUTHORIZED ---
+    // Atrapa fallos de autenticación cuando se use Spring Security
+    /*@ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<ErrorResponseDTO> handleUnauthorized(AuthenticationException ex, HttpServletRequest request) {
+        return buildResponse(HttpStatus.UNAUTHORIZED, "No autenticado: se requiere token o credenciales válidas.", request, null);
+    }*/
+
+    // --- 403 FORBIDDEN ---
+    // Atrapa intentos sin privilegios/roles suficientes
+    /*@ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ErrorResponseDTO> handleAccessDenied(AccessDeniedException ex, HttpServletRequest request) {
+        return buildResponse(HttpStatus.FORBIDDEN, "Acceso denegado: permisos insuficientes para ejecutar esta acción.", request, null);
+    }*/
+
+    // --- 404 NOT FOUND ---
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<ErrorResponseDTO> handleResourceNotFound(ResourceNotFoundException ex, HttpServletRequest request) {
+        return buildResponse(HttpStatus.NOT_FOUND, ex.getMessage(), request, null);
+    }
+
+    // --- 409 CONFLICT ---
+    // Excepciones de negocio por registros repetidos
+    @ExceptionHandler(DuplicateResourceException.class)
+    public ResponseEntity<ErrorResponseDTO> handleDuplicateResource(DuplicateResourceException ex, HttpServletRequest request) {
+        return buildResponse(HttpStatus.CONFLICT, ex.getMessage(), request, null);
+    }
+
+    // Violaciones directas a nivel de Base de Datos (ej: unique constraint de CI o RUC)
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ErrorResponseDTO> handleDataIntegrityViolation(DataIntegrityViolationException ex, HttpServletRequest request) {
+        return buildResponse(HttpStatus.CONFLICT, "El registro entra en conflicto con un valor único ya existente (ej: CI, RUC o código duplicado).", request, null);
+    }
+
+    // --- 500 INTERNAL SERVER ERROR ---
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponseDTO> handleGlobalException(Exception ex, HttpServletRequest request) {
+        // En producción se loguea el error interno (logger.error(ex.getMessage(), ex)) y se oculta el detalle técnico al cliente
+        return buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Ocurrió un error interno inesperado en el servidor.", request, null);
+    }
+
+    // --- Método auxiliar para centralizar la construcción del DTO ---
+    private ResponseEntity<ErrorResponseDTO> buildResponse(HttpStatus status, String message, HttpServletRequest request, List<FieldErrorDTO> details) {
         ErrorResponseDTO error = new ErrorResponseDTO();
         error.setTimestamp(OffsetDateTime.now());
-        error.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-        error.setError(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase());
-        error.setMessage("Ocurrió un error interno inesperado en el servidor: " + ex.getMessage());
+        error.setStatus(status.value());
+        error.setError(status.getReasonPhrase());
+        error.setMessage(message);
         error.setPath(request.getRequestURI());
-
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+        if (details != null && !details.isEmpty()) {
+            error.setDetails(details);
+        }
+        return ResponseEntity.status(status).body(error);
     }
 }

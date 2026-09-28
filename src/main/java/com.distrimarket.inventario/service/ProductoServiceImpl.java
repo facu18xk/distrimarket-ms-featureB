@@ -3,6 +3,8 @@ package com.distrimarket.inventario.service;
 import com.distrimarket.commons.entity.Producto;
 import com.distrimarket.commons.dto.ProductoRequestDTO;
 import com.distrimarket.commons.dto.ProductoResponseDTO;
+import com.distrimarket.inventario.exception.DuplicateResourceException;
+import com.distrimarket.inventario.exception.ResourceNotFoundException;
 import com.distrimarket.inventario.mapper.ProductoMapper;
 import com.distrimarket.inventario.repository.ProductoRepository;
 import com.distrimarket.inventario.service.BaseServiceImpl;
@@ -30,38 +32,16 @@ public class ProductoServiceImpl extends BaseServiceImpl<Producto, ProductoReque
 
     @Override
     @Transactional
-    public ProductoResponseDTO findById(Long id) {
-        if (!productoRepository.existsById(id)) {
-            throw new RuntimeException("No existe un producto con el ID: " + id);
-        }
-        return super.findById(id);
-    }
-
-    @Override
-    @Transactional
     public ProductoResponseDTO create(ProductoRequestDTO createDTO) {
-        if (productoRepository.existsByNombreIgnoreCase(createDTO.getNombre())) {
-            throw new RuntimeException("Ya existe un producto con el nombre: " + createDTO.getNombre());
-        }
+        validateCreate(createDTO);
         return super.create(createDTO);
     }
 
     @Override
     @Transactional
-    public ProductoResponseDTO update(Long id, ProductoRequestDTO createDTO) {
-        if (!productoRepository.existsById(id)) {
-            throw new RuntimeException("No existe un producto con el ID: " + id);
-        }
-        return super.update(id, createDTO);
-    }
-
-    @Override
-    @Transactional
-    public void deleteById(Long id) {
-        if (!productoRepository.existsById(id)) {
-            throw new RuntimeException("No existe un producto con el ID: " + id);
-        }
-        super.deleteById(id);
+    public ProductoResponseDTO update(Long id, ProductoRequestDTO updateDTO) {
+        validateUpdate(id, updateDTO);
+        return super.update(id, updateDTO);
     }
 
     @Transactional(readOnly = true)
@@ -74,5 +54,25 @@ public class ProductoServiceImpl extends BaseServiceImpl<Producto, ProductoReque
         Page<Producto> entityPage = productoRepository.findAll(spec, pageable);
 
         return entityPage.map(productoMapper::toDTO);
+    }
+
+    private void validateCreate(ProductoRequestDTO dto) {
+        if (productoRepository.existsByNombreIgnoreCase(dto.getNombre())) {
+            throw new DuplicateResourceException("Ya existe un producto con el nombre: " + dto.getNombre());
+        }
+        if (dto.getCodigoBarra() != null && !dto.getCodigoBarra().isBlank()
+                && productoRepository.existsByCodigoBarra(dto.getCodigoBarra())) {
+            throw new DuplicateResourceException("Ya existe un producto con el código de barra: " + dto.getCodigoBarra());
+        }
+    }
+
+    private void validateUpdate(Long id, ProductoRequestDTO dto) {
+        if (productoRepository.existsByNombreIgnoreCaseAndIdNot(dto.getNombre(), id)) {
+            throw new DuplicateResourceException("Ya existe otro producto con el nombre: " + dto.getNombre());
+        }
+        if (dto.getCodigoBarra() != null && !dto.getCodigoBarra().isBlank()
+                && productoRepository.existsByCodigoBarraAndIdNot(dto.getCodigoBarra(), id)) {
+            throw new DuplicateResourceException("Ya existe otro producto con el código de barra: " + dto.getCodigoBarra());
+        }
     }
 }

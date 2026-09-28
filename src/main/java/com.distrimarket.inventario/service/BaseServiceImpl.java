@@ -55,11 +55,9 @@ public abstract class BaseServiceImpl<E extends BaseEntity, CREATE_DTO, RESPONSE
     @Override
     @Transactional
     public RESPONSE_DTO update(Long id, CREATE_DTO createDTO) {
-        if (!repository.existsById(id)) {
-            throw new ResourceNotFoundException("No se encuentra el registro para actualizar con ID: " + id);
-        }
-        E entity = mapper.toEntity(createDTO);
-        entity.setId(id);
+        E entity = repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("No se encuentra el registro para actualizar con ID: " + id));
+        mapper.updateEntityFromDto(createDTO, entity);
         E updatedEntity = repository.save(entity);
         return mapper.toDTO(updatedEntity);
     }
@@ -67,9 +65,8 @@ public abstract class BaseServiceImpl<E extends BaseEntity, CREATE_DTO, RESPONSE
     @Override
     @Transactional
     public void deleteById(Long id) {
-        if (!repository.existsById(id)) {
-            throw new ResourceNotFoundException("No se encuentra el registro con ID: " + id);
-        }
-        repository.deleteById(id);
+        E entity = repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("No se encuentra el registro con ID: " + id));
+        repository.delete(entity);
     }
 }
