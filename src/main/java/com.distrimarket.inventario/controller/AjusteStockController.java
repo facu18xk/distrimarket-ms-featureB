@@ -5,6 +5,7 @@ import com.distrimarket.commons.dto.AjusteStockResponseDTO;
 import com.distrimarket.commons.entity.AjusteStock;
 import com.distrimarket.inventario.service.AjusteStockService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
@@ -26,11 +27,23 @@ public class AjusteStockController extends BaseController<AjusteStock, AjusteSto
         this.ajusteStockService = ajusteStockService;
     }
 
-    @GetMapping
+    /*@GetMapping
     @Operation(summary = "Listar ajustes de stock con paginación")
     public ResponseEntity<Page<AjusteStockResponseDTO>> getAll(
             @PageableDefault(size = 10, sort = "fechaCreacion") Pageable pageable) {
         return doGetAll(pageable);
+    }*/
+
+    @GetMapping
+    @Operation(summary = "Listar ajustes de stock con paginación y filtros opcionales por depósito o empleado")
+    public ResponseEntity<Page<AjusteStockResponseDTO>> getAll(
+            @Parameter(description = "ID del depósito a filtrar (opcional)")
+            @RequestParam(name = "depositoId", required = false) Long depositoId,
+            @Parameter(description = "ID del empleado a filtrar (opcional)")
+            @RequestParam(name = "empleadoId", required = false) Long empleadoId,
+            @PageableDefault(size = 10, sort = "fechaCreacion") Pageable pageable) {
+
+        return ResponseEntity.ok(ajusteStockService.findAllWithSpecifications(depositoId, empleadoId, pageable));
     }
 
     @Override

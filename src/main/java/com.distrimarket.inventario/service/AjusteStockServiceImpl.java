@@ -5,12 +5,16 @@ import com.distrimarket.commons.dto.AjusteStockRequestDTO;
 import com.distrimarket.commons.dto.AjusteStockResponseDTO;
 import com.distrimarket.commons.entity.*;
 import com.distrimarket.commons.enums.TipoAjuste;
+import com.distrimarket.inventario.exception.InsufficientStockException;
 import com.distrimarket.inventario.exception.ResourceNotFoundException;
+import com.distrimarket.inventario.exception.IllegalArgumentException;
 import com.distrimarket.inventario.mapper.AjusteStockDetalleMapper;
 import com.distrimarket.inventario.mapper.AjusteStockMapper;
 import com.distrimarket.inventario.repository.*;
+import com.distrimarket.inventario.specification.AjusteStockSpecification;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +31,7 @@ public class AjusteStockServiceImpl
     private final ProductoRepository productoRepository;
     private final StockDepositoRepository stockDepositoRepository;
     private final AjusteStockDetalleMapper detalleMapper;
+    private final AjusteStockSpecification ajusteStockSpecification;
 
     public AjusteStockServiceImpl(AjusteStockRepository ajusteStockRepository,
                                   AjusteStockMapper ajusteStockMapper,
@@ -34,7 +39,8 @@ public class AjusteStockServiceImpl
                                   EmpleadoRepository empleadoRepository,
                                   ProductoRepository productoRepository,
                                   StockDepositoRepository stockDepositoRepository,
-                                  AjusteStockDetalleMapper detalleMapper) {
+                                  AjusteStockDetalleMapper detalleMapper,
+                                  AjusteStockSpecification ajusteStockSpecification) {
         super(ajusteStockRepository, ajusteStockMapper);
         this.ajusteStockRepository = ajusteStockRepository;
         this.depositoRepository = depositoRepository;
@@ -42,6 +48,7 @@ public class AjusteStockServiceImpl
         this.productoRepository = productoRepository;
         this.stockDepositoRepository = stockDepositoRepository;
         this.detalleMapper = detalleMapper;
+        this.ajusteStockSpecification = ajusteStockSpecification;
     }
 
     @Override
@@ -96,7 +103,7 @@ public class AjusteStockServiceImpl
             stock.setCantidad(stock.getCantidad() + cantidad);
         } else if (tipo == TipoAjuste.NEGATIVO) {
             if (stock.getCantidad() < cantidad) {
-                throw new IllegalArgumentException(String.format(
+                throw new InsufficientStockException(String.format(
                         "Stock insuficiente para el producto '%s' (ID %d). Disponible: %d, Solicitado descontar: %d",
                         producto.getNombre(), producto.getId(), stock.getCantidad(), cantidad));
             }
@@ -126,5 +133,15 @@ public class AjusteStockServiceImpl
     @Override
     public void deleteById(Long id) {
         throw new UnsupportedOperationException("Operación no permitida: No se pueden eliminar registros históricos de ajuste de stock.");
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<AjusteStockResponseDTO> findAllWithSpecifications(Long depositoId, Long empleadoId, Pageable pageable) {
+        Specification<AjusteStock> spec = Specification
+                .where(ajusteStockSpecification.hasDepositoId(depositoId))
+                .and(ajusteStockSpecification.hasEmpleadoId(empleadoId));
+
+        return ajusteStockRepository.findAll(spec, pageable).map(mapper::toDTO);
     }
 }

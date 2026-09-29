@@ -12,10 +12,6 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import com.distrimarket.inventario.exception.ResourceNotFoundException;
-import com.distrimarket.inventario.exception.DuplicateResourceException;
-import com.distrimarket.inventario.exception.BadRequestException;
-import com.distrimarket.inventario.exception.IllegalArgumentException;
 
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
@@ -75,6 +71,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ErrorResponseDTO> handleDataIntegrityViolation(DataIntegrityViolationException ex, HttpServletRequest request) {
         return buildResponse(HttpStatus.CONFLICT, "El registro entra en conflicto con un valor único ya existente (ej: CI, RUC o código duplicado).", request, null);
+    }
+
+    // No se puede incurrir en stock negativo
+    @ExceptionHandler(InsufficientStockException.class)
+    public ResponseEntity<ErrorResponseDTO> handleInsufficientStock(InsufficientStockException ex, HttpServletRequest request) {
+        return buildResponse(HttpStatus.CONFLICT, ex.getMessage(), request, null);
     }
 
     // --- 500 INTERNAL SERVER ERROR ---
