@@ -60,6 +60,12 @@ public class GlobalExceptionHandler {
         return buildResponse(HttpStatus.NOT_FOUND, ex.getMessage(), request, null);
     }
 
+    // --- 405 METHOD NOT ALLOWED ---
+    @ExceptionHandler(UnsupportedOperationException.class)
+    public ResponseEntity<ErrorResponseDTO> handleUnsupportedOperation(UnsupportedOperationException ex, HttpServletRequest request) {
+        return buildResponse(HttpStatus.METHOD_NOT_ALLOWED, ex.getMessage(), request, null);
+    }
+
     // --- 409 CONFLICT ---
     // Excepciones de negocio por registros repetidos
     @ExceptionHandler(DuplicateResourceException.class)
