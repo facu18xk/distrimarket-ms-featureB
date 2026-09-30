@@ -10,7 +10,9 @@ import com.distrimarket.inventario.service.BaseServiceImpl;
 import com.distrimarket.inventario.service.CategoriaService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 public class CategoriaServiceImpl extends BaseServiceImpl<Categoria, CategoriaRequestDTO, CategoriaResponseDTO> implements CategoriaService {
 
@@ -24,6 +26,7 @@ public class CategoriaServiceImpl extends BaseServiceImpl<Categoria, CategoriaRe
     @Override
     @Transactional
     public CategoriaResponseDTO create(CategoriaRequestDTO createDTO) {
+        log.debug("Comprobando disponibilidad de nombre de categoría: '{}'", createDTO.getNombre());
         if (categoriaRepository.existsByNombreIgnoreCase(createDTO.getNombre())) {
             throw new DuplicateResourceException("Ya existe una categoría con el nombre: " + createDTO.getNombre());
         }
@@ -33,6 +36,7 @@ public class CategoriaServiceImpl extends BaseServiceImpl<Categoria, CategoriaRe
     @Override
     @Transactional
     public CategoriaResponseDTO update(Long id, CategoriaRequestDTO createDTO) {
+        log.debug("Comprobando disponibilidad de nombre para categoría ID {}: '{}'", id, createDTO.getNombre());
         if (categoriaRepository.existsByNombreIgnoreCaseAndIdNot(createDTO.getNombre(), id)) {
             throw new DuplicateResourceException("Ya existe otra categoría con el nombre: " + createDTO.getNombre());
         }

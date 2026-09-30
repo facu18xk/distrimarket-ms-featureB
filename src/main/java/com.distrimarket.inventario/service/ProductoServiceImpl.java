@@ -15,7 +15,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 public class ProductoServiceImpl extends BaseServiceImpl<Producto, ProductoRequestDTO, ProductoResponseDTO> implements ProductoService {
 
@@ -46,7 +48,8 @@ public class ProductoServiceImpl extends BaseServiceImpl<Producto, ProductoReque
 
     @Transactional(readOnly = true)
     public Page<ProductoResponseDTO> findAllWithSpecifications(Long categoriaId, Long marcaId, Pageable pageable) {
-
+        log.debug("Consultando productos con filtros -> categoriaId: {}, marcaId: {}, página: {}, tamaño: {}",
+                categoriaId, marcaId, pageable.getPageNumber(), pageable.getPageSize());
         Specification<Producto> spec = Specification
                 .where(productoSpecification.hasCategoriaId(categoriaId))
                 .and(productoSpecification.hasMarcaId(marcaId));
@@ -57,6 +60,8 @@ public class ProductoServiceImpl extends BaseServiceImpl<Producto, ProductoReque
     }
 
     private void validateCreate(ProductoRequestDTO dto) {
+        log.debug("Validando unicidad para nuevo producto: '{}' (Código de barra: '{}')",
+                dto.getNombre(), dto.getCodigoBarra());
         if (productoRepository.existsByNombreIgnoreCase(dto.getNombre())) {
             throw new DuplicateResourceException("Ya existe un producto con el nombre: " + dto.getNombre());
         }
@@ -67,6 +72,8 @@ public class ProductoServiceImpl extends BaseServiceImpl<Producto, ProductoReque
     }
 
     private void validateUpdate(Long id, ProductoRequestDTO dto) {
+        log.debug("Validando unicidad en actualización de producto ID {}: '{}' (Código de barra: '{}')",
+                id, dto.getNombre(), dto.getCodigoBarra());
         if (productoRepository.existsByNombreIgnoreCaseAndIdNot(dto.getNombre(), id)) {
             throw new DuplicateResourceException("Ya existe otro producto con el nombre: " + dto.getNombre());
         }

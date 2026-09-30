@@ -12,17 +12,21 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
     // --- 400 BAD REQUEST ---
     @ExceptionHandler({BadRequestException.class, IllegalArgumentException.class})
     public ResponseEntity<ErrorResponseDTO> handleBadRequest(RuntimeException ex, HttpServletRequest request) {
+        log.warn("Solicitud inválida [400 BAD REQUEST] en {} {}: {}",
+                request.getMethod(), request.getRequestURI(), ex.getMessage());
         return buildResponse(HttpStatus.BAD_REQUEST, ex.getMessage(), request, null);
     }
 
@@ -36,6 +40,9 @@ public class GlobalExceptionHandler {
             detail.setMessage(fieldError.getDefaultMessage());
             details.add(detail);
         }
+
+        log.warn("Fallo de validación en {} {}: {} campo(s) con error. Detalles: {}",
+                request.getMethod(), request.getRequestURI(), details.size(), details);
 
         return buildResponse(HttpStatus.BAD_REQUEST, "Validación de formulario fallida", request, details);
     }
@@ -57,12 +64,16 @@ public class GlobalExceptionHandler {
     // --- 404 NOT FOUND ---
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ErrorResponseDTO> handleResourceNotFound(ResourceNotFoundException ex, HttpServletRequest request) {
+        log.info("Recurso no encontrado [404 NOT FOUND] en {} {}: {}",
+                request.getMethod(), request.getRequestURI(), ex.getMessage());
         return buildResponse(HttpStatus.NOT_FOUND, ex.getMessage(), request, null);
     }
 
     // --- 405 METHOD NOT ALLOWED ---
     @ExceptionHandler(UnsupportedOperationException.class)
     public ResponseEntity<ErrorResponseDTO> handleUnsupportedOperation(UnsupportedOperationException ex, HttpServletRequest request) {
+        log.warn("Operación no permitida [405 METHOD NOT ALLOWED] en {} {}: {}",
+                request.getMethod(), request.getRequestURI(), ex.getMessage());
         return buildResponse(HttpStatus.METHOD_NOT_ALLOWED, ex.getMessage(), request, null);
     }
 
@@ -70,18 +81,24 @@ public class GlobalExceptionHandler {
     // Excepciones de negocio por registros repetidos
     @ExceptionHandler(DuplicateResourceException.class)
     public ResponseEntity<ErrorResponseDTO> handleDuplicateResource(DuplicateResourceException ex, HttpServletRequest request) {
+        log.warn("Conflicto de unicidad [409 CONFLICT] en {} {}: {}",
+                request.getMethod(), request.getRequestURI(), ex.getMessage());
         return buildResponse(HttpStatus.CONFLICT, ex.getMessage(), request, null);
     }
 
     // Violaciones directas a nivel de Base de Datos (ej: unique constraint de CI o RUC)
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ErrorResponseDTO> handleDataIntegrityViolation(DataIntegrityViolationException ex, HttpServletRequest request) {
+        log.warn("Violación de integridad referencial o constraint única [409 CONFLICT] en {} {}: {}",
+                request.getMethod(), request.getRequestURI(), ex.getMostSpecificCause().getMessage());
         return buildResponse(HttpStatus.CONFLICT, "El registro entra en conflicto con un valor único ya existente (ej: CI, RUC o código duplicado).", request, null);
     }
 
     // No se puede incurrir en stock negativo
     @ExceptionHandler(InsufficientStockException.class)
     public ResponseEntity<ErrorResponseDTO> handleInsufficientStock(InsufficientStockException ex, HttpServletRequest request) {
+        log.warn("Operación rechazada por stock insuficiente [409 CONFLICT] en {} {}: {}",
+                request.getMethod(), request.getRequestURI(), ex.getMessage());
         return buildResponse(HttpStatus.CONFLICT, ex.getMessage(), request, null);
     }
 
@@ -89,6 +106,8 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponseDTO> handleGlobalException(Exception ex, HttpServletRequest request) {
         // En producción se loguea el error interno (logger.error(ex.getMessage(), ex)) y se oculta el detalle técnico al cliente
+        log.error("Error crítico no controlado [500 INTERNAL SERVER ERROR] en {} {}: {}",
+                request.getMethod(), request.getRequestURI(), ex.getMessage(), ex);
         return buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Ocurrió un error interno inesperado en el servidor.", request, null);
     }
 

@@ -15,7 +15,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 public class TransferenciaStockServiceImpl
         extends BaseServiceImpl<TransferenciaStock, TransferenciaStockRequestDTO, TransferenciaStockResponseDTO>
@@ -50,6 +52,8 @@ public class TransferenciaStockServiceImpl
     @Override
     @Transactional
     public TransferenciaStockResponseDTO create(TransferenciaStockRequestDTO dto) {
+        log.info("Iniciando registro de transferencia de stock desde depósito {} hacia depósito {} por empleado ID {}",
+                dto.getIdDepositoOrigen(), dto.getIdDepositoDestino(), dto.getIdEmpleado());
         validarRequest(dto);
 
         Deposito depositoOrigen = depositoRepository.findById(dto.getIdDepositoOrigen())
@@ -73,6 +77,7 @@ public class TransferenciaStockServiceImpl
 
         // Procesar detalles y mover existencias
         for (TransferenciaStockDetalleRequestDTO detDto : dto.getDetalles()) {
+            log.debug("Procesando detalle: Producto ID {}, Cantidad {}", detDto.getIdProducto(), detDto.getCantidad());
             if (detDto.getCantidad() == null || detDto.getCantidad() <= 0) {
                 throw new BadRequestException("La cantidad a transferir debe ser mayor a cero.");
             }
@@ -88,22 +93,30 @@ public class TransferenciaStockServiceImpl
         }
 
         TransferenciaStock guardado = transferenciaStockRepository.save(transferencia);
+        log.info("Transferencia de stock registrada con éxito con ID: {}", guardado.getId());
         return mapper.toDTO(guardado);
     }
 
     private void ejecutarMovimientoInventario(Deposito origen, Deposito destino, Producto producto, Integer cantidad) {
         // 1. Validar y descontar del depósito de origen
         StockDeposito stockOrigen = stockDepositoRepository.findByDepositoIdAndProductoId(origen.getId(), producto.getId())
-                .orElseThrow(() -> new BadRequestException(String.format(
-                        "No existe stock registrado para el producto '%s' (ID %d) en el depósito de origen '%s'",
-                        producto.getNombre(), producto.getId(), origen.getNombre())));
+                .orElseThrow(() -> {
+                    log.warn("Fallo de transferencia: no existe registro de stock para el producto ID {} en el depósito origen ID {}",
+                            producto.getId(), origen.getId());
+                    return new BadRequestException(String.format(
+                            "No existe stock registrado para el producto '%s' (ID %d) en el depósito de origen '%s'",
+                            producto.getNombre(), producto.getId(), origen.getNombre()));
+                });
 
         if (stockOrigen.getCantidad() < cantidad) {
+            log.warn("Fallo de transferencia: Stock insuficiente para producto '{}' (ID {}). Disponible: {}, Solicitado: {}",
+                    producto.getNombre(), producto.getId(), stockOrigen.getCantidad(), cantidad);
             throw new BadRequestException(String.format(
                     "Stock insuficiente para transferir '%s' (ID %d). Disponible en origen: %d, Solicitado: %d",
                     producto.getNombre(), producto.getId(), stockOrigen.getCantidad(), cantidad));
         }
 
+        log.debug("Descontando {} unidades del depósito {}", cantidad, origen.getId());
         stockOrigen.setCantidad(stockOrigen.getCantidad() - cantidad);
         stockDepositoRepository.save(stockOrigen);
 

@@ -17,7 +17,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 public class StockDepositoServiceImpl
         extends BaseServiceImpl<StockDeposito, StockDepositoRequestDTO, StockDepositoResponseDTO>
@@ -43,6 +45,8 @@ public class StockDepositoServiceImpl
     @Override
     @Transactional
     public StockDepositoResponseDTO create(StockDepositoRequestDTO createDTO) {
+        log.info("Creando registro de stock para depósito ID: {} y producto ID: {} con cantidad inicial: {}",
+                createDTO.getIdDeposito(), createDTO.getIdProducto(), createDTO.getCantidad());
         validarExistenciaPadres(createDTO.getIdDeposito(), createDTO.getIdProducto());
 
         if (stockDepositoRepository.existsByDepositoIdAndProductoId(createDTO.getIdDeposito(), createDTO.getIdProducto())) {
@@ -63,12 +67,15 @@ public class StockDepositoServiceImpl
         entity.setProducto(producto);
 
         StockDeposito saved = stockDepositoRepository.save(entity);
+        log.info("Registro de stock creado exitosamente con ID: {} (Depósito: '{}', Producto: '{}', Cantidad: {})",
+                saved.getId(), deposito.getNombre(), producto.getNombre(), saved.getCantidad());
         return mapper.toDTO(saved);
     }
 
     @Override
     @Transactional
     public StockDepositoResponseDTO update(Long id, StockDepositoRequestDTO updateDTO) {
+        log.info("Actualizando registro de stock con ID: {}", id);
         StockDeposito stockExistente = stockDepositoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Registro de stock no encontrado con ID: " + id));
 
@@ -89,12 +96,15 @@ public class StockDepositoServiceImpl
         stockExistente.setProducto(producto);
 
         StockDeposito updated = stockDepositoRepository.save(stockExistente);
+        log.info("Registro de stock ID: {} actualizado exitosamente a cantidad: {}", id, updated.getCantidad());
         return mapper.toDTO(updated);
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<StockDepositoResponseDTO> findAllWithSpecifications(Long depositoId, Long productoId, Pageable pageable) {
+        log.debug("Consultando stock con filtros -> depositoId: {}, productoId: {}, página: {}, tamaño: {}",
+                depositoId, productoId, pageable.getPageNumber(), pageable.getPageSize());
         Specification<StockDeposito> spec = Specification
                 .where(stockDepositoSpecification.hasDepositoId(depositoId))
                 .and(stockDepositoSpecification.hasProductoId(productoId));
@@ -105,6 +115,7 @@ public class StockDepositoServiceImpl
     @Override
     @Transactional(readOnly = true)
     public StockDepositoResponseDTO findByDepositoIdAndProductoId(Long depositoId, Long productoId) {
+        log.debug("Consultando stock puntual para depósito ID: {} y producto ID: {}", depositoId, productoId);
         StockDeposito stock = stockDepositoRepository.findByDepositoIdAndProductoId(depositoId, productoId)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         String.format("No existe registro de stock para el depósito %d y producto %d", depositoId, productoId)));
@@ -112,6 +123,7 @@ public class StockDepositoServiceImpl
     }
 
     private void validarExistenciaPadres(Long depositoId, Long productoId) {
+        log.debug("Verificando existencia de entidades padre -> Depósito ID: {}, Producto ID: {}", depositoId, productoId);
         if (!depositoRepository.existsById(depositoId)) {
             throw new ResourceNotFoundException("No existe el depósito con ID: " + depositoId);
         }

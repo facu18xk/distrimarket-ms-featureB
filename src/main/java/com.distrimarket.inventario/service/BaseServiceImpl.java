@@ -8,9 +8,11 @@ import com.distrimarket.inventario.service.BaseService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 
+@Slf4j
 public abstract class BaseServiceImpl<E extends BaseEntity, CREATE_DTO, RESPONSE_DTO>
         implements BaseService<E, CREATE_DTO, RESPONSE_DTO> {
 
@@ -32,6 +34,7 @@ public abstract class BaseServiceImpl<E extends BaseEntity, CREATE_DTO, RESPONSE
     @Override
     @Transactional(readOnly = true)
     public Page<RESPONSE_DTO> findAll(Pageable pageable) {
+        log.debug("[{}] Consultando página {} con tamaño {}", getServiceName(), pageable.getPageNumber(), pageable.getPageSize());
         Page<E> entityPage = repository.findAll(pageable);
         return entityPage.map(mapper::toDTO);
     }
@@ -39,6 +42,7 @@ public abstract class BaseServiceImpl<E extends BaseEntity, CREATE_DTO, RESPONSE
     @Override
     @Transactional(readOnly = true)
     public RESPONSE_DTO findById(Long id) {
+        log.debug("[{}] Buscando registro con ID: {}", getServiceName(), id);
         E entity = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Recurso no encontrado con ID: " + id));
         return mapper.toDTO(entity);
@@ -47,26 +51,37 @@ public abstract class BaseServiceImpl<E extends BaseEntity, CREATE_DTO, RESPONSE
     @Override
     @Transactional
     public RESPONSE_DTO create(CREATE_DTO createDTO) {
+        log.info("[{}] Creando nuevo registro...", getServiceName());
         E entity = mapper.toEntity(createDTO);
         E savedEntity = repository.save(entity);
+        log.info("[{}] Registro creado exitosamente con ID: {}", getServiceName(), savedEntity.getId());
         return mapper.toDTO(savedEntity);
     }
 
     @Override
     @Transactional
     public RESPONSE_DTO update(Long id, CREATE_DTO createDTO) {
+        log.info("[{}] Actualizando registro con ID: {}", getServiceName(), id);
         E entity = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("No se encuentra el registro para actualizar con ID: " + id));
         mapper.updateEntityFromDto(createDTO, entity);
         E updatedEntity = repository.save(entity);
+        log.info("[{}] Registro con ID: {} actualizado exitosamente", getServiceName(), id);
         return mapper.toDTO(updatedEntity);
     }
 
     @Override
     @Transactional
     public void deleteById(Long id) {
+        log.info("[{}] Eliminando registro con ID: {}", getServiceName(), id);
         E entity = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("No se encuentra el registro con ID: " + id));
         repository.delete(entity);
+        log.info("[{}] Registro con ID: {} eliminado exitosamente", getServiceName(), id);
+    }
+
+    // Helper para que el log indique qué servicio concreto está actuando
+    protected String getServiceName() {
+        return this.getClass().getSimpleName();
     }
 }

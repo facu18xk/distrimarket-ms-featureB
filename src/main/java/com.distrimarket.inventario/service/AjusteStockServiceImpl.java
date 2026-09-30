@@ -17,9 +17,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 
+@Slf4j
 @Service
 public class AjusteStockServiceImpl
         extends BaseServiceImpl<AjusteStock, AjusteStockRequestDTO, AjusteStockResponseDTO>
@@ -54,6 +56,9 @@ public class AjusteStockServiceImpl
     @Override
     @Transactional
     public AjusteStockResponseDTO create(AjusteStockRequestDTO dto) {
+        log.info("Iniciando ajuste de stock [{}] para depósito ID {} por empleado ID {} con {} detalle(s)",
+                dto.getTipoAjuste(), dto.getIdDeposito(), dto.getIdEmpleado(),
+                dto.getDetalles() != null ? dto.getDetalles().size() : 0);
         validateRequest(dto);
 
         Deposito deposito = depositoRepository.findById(dto.getIdDeposito())
@@ -88,6 +93,7 @@ public class AjusteStockServiceImpl
         }
 
         AjusteStock saved = ajusteStockRepository.save(ajuste);
+        log.info("Ajuste de stock registrado exitosamente con ID: {}", saved.getId());
         return mapper.toDTO(saved);
     }
 
@@ -99,18 +105,22 @@ public class AjusteStockServiceImpl
                         .cantidad(0)
                         .build());
 
+        int cantidadAnterior = stock.getCantidad();
+
         if (tipo == TipoAjuste.POSITIVO) {
-            stock.setCantidad(stock.getCantidad() + cantidad);
+            stock.setCantidad(cantidadAnterior + cantidad);
         } else if (tipo == TipoAjuste.NEGATIVO) {
-            if (stock.getCantidad() < cantidad) {
+            if (cantidadAnterior < cantidad) {
                 throw new InsufficientStockException(String.format(
                         "Stock insuficiente para el producto '%s' (ID %d). Disponible: %d, Solicitado descontar: %d",
-                        producto.getNombre(), producto.getId(), stock.getCantidad(), cantidad));
+                        producto.getNombre(), producto.getId(), cantidadAnterior, cantidad));
             }
-            stock.setCantidad(stock.getCantidad() - cantidad);
+            stock.setCantidad(cantidadAnterior - cantidad);
         }
 
         stockDepositoRepository.save(stock);
+        log.debug("Stock actualizado para producto ID {} en depósito ID {}: {} -> {} (Ajuste {})",
+                producto.getId(), deposito.getId(), cantidadAnterior, stock.getCantidad(), tipo);
     }
 
     private void validateRequest(AjusteStockRequestDTO dto) {
@@ -122,6 +132,7 @@ public class AjusteStockServiceImpl
     @Override
     @Transactional(readOnly = true)
     public Page<AjusteStockResponseDTO> findAllByDepositoId(Long depositoId, Pageable pageable) {
+        log.debug("Consultando ajustes de stock para depósito ID: {}, página: {}", depositoId, pageable.getPageNumber());
         return ajusteStockRepository.findAll(pageable).map(mapper::toDTO);
     }
 
@@ -138,6 +149,8 @@ public class AjusteStockServiceImpl
     @Override
     @Transactional(readOnly = true)
     public Page<AjusteStockResponseDTO> findAllWithSpecifications(Long depositoId, Long empleadoId, Pageable pageable) {
+        log.debug("Consultando ajustes con filtros -> depósitoId: {}, empleadoId: {}, página: {}",
+                depositoId, empleadoId, pageable.getPageNumber());
         Specification<AjusteStock> spec = Specification
                 .where(ajusteStockSpecification.hasDepositoId(depositoId))
                 .and(ajusteStockSpecification.hasEmpleadoId(empleadoId));

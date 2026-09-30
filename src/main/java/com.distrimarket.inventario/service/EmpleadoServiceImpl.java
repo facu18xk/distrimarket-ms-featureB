@@ -12,7 +12,9 @@ import com.distrimarket.inventario.repository.EmpleadoRepository;
 import com.distrimarket.inventario.repository.PersonaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 public class EmpleadoServiceImpl
         extends BaseServiceImpl<Empleado, EmpleadoRequestDTO, EmpleadoResponseDTO>
@@ -32,6 +34,8 @@ public class EmpleadoServiceImpl
     @Override
     @Transactional
     public EmpleadoResponseDTO create(EmpleadoRequestDTO createDTO) {
+        log.info("Registrando nuevo empleado para persona ID: {} con cargo: '{}'",
+                createDTO.getIdPersona(), createDTO.getCargo());
         Persona persona = validatePersona(createDTO.getIdPersona());
 
         if (empleadoRepository.existsByPersonaId(createDTO.getIdPersona())) {
@@ -42,12 +46,14 @@ public class EmpleadoServiceImpl
         entity.setPersona(persona);
 
         Empleado saved = empleadoRepository.save(entity);
+        log.info("Empleado creado exitosamente con ID: {} (Persona ID: {})", saved.getId(), persona.getId());
         return mapper.toDTO(saved);
     }
 
     @Override
     @Transactional
     public EmpleadoResponseDTO update(Long id, EmpleadoRequestDTO updateDTO) {
+        log.info("Actualizando empleado con ID: {}", id);
         Empleado empleadoExistente = empleadoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Empleado no encontrado con ID: " + id));
 
@@ -61,18 +67,21 @@ public class EmpleadoServiceImpl
         empleadoExistente.setPersona(persona);
 
         Empleado updated = empleadoRepository.save(empleadoExistente);
+        log.info("Empleado ID: {} actualizado exitosamente", id);
         return mapper.toDTO(updated);
     }
 
     @Override
     @Transactional(readOnly = true)
     public EmpleadoResponseDTO findByPersonaId(Long personaId) {
+        log.debug("Consultando ficha de empleado asociada a persona ID: {}", personaId);
         Empleado empleado = empleadoRepository.findByPersonaId(personaId)
                 .orElseThrow(() -> new ResourceNotFoundException("No se encontró ningún empleado asociado a la persona con ID: " + personaId));
         return mapper.toDTO(empleado);
     }
 
     private Persona validatePersona(Long personaId) {
+        log.debug("Verificando existencia y tipo de persona para ID: {}", personaId);
         Persona persona = personaRepository.findById(personaId)
                 .orElseThrow(() -> new ResourceNotFoundException("No existe una persona registrada con ID: " + personaId));
 

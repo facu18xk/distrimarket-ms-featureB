@@ -12,7 +12,9 @@ import com.distrimarket.inventario.service.BaseServiceImpl;
 import com.distrimarket.inventario.service.PersonaService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 public class PersonaServiceImpl extends BaseServiceImpl<Persona, PersonaRequestDTO, PersonaResponseDTO> implements PersonaService {
 
@@ -26,6 +28,7 @@ public class PersonaServiceImpl extends BaseServiceImpl<Persona, PersonaRequestD
     @Override
     @Transactional(readOnly = true)
     public PersonaResponseDTO findByCi(String ci) {
+        log.debug("Buscando persona por CI: {}", ci);
         Persona persona = personaRepository.findByCi(ci)
                 .orElseThrow(() -> new ResourceNotFoundException("No existe una persona con el CI: " + ci));
         return mapper.toDTO(persona);
@@ -34,6 +37,7 @@ public class PersonaServiceImpl extends BaseServiceImpl<Persona, PersonaRequestD
     @Override
     @Transactional(readOnly = true)
     public PersonaResponseDTO findByRuc(String ruc) {
+        log.debug("Buscando persona por RUC: {}", ruc);
         Persona persona = personaRepository.findByRuc(ruc)
                 .orElseThrow(() -> new ResourceNotFoundException("No existe una persona con el RUC: " + ruc));
         return mapper.toDTO(persona);
@@ -54,6 +58,8 @@ public class PersonaServiceImpl extends BaseServiceImpl<Persona, PersonaRequestD
     }
 
     private void validateCreate(PersonaRequestDTO dto) {
+        log.debug("Validando reglas documentales para nueva persona [{}] - CI: '{}', RUC: '{}'",
+                dto.getTipoPersona(), dto.getCi(), dto.getRuc());
         if (dto.getTipoPersona() == null) {
             throw new IllegalArgumentException("El tipo de persona es obligatorio.");
         }
@@ -80,6 +86,7 @@ public class PersonaServiceImpl extends BaseServiceImpl<Persona, PersonaRequestD
     }
 
     private void validateUpdate(Long id, PersonaRequestDTO dto) {
+        log.debug("Validando unicidad de documentos para actualización de persona ID: {}", id);
         // Obtenemos la persona actual antes de actualizar
         Persona actual = personaRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("No se encuentra la persona con ID: " + id));

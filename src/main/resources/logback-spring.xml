@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="30 seconds">
+
+    <!-- Propiedades de rutas y patrones -->
+    <property name="LOGS_DIR" value="./logs" />
+    <property name="LOG_PATTERN"
+              value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n" />
+    <property name="CONSOLE_LOG_PATTERN"
+              value="%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr([%thread]){magenta} %clr(%-5level) %clr(%logger{36}){cyan} - %msg%n" />
+
+    <!-- Appender 1: Consola (Con colores de Spring Boot) -->
+    <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Appender 2: Archivo General en Disco (Rotación diaria y por tamaño) -->
+    <appender name="RollingFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOGS_DIR}/inventario-app.log</file>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>${LOG_PATTERN}</pattern>
+        </encoder>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!-- Archivo histórico comprimido en .gz -->
+            <fileNamePattern>${LOGS_DIR}/archived/inventario-app-%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+            <!-- Tamaño máximo por archivo individual -->
+            <maxFileSize>10MB</maxFileSize>
+            <!-- Retener logs hasta 30 días -->
+            <maxHistory>30</maxHistory>
+            <!-- Límite global del directorio de logs -->
+            <totalSizeCap>1GB</totalSizeCap>
+        </rollingPolicy>
+    </appender>
+
+    <!-- Appender 3: Archivo dedicado Exclusivamente a Errores -->
+    <appender name="ErrorRollingFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOGS_DIR}/inventario-errors.log</file>
+        <!-- Filtra solo eventos ERROR -->
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>ERROR</level>
+        </filter>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>${LOG_PATTERN}</pattern>
+        </encoder>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${LOGS_DIR}/archived/inventario-errors-%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+            <maxFileSize>10MB</maxFileSize>
+            <maxHistory>60</maxHistory>
+            <totalSizeCap>500MB</totalSizeCap>
+        </rollingPolicy>
+    </appender>
+
+    <!-- Nivel de log para tu paquete de negocio -->
+    <logger name="com.distrimarket.inventario" level="DEBUG" additivity="false">
+        <appender-ref ref="Console" />
+        <appender-ref ref="RollingFile" />
+        <appender-ref ref="ErrorRollingFile" />
+    </logger>
+
+    <!-- Nivel para dependencias de Spring / Hibernate -->
+    <logger name="org.springframework" level="INFO" />
+    <logger name="org.hibernate.SQL" level="DEBUG" /> <!-- Registra las sentencias SQL de Hibernate -->
+
+    <!-- Nivel Root Global -->
+    <root level="INFO">
+        <appender-ref ref="Console" />
+        <appender-ref ref="RollingFile" />
+        <appender-ref ref="ErrorRollingFile" />
+    </root>
+
+</configuration>

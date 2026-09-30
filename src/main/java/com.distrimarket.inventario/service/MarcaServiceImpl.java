@@ -8,7 +8,9 @@ import com.distrimarket.inventario.mapper.MarcaMapper;
 import com.distrimarket.inventario.repository.MarcaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 public class MarcaServiceImpl extends BaseServiceImpl<Marca, MarcaRequestDTO, MarcaResponseDTO> implements MarcaService {
 
@@ -22,6 +24,7 @@ public class MarcaServiceImpl extends BaseServiceImpl<Marca, MarcaRequestDTO, Ma
     @Override
     @Transactional
     public MarcaResponseDTO create(MarcaRequestDTO createDTO) {
+        log.debug("Comprobando disponibilidad de nombre de marca: '{}'", createDTO.getNombre());
         if (marcaRepository.existsByNombreIgnoreCase(createDTO.getNombre())) {
             throw new DuplicateResourceException("Ya existe una marca con el nombre: " + createDTO.getNombre());
         }
@@ -31,6 +34,7 @@ public class MarcaServiceImpl extends BaseServiceImpl<Marca, MarcaRequestDTO, Ma
     @Override
     @Transactional
     public MarcaResponseDTO update(Long id, MarcaRequestDTO createDTO) {
+        log.debug("Comprobando disponibilidad de nombre para marca ID {}: '{}'", id, createDTO.getNombre());
         if (marcaRepository.existsByNombreIgnoreCaseAndIdNot(createDTO.getNombre(), id)) {
             throw new DuplicateResourceException("Ya existe otra marca con el nombre: " + createDTO.getNombre());
         }

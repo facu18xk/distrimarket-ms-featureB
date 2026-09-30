@@ -10,7 +10,9 @@ import com.distrimarket.inventario.service.BaseServiceImpl;
 import com.distrimarket.inventario.service.DepositoService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 public class DepositoServiceImpl extends BaseServiceImpl<Deposito, DepositoRequestDTO, DepositoResponseDTO> implements DepositoService {
 
@@ -24,6 +26,7 @@ public class DepositoServiceImpl extends BaseServiceImpl<Deposito, DepositoReque
     @Override
     @Transactional
     public DepositoResponseDTO create(DepositoRequestDTO createDTO) {
+        log.debug("Comprobando disponibilidad de nombre de depósito: '{}'", createDTO.getNombre());
         if (depositoRepository.existsByNombreIgnoreCase(createDTO.getNombre())) {
             throw new DuplicateResourceException("Ya existe un depósito con el nombre: " + createDTO.getNombre());
         }
@@ -33,6 +36,7 @@ public class DepositoServiceImpl extends BaseServiceImpl<Deposito, DepositoReque
     @Override
     @Transactional
     public DepositoResponseDTO update(Long id, DepositoRequestDTO createDTO) {
+        log.debug("Comprobando disponibilidad de nombre para depósito ID {}: '{}'", id, createDTO.getNombre());
         if (depositoRepository.existsByNombreIgnoreCaseAndIdNot(createDTO.getNombre(), id)) {
             throw new DuplicateResourceException("Ya existe otro depósito con el nombre: " + createDTO.getNombre());
         }
