@@ -1,9 +1,14 @@
 server:
   port: 8081 # Inventario correrá en el puerto 8081
+  servlet:
+    context-path: /inventario
 
 spring:
   application:
     name: distrimarket-inventario
+  devtools:
+    restart:
+      enabled: false
 
   # Configuración de la Base de Datos (PostgreSQL)
   datasource:
@@ -33,7 +38,20 @@ springdoc:
     operations-sorter: method
     tags-sorter: alpha
   default-produces-media-type: application/json
+  override-with-generic-response: false
 
 info:
   app:
     version: '@project.version@'
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+    register-with-eureka: true
+    fetch-registry: true
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.application.name}:${server.port}
+    status-page-url-path: /inventario/actuator/info
+    health-check-url-path: /inventario/actuator/health

@@ -13,6 +13,9 @@ public class WebConfig implements WebMvcConfigurer {
         // Permite que el navegador acceda a http://localhost:8081/openapi.yaml
         registry.addResourceHandler("/openapi.yaml")
                 .addResourceLocations("classpath:/static/openapi.yaml", "classpath:/openapi.yaml");
+        // Expone el archivo que viene dentro del jar distrimarket-common
+        /*registry.addResourceHandler("/v3/api-docs/yaml")
+                .addResourceLocations("classpath:/static/openapi.yaml");*/
     }
 
     @Override
