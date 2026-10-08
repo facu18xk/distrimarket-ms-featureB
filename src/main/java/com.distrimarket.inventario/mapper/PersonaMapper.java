@@ -17,6 +17,7 @@ public interface PersonaMapper extends BaseMapper<Persona, PersonaRequestDTO, Pe
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "fechaCreacion", ignore = true)
     @Mapping(target = "fechaModificacion", ignore = true)
+    @Mapping(target = "activo", ignore = true)
     Persona toEntity(PersonaRequestDTO dto);
 
     @Override
@@ -29,5 +30,6 @@ public interface PersonaMapper extends BaseMapper<Persona, PersonaRequestDTO, Pe
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "fechaCreacion", ignore = true)
     @Mapping(target = "fechaModificacion", ignore = true)
+    @Mapping(target = "activo", ignore = true)
     void updateEntityFromDto(PersonaRequestDTO dto, @MappingTarget Persona entity);
 }

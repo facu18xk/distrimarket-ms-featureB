@@ -17,6 +17,7 @@ public interface DepositoMapper extends BaseMapper<Deposito, DepositoRequestDTO,
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "fechaCreacion", ignore = true)
     @Mapping(target = "fechaModificacion", ignore = true)
+    @Mapping(target = "activo", ignore = true)
     Deposito toEntity(DepositoRequestDTO dto);
 
     @Override
@@ -29,5 +30,6 @@ public interface DepositoMapper extends BaseMapper<Deposito, DepositoRequestDTO,
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "fechaCreacion", ignore = true)
     @Mapping(target = "fechaModificacion", ignore = true)
+    @Mapping(target = "activo", ignore = true)
     void updateEntityFromDto(DepositoRequestDTO dto, @MappingTarget Deposito entity);
 }

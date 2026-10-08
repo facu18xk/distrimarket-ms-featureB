@@ -10,20 +10,19 @@ import org.mapstruct.MappingTarget;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring", builder = @Builder(disableBuilder = true))
+@Mapper(componentModel = "spring", uses = {PersonaMapper.class}, builder = @Builder(disableBuilder = true))
 public interface EmpleadoMapper extends BaseMapper<Empleado, EmpleadoRequestDTO, EmpleadoResponseDTO> {
 
     @Override
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "fechaCreacion", ignore = true)
     @Mapping(target = "fechaModificacion", ignore = true)
-    @Mapping(target = "persona.id", source = "idPersona")
+    @Mapping(target = "persona", source = "persona")
+    @Mapping(target = "activo", ignore = true)
     Empleado toEntity(EmpleadoRequestDTO dto);
 
     @Override
-    @Mapping(target = "idPersona", source = "persona.id")
-    @Mapping(target = "nombreCompletoPersona", source = "persona.nombreCompleto")
-    @Mapping(target = "ciPersona", source = "persona.ci")
+    @Mapping(target = "persona", source = "persona")
     EmpleadoResponseDTO toDTO(Empleado entity);
 
     @Override
@@ -33,6 +32,7 @@ public interface EmpleadoMapper extends BaseMapper<Empleado, EmpleadoRequestDTO,
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "fechaCreacion", ignore = true)
     @Mapping(target = "fechaModificacion", ignore = true)
-    @Mapping(target = "persona.id", source = "idPersona")
+    @Mapping(target = "persona", ignore = true)
+    @Mapping(target = "activo", ignore = true)
     void updateEntityFromDto(EmpleadoRequestDTO dto, @MappingTarget Empleado entity);
 }

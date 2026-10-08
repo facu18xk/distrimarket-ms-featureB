@@ -12,4 +12,5 @@ public interface BaseService<E extends BaseEntity, CREATE_DTO, RESPONSE_DTO> {
     RESPONSE_DTO create(CREATE_DTO createDTO);
     RESPONSE_DTO update(Long id, CREATE_DTO createDTO);
     void deleteById(Long id);
+    void reactivarById(Long id);
 }

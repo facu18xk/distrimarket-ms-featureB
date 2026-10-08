@@ -3,7 +3,7 @@ package com.distrimarket.inventario.service;
 import com.distrimarket.commons.entity.Persona;
 import com.distrimarket.commons.dto.PersonaRequestDTO;
 import com.distrimarket.commons.dto.PersonaResponseDTO;
-import com.distrimarket.commons.dto.TipoPersona;
+import com.distrimarket.commons.enums.TipoPersona;
 import com.distrimarket.inventario.exception.DuplicateResourceException;
 import com.distrimarket.inventario.exception.ResourceNotFoundException;
 import com.distrimarket.inventario.mapper.PersonaMapper;

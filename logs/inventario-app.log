@@ -1,0 +1,863 @@
+2026-10-07 16:52:49.403 [restartedMain] ERROR o.s.boot.SpringApplication - Application run failed
+java.lang.IllegalStateException: java.lang.IllegalStateException: Logback configuration error detected: 
+ERROR in ch.qos.logback.core.pattern.parser.Compiler@7c4a7acf - There is no conversion class registered for composite conversion word [clr]
+ERROR in ch.qos.logback.core.pattern.parser.Compiler@7c4a7acf - Failed to create converter for [%clr] keyword
+ERROR in ch.qos.logback.core.pattern.parser.Compiler@7c4a7acf - There is no conversion class registered for composite conversion word [clr]
+ERROR in ch.qos.logback.core.pattern.parser.Compiler@7c4a7acf - Failed to create converter for [%clr] keyword
+ERROR in ch.qos.logback.core.pattern.parser.Compiler@7c4a7acf - There is no conversion class registered for composite conversion word [clr]
+ERROR in ch.qos.logback.core.pattern.parser.Compiler@7c4a7acf - Failed to create converter for [%clr] keyword
+ERROR in ch.qos.logback.core.pattern.parser.Compiler@7c4a7acf - There is no conversion class registered for composite conversion word [clr]
+ERROR in ch.qos.logback.core.pattern.parser.Compiler@7c4a7acf - Failed to create converter for [%clr] keyword
+	at org.springframework.boot.context.logging.LoggingApplicationListener.initializeSystem(LoggingApplicationListener.java:347)
+	at org.springframework.boot.context.logging.LoggingApplicationListener.initialize(LoggingApplicationListener.java:298)
+	at org.springframework.boot.context.logging.LoggingApplicationListener.onApplicationEnvironmentPreparedEvent(LoggingApplicationListener.java:246)
+	at org.springframework.boot.context.logging.LoggingApplicationListener.onApplicationEvent(LoggingApplicationListener.java:223)
+	at org.springframework.context.event.SimpleApplicationEventMulticaster.doInvokeListener(SimpleApplicationEventMulticaster.java:185)
+	at org.springframework.context.event.SimpleApplicationEventMulticaster.invokeListener(SimpleApplicationEventMulticaster.java:178)
+	at org.springframework.context.event.SimpleApplicationEventMulticaster.multicastEvent(SimpleApplicationEventMulticaster.java:156)
+	at org.springframework.context.event.SimpleApplicationEventMulticaster.multicastEvent(SimpleApplicationEventMulticaster.java:138)
+	at org.springframework.boot.context.event.EventPublishingRunListener.multicastInitialEvent(EventPublishingRunListener.java:136)
+	at org.springframework.boot.context.event.EventPublishingRunListener.environmentPrepared(EventPublishingRunListener.java:81)
+	at org.springframework.boot.SpringApplicationRunListeners.lambda$environmentPrepared$2(SpringApplicationRunListeners.java:64)
+	at java.base/java.lang.Iterable.forEach(Iterable.java:75)
+	at org.springframework.boot.SpringApplicationRunListeners.doWithListeners(SpringApplicationRunListeners.java:118)
+	at org.springframework.boot.SpringApplicationRunListeners.doWithListeners(SpringApplicationRunListeners.java:112)
+	at org.springframework.boot.SpringApplicationRunListeners.environmentPrepared(SpringApplicationRunListeners.java:63)
+	at org.springframework.boot.SpringApplication.prepareEnvironment(SpringApplication.java:369)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:329)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1354)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1343)
+	at com.distrimarket.inventario.InventarioApplication.main(InventarioApplication.java:25)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.springframework.boot.devtools.restart.RestartLauncher.run(RestartLauncher.java:50)
+Caused by: java.lang.IllegalStateException: Logback configuration error detected: 
+ERROR in ch.qos.logback.core.pattern.parser.Compiler@7c4a7acf - There is no conversion class registered for composite conversion word [clr]
+ERROR in ch.qos.logback.core.pattern.parser.Compiler@7c4a7acf - Failed to create converter for [%clr] keyword
+ERROR in ch.qos.logback.core.pattern.parser.Compiler@7c4a7acf - There is no conversion class registered for composite conversion word [clr]
+ERROR in ch.qos.logback.core.pattern.parser.Compiler@7c4a7acf - Failed to create converter for [%clr] keyword
+ERROR in ch.qos.logback.core.pattern.parser.Compiler@7c4a7acf - There is no conversion class registered for composite conversion word [clr]
+ERROR in ch.qos.logback.core.pattern.parser.Compiler@7c4a7acf - Failed to create converter for [%clr] keyword
+ERROR in ch.qos.logback.core.pattern.parser.Compiler@7c4a7acf - There is no conversion class registered for composite conversion word [clr]
+ERROR in ch.qos.logback.core.pattern.parser.Compiler@7c4a7acf - Failed to create converter for [%clr] keyword
+	at org.springframework.boot.logging.logback.LogbackLoggingSystem.reportConfigurationErrorsIfNecessary(LogbackLoggingSystem.java:277)
+	at org.springframework.boot.logging.logback.LogbackLoggingSystem.loadConfiguration(LogbackLoggingSystem.java:255)
+	at org.springframework.boot.logging.AbstractLoggingSystem.initializeWithConventions(AbstractLoggingSystem.java:81)
+	at org.springframework.boot.logging.AbstractLoggingSystem.initialize(AbstractLoggingSystem.java:61)
+	at org.springframework.boot.logging.logback.LogbackLoggingSystem.initialize(LogbackLoggingSystem.java:189)
+	at org.springframework.boot.context.logging.LoggingApplicationListener.initializeSystem(LoggingApplicationListener.java:332)
+	... 22 common frames omitted
+2026-10-07 16:55:18.406 [background-preinit] INFO  o.h.validator.internal.util.Version - HV000001: Hibernate Validator 8.0.1.Final
+2026-10-07 16:55:18.441 [restartedMain] INFO  c.d.inventario.InventarioApplication - Starting InventarioApplication using Java 21.0.8 with PID 62800 (C:\Users\BAMG\Desktop\Ejercicios\distrimarket\distrimarket-inventario\target\classes started by BAMG in C:\Users\BAMG\Desktop\Ejercicios\distrimarket\distrimarket-inventario)
+2026-10-07 16:55:18.441 [restartedMain] DEBUG c.d.inventario.InventarioApplication - Running with Spring Boot v3.2.4, Spring v6.1.5
+2026-10-07 16:55:18.442 [restartedMain] INFO  c.d.inventario.InventarioApplication - No active profile set, falling back to 1 default profile: "default"
+2026-10-07 16:55:18.488 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2026-10-07 16:55:18.488 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2026-10-07 16:55:18.919 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-10-07 16:55:18.957 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 33 ms. Found 9 JPA repository interfaces.
+2026-10-07 16:55:19.244 [restartedMain] INFO  o.s.cloud.context.scope.GenericScope - BeanFactory id=e2869fe8-a770-37e8-9540-65a893412c1c
+2026-10-07 16:55:19.579 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8081 (http)
+2026-10-07 16:55:19.587 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8081"]
+2026-10-07 16:55:19.588 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-10-07 16:55:19.589 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.19]
+2026-10-07 16:55:19.631 [restartedMain] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-10-07 16:55:19.631 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1142 ms
+2026-10-07 16:55:19.720 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-10-07 16:55:22.198 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@3fb32a7b
+2026-10-07 16:55:22.201 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2026-10-07 16:55:23.220 [restartedMain] INFO  liquibase.database - Set default schema name to public
+2026-10-07 16:55:24.397 [restartedMain] INFO  liquibase.changelog - Reading from public.databasechangelog
+2026-10-07 16:55:27.726 [restartedMain] INFO  liquibase.lockservice - Successfully acquired change log lock
+2026-10-07 16:55:27.903 [restartedMain] INFO  liquibase.command - Using deploymentId: 1402927903
+2026-10-07 16:55:28.079 [restartedMain] INFO  liquibase.changelog - Reading from public.databasechangelog
+2026-10-07 16:55:28.831 [restartedMain] ERROR liquibase.changelog - ChangeSet db/changelog/003-comprobantes-activo.yaml::029-add-activo-comprobantes::distrimarket encountered an exception.
+2026-10-07 16:55:29.191 [restartedMain] INFO  liquibase.command - Update command encountered an exception.
+2026-10-07 16:55:29.897 [restartedMain] INFO  liquibase.lockservice - Successfully released change log lock
+2026-10-07 16:55:30.074 [restartedMain] INFO  liquibase.command - Command execution complete
+2026-10-07 16:55:30.250 [restartedMain] WARN  o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'liquibase' defined in class path resource [org/springframework/boot/autoconfigure/liquibase/LiquibaseAutoConfiguration$LiquibaseConfiguration.class]: liquibase.exception.LiquibaseException: liquibase.exception.MigrationFailedException: Migration failed for changeset db/changelog/003-comprobantes-activo.yaml::029-add-activo-comprobantes::distrimarket:
+     Reason: liquibase.exception.DatabaseException: ERROR: column "activo" of relation "facturas_compras" already exists [Failed SQL: (0) ALTER TABLE public.facturas_compras ADD activo BOOLEAN DEFAULT TRUE NOT NULL]
+2026-10-07 16:55:30.251 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-10-07 16:55:31.468 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2026-10-07 16:55:31.472 [restartedMain] INFO  o.a.catalina.core.StandardService - Stopping service [Tomcat]
+2026-10-07 16:55:31.481 [restartedMain] INFO  o.s.b.a.l.ConditionEvaluationReportLogger - 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2026-10-07 16:55:31.498 [restartedMain] ERROR o.s.boot.SpringApplication - Application run failed
+org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'liquibase' defined in class path resource [org/springframework/boot/autoconfigure/liquibase/LiquibaseAutoConfiguration$LiquibaseConfiguration.class]: liquibase.exception.LiquibaseException: liquibase.exception.MigrationFailedException: Migration failed for changeset db/changelog/003-comprobantes-activo.yaml::029-add-activo-comprobantes::distrimarket:
+     Reason: liquibase.exception.DatabaseException: ERROR: column "activo" of relation "facturas_compras" already exists [Failed SQL: (0) ALTER TABLE public.facturas_compras ADD activo BOOLEAN DEFAULT TRUE NOT NULL]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1786)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:600)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:522)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:326)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:324)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:200)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:313)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:200)
+	at org.springframework.context.support.AbstractApplicationContext.getBean(AbstractApplicationContext.java:1234)
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:952)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:624)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146)
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:754)
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:456)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:334)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1354)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1343)
+	at com.distrimarket.inventario.InventarioApplication.main(InventarioApplication.java:25)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.springframework.boot.devtools.restart.RestartLauncher.run(RestartLauncher.java:50)
+Caused by: liquibase.exception.CommandExecutionException: liquibase.exception.LiquibaseException: liquibase.exception.MigrationFailedException: Migration failed for changeset db/changelog/003-comprobantes-activo.yaml::029-add-activo-comprobantes::distrimarket:
+     Reason: liquibase.exception.DatabaseException: ERROR: column "activo" of relation "facturas_compras" already exists [Failed SQL: (0) ALTER TABLE public.facturas_compras ADD activo BOOLEAN DEFAULT TRUE NOT NULL]
+	at liquibase.command.CommandScope.execute(CommandScope.java:237)
+	at liquibase.Liquibase.lambda$update$0(Liquibase.java:222)
+	at liquibase.Scope.lambda$child$0(Scope.java:184)
+	at liquibase.Scope.child(Scope.java:193)
+	at liquibase.Scope.child(Scope.java:183)
+	at liquibase.Scope.child(Scope.java:162)
+	at liquibase.Liquibase.runInScope(Liquibase.java:1371)
+	at liquibase.Liquibase.update(Liquibase.java:211)
+	at liquibase.Liquibase.update(Liquibase.java:193)
+	at liquibase.integration.spring.SpringLiquibase.performUpdate(SpringLiquibase.java:331)
+	at liquibase.integration.spring.SpringLiquibase.afterPropertiesSet(SpringLiquibase.java:286)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods(AbstractAutowireCapableBeanFactory.java:1833)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1782)
+	... 21 common frames omitted
+Caused by: liquibase.exception.LiquibaseException: liquibase.exception.MigrationFailedException: Migration failed for changeset db/changelog/003-comprobantes-activo.yaml::029-add-activo-comprobantes::distrimarket:
+     Reason: liquibase.exception.DatabaseException: ERROR: column "activo" of relation "facturas_compras" already exists [Failed SQL: (0) ALTER TABLE public.facturas_compras ADD activo BOOLEAN DEFAULT TRUE NOT NULL]
+	at liquibase.changelog.ChangeLogIterator.run(ChangeLogIterator.java:122)
+	at liquibase.command.core.AbstractUpdateCommandStep.lambda$doRun$1(AbstractUpdateCommandStep.java:105)
+	at liquibase.Scope.lambda$child$0(Scope.java:184)
+	at liquibase.Scope.child(Scope.java:193)
+	at liquibase.Scope.child(Scope.java:183)
+	at liquibase.Scope.child(Scope.java:162)
+	at liquibase.command.core.AbstractUpdateCommandStep.doRun(AbstractUpdateCommandStep.java:104)
+	at liquibase.command.core.AbstractUpdateCommandStep.lambda$run$0(AbstractUpdateCommandStep.java:63)
+	at liquibase.Scope.lambda$child$0(Scope.java:184)
+	at liquibase.Scope.child(Scope.java:193)
+	at liquibase.Scope.child(Scope.java:183)
+	at liquibase.Scope.child(Scope.java:162)
+	at liquibase.command.core.AbstractUpdateCommandStep.run(AbstractUpdateCommandStep.java:62)
+	at liquibase.command.core.UpdateCommandStep.run(UpdateCommandStep.java:106)
+	at liquibase.command.CommandScope.execute(CommandScope.java:214)
+	... 33 common frames omitted
+Caused by: liquibase.exception.MigrationFailedException: Migration failed for changeset db/changelog/003-comprobantes-activo.yaml::029-add-activo-comprobantes::distrimarket:
+     Reason: liquibase.exception.DatabaseException: ERROR: column "activo" of relation "facturas_compras" already exists [Failed SQL: (0) ALTER TABLE public.facturas_compras ADD activo BOOLEAN DEFAULT TRUE NOT NULL]
+	at liquibase.changelog.ChangeSet.execute(ChangeSet.java:785)
+	at liquibase.changelog.visitor.UpdateVisitor.executeAcceptedChange(UpdateVisitor.java:118)
+	at liquibase.changelog.visitor.UpdateVisitor.visit(UpdateVisitor.java:68)
+	at liquibase.changelog.ChangeLogIterator$2.lambda$run$0(ChangeLogIterator.java:110)
+	at liquibase.Scope.lambda$child$0(Scope.java:184)
+	at liquibase.Scope.child(Scope.java:193)
+	at liquibase.Scope.child(Scope.java:183)
+	at liquibase.Scope.child(Scope.java:162)
+	at liquibase.Scope.child(Scope.java:250)
+	at liquibase.changelog.ChangeLogIterator$2.run(ChangeLogIterator.java:100)
+	at liquibase.Scope.lambda$child$0(Scope.java:184)
+	at liquibase.Scope.child(Scope.java:193)
+	at liquibase.Scope.child(Scope.java:183)
+	at liquibase.Scope.child(Scope.java:162)
+	at liquibase.Scope.child(Scope.java:250)
+	at liquibase.Scope.child(Scope.java:254)
+	at liquibase.changelog.ChangeLogIterator.run(ChangeLogIterator.java:74)
+	... 47 common frames omitted
+Caused by: liquibase.exception.DatabaseException: ERROR: column "activo" of relation "facturas_compras" already exists [Failed SQL: (0) ALTER TABLE public.facturas_compras ADD activo BOOLEAN DEFAULT TRUE NOT NULL]
+	at liquibase.executor.jvm.JdbcExecutor$ExecuteStatementCallback.doInStatement(JdbcExecutor.java:468)
+	at liquibase.executor.jvm.JdbcExecutor.execute(JdbcExecutor.java:77)
+	at liquibase.executor.jvm.JdbcExecutor.execute(JdbcExecutor.java:177)
+	at liquibase.database.AbstractJdbcDatabase.execute(AbstractJdbcDatabase.java:1291)
+	at liquibase.database.AbstractJdbcDatabase.executeStatements(AbstractJdbcDatabase.java:1273)
+	at liquibase.changelog.ChangeSet.execute(ChangeSet.java:744)
+	... 63 common frames omitted
+Caused by: org.postgresql.util.PSQLException: ERROR: column "activo" of relation "facturas_compras" already exists
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2713)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2401)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:368)
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:498)
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:415)
+	at org.postgresql.jdbc.PgStatement.executeWithFlags(PgStatement.java:335)
+	at org.postgresql.jdbc.PgStatement.executeCachedSql(PgStatement.java:321)
+	at org.postgresql.jdbc.PgStatement.executeWithFlags(PgStatement.java:297)
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:292)
+	at com.zaxxer.hikari.pool.ProxyStatement.execute(ProxyStatement.java:94)
+	at com.zaxxer.hikari.pool.HikariProxyStatement.execute(HikariProxyStatement.java)
+	at liquibase.executor.jvm.JdbcExecutor$ExecuteStatementCallback.doInStatement(JdbcExecutor.java:462)
+	... 68 common frames omitted
+2026-10-07 17:00:13.774 [background-preinit] INFO  o.h.validator.internal.util.Version - HV000001: Hibernate Validator 8.0.1.Final
+2026-10-07 17:00:13.805 [restartedMain] INFO  c.d.inventario.InventarioApplication - Starting InventarioApplication using Java 21.0.8 with PID 45064 (C:\Users\BAMG\Desktop\Ejercicios\distrimarket\distrimarket-inventario\target\classes started by BAMG in C:\Users\BAMG\Desktop\Ejercicios\distrimarket\distrimarket-inventario)
+2026-10-07 17:00:13.805 [restartedMain] DEBUG c.d.inventario.InventarioApplication - Running with Spring Boot v3.2.4, Spring v6.1.5
+2026-10-07 17:00:13.806 [restartedMain] INFO  c.d.inventario.InventarioApplication - No active profile set, falling back to 1 default profile: "default"
+2026-10-07 17:00:13.853 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2026-10-07 17:00:13.853 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2026-10-07 17:00:14.341 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-10-07 17:00:14.378 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 32 ms. Found 9 JPA repository interfaces.
+2026-10-07 17:00:14.661 [restartedMain] INFO  o.s.cloud.context.scope.GenericScope - BeanFactory id=e2869fe8-a770-37e8-9540-65a893412c1c
+2026-10-07 17:00:14.964 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8081 (http)
+2026-10-07 17:00:14.971 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8081"]
+2026-10-07 17:00:14.972 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-10-07 17:00:14.972 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.19]
+2026-10-07 17:00:15.011 [restartedMain] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-10-07 17:00:15.011 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1158 ms
+2026-10-07 17:00:15.085 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-10-07 17:00:17.046 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@16e8048c
+2026-10-07 17:00:17.047 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2026-10-07 17:00:17.985 [restartedMain] INFO  liquibase.database - Set default schema name to public
+2026-10-07 17:00:19.018 [restartedMain] INFO  liquibase.changelog - Reading from public.databasechangelog
+2026-10-07 17:00:22.171 [restartedMain] INFO  liquibase.lockservice - Successfully acquired change log lock
+2026-10-07 17:00:22.342 [restartedMain] INFO  liquibase.command - Using deploymentId: 1403222341
+2026-10-07 17:00:22.513 [restartedMain] INFO  liquibase.changelog - Reading from public.databasechangelog
+2026-10-07 17:00:23.041 [restartedMain] INFO  liquibase.changelog - Marking ChangeSet: "db/changelog/003-comprobantes-activo.yaml::029-add-activo-comprobantes::distrimarket" as ran despite precondition failure due to onFail='MARK_RAN': 
+          db/changelog/db.changelog-master.yaml : Not precondition failed
+
+2026-10-07 17:00:23.898 [restartedMain] INFO  liquibase.util - UPDATE SUMMARY
+2026-10-07 17:00:23.898 [restartedMain] INFO  liquibase.util - Run:                          1
+2026-10-07 17:00:23.899 [restartedMain] INFO  liquibase.util - Previously run:              28
+2026-10-07 17:00:23.899 [restartedMain] INFO  liquibase.util - Filtered out:                 0
+2026-10-07 17:00:23.899 [restartedMain] INFO  liquibase.util - -------------------------------
+2026-10-07 17:00:23.899 [restartedMain] INFO  liquibase.util - Total change sets:           29
+2026-10-07 17:00:23.899 [restartedMain] INFO  liquibase.util - Update summary generated
+2026-10-07 17:00:23.901 [restartedMain] INFO  liquibase.command - Update command completed successfully.
+2026-10-07 17:00:24.412 [restartedMain] INFO  liquibase.lockservice - Successfully released change log lock
+2026-10-07 17:00:24.581 [restartedMain] INFO  liquibase.command - Command execution complete
+2026-10-07 17:00:24.818 [restartedMain] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-10-07 17:00:24.869 [restartedMain] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.4.4.Final
+2026-10-07 17:00:24.897 [restartedMain] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2026-10-07 17:00:25.083 [restartedMain] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-10-07 17:00:26.644 [restartedMain] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-10-07 17:00:26.646 [restartedMain] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-10-07 17:00:27.177 [restartedMain] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-10-07 17:00:27.455 [restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2026-10-07 17:00:27.521 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8081"]
+2026-10-07 17:00:27.538 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8081 (http) with context path ''
+2026-10-07 17:00:27.549 [restartedMain] INFO  c.d.inventario.InventarioApplication - Started InventarioApplication in 14.121 seconds (process running for 14.641)
+2026-10-07 17:00:30.230 [http-nio-8081-exec-7] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-10-07 17:00:30.230 [http-nio-8081-exec-7] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2026-10-07 17:00:30.231 [http-nio-8081-exec-7] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 1 ms
+2026-10-07 17:03:49.349 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-10-07 17:03:49.352 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-10-07 17:03:49.356 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2026-10-07 17:04:19.579 [background-preinit] INFO  o.h.validator.internal.util.Version - HV000001: Hibernate Validator 8.0.1.Final
+2026-10-07 17:04:19.606 [restartedMain] INFO  c.d.inventario.InventarioApplication - Starting InventarioApplication using Java 21.0.8 with PID 45248 (C:\Users\BAMG\Desktop\Ejercicios\distrimarket\distrimarket-inventario\target\classes started by BAMG in C:\Users\BAMG\Desktop\Ejercicios\distrimarket\distrimarket-inventario)
+2026-10-07 17:04:19.606 [restartedMain] DEBUG c.d.inventario.InventarioApplication - Running with Spring Boot v3.2.4, Spring v6.1.5
+2026-10-07 17:04:19.607 [restartedMain] INFO  c.d.inventario.InventarioApplication - No active profile set, falling back to 1 default profile: "default"
+2026-10-07 17:04:19.643 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2026-10-07 17:04:19.643 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2026-10-07 17:04:20.123 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-10-07 17:04:20.160 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 33 ms. Found 9 JPA repository interfaces.
+2026-10-07 17:04:20.433 [restartedMain] INFO  o.s.cloud.context.scope.GenericScope - BeanFactory id=e2869fe8-a770-37e8-9540-65a893412c1c
+2026-10-07 17:04:20.721 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8081 (http)
+2026-10-07 17:04:20.727 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8081"]
+2026-10-07 17:04:20.728 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-10-07 17:04:20.728 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.19]
+2026-10-07 17:04:20.768 [restartedMain] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-10-07 17:04:20.768 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1124 ms
+2026-10-07 17:04:20.842 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-10-07 17:04:22.945 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@6e928b7a
+2026-10-07 17:04:22.948 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2026-10-07 17:04:23.955 [restartedMain] INFO  liquibase.database - Set default schema name to public
+2026-10-07 17:04:25.053 [restartedMain] INFO  liquibase.changelog - Reading from public.databasechangelog
+2026-10-07 17:04:27.105 [restartedMain] INFO  liquibase.changelog - Reading from public.databasechangelog
+2026-10-07 17:04:27.294 [restartedMain] INFO  liquibase.util - UPDATE SUMMARY
+2026-10-07 17:04:27.294 [restartedMain] INFO  liquibase.util - Run:                          0
+2026-10-07 17:04:27.295 [restartedMain] INFO  liquibase.util - Previously run:              29
+2026-10-07 17:04:27.295 [restartedMain] INFO  liquibase.util - Filtered out:                 0
+2026-10-07 17:04:27.295 [restartedMain] INFO  liquibase.util - -------------------------------
+2026-10-07 17:04:27.295 [restartedMain] INFO  liquibase.util - Total change sets:           29
+2026-10-07 17:04:27.295 [restartedMain] INFO  liquibase.util - Update summary generated
+2026-10-07 17:04:28.216 [restartedMain] INFO  liquibase.lockservice - Successfully released change log lock
+2026-10-07 17:04:28.400 [restartedMain] INFO  liquibase.command - Command execution complete
+2026-10-07 17:04:28.643 [restartedMain] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-10-07 17:04:28.680 [restartedMain] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.4.4.Final
+2026-10-07 17:04:28.704 [restartedMain] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2026-10-07 17:04:28.864 [restartedMain] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-10-07 17:04:30.396 [restartedMain] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-10-07 17:04:30.398 [restartedMain] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-10-07 17:04:30.899 [restartedMain] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-10-07 17:04:31.172 [restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2026-10-07 17:04:31.232 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8081"]
+2026-10-07 17:04:31.245 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8081 (http) with context path ''
+2026-10-07 17:04:31.255 [restartedMain] INFO  c.d.inventario.InventarioApplication - Started InventarioApplication in 11.998 seconds (process running for 12.471)
+2026-10-07 17:04:32.043 [http-nio-8081-exec-3] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-10-07 17:04:32.044 [http-nio-8081-exec-3] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2026-10-07 17:04:32.045 [http-nio-8081-exec-3] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 1 ms
+2026-10-07 17:04:52.911 [http-nio-8081-exec-6] DEBUG c.d.i.service.EmpleadoServiceImpl - Consultando empleados con filtros -> cargo: null, estado: true, página: 0
+2026-10-07 17:04:53.022 [http-nio-8081-exec-6] DEBUG org.hibernate.SQL - select e1_0.id,e1_0.cargo,e1_0.estado,e1_0.fecha_creacion,e1_0.fecha_ingreso,e1_0.fecha_modificacion,e1_0.persona,p1_0.id,p1_0.ci,p1_0.correo,p1_0.direccion,p1_0.fecha_creacion,p1_0.fecha_modificacion,p1_0.nombre_completo,p1_0.ruc,p1_0.telefono,p1_0.tipo_persona from empleados e1_0 join personas p1_0 on p1_0.id=e1_0.persona where 1=1 and e1_0.estado=? order by e1_0.id offset ? rows fetch first ? rows only
+2026-10-07 17:04:53.213 [http-nio-8081-exec-6] WARN  o.h.e.jdbc.spi.SqlExceptionHelper - SQL Error: 0, SQLState: 42703
+2026-10-07 17:04:53.213 [http-nio-8081-exec-6] ERROR o.h.e.jdbc.spi.SqlExceptionHelper - ERROR: column e1_0.persona does not exist
+  Hint: Perhaps you meant to reference the column "e1_0.id_persona".
+  Position: 314
+2026-10-07 17:04:53.409 [http-nio-8081-exec-6] ERROR c.d.i.e.GlobalExceptionHandler - Error crítico no controlado [500 INTERNAL SERVER ERROR] en GET /empleados: JDBC exception executing SQL [select e1_0.id,e1_0.cargo,e1_0.estado,e1_0.fecha_creacion,e1_0.fecha_ingreso,e1_0.fecha_modificacion,e1_0.persona,p1_0.id,p1_0.ci,p1_0.correo,p1_0.direccion,p1_0.fecha_creacion,p1_0.fecha_modificacion,p1_0.nombre_completo,p1_0.ruc,p1_0.telefono,p1_0.tipo_persona from empleados e1_0 join personas p1_0 on p1_0.id=e1_0.persona where 1=1 and e1_0.estado=? order by e1_0.id offset ? rows fetch first ? rows only] [ERROR: column e1_0.persona does not exist
+  Hint: Perhaps you meant to reference the column "e1_0.id_persona".
+  Position: 314] [n/a]; SQL [n/a]
+org.springframework.dao.InvalidDataAccessResourceUsageException: JDBC exception executing SQL [select e1_0.id,e1_0.cargo,e1_0.estado,e1_0.fecha_creacion,e1_0.fecha_ingreso,e1_0.fecha_modificacion,e1_0.persona,p1_0.id,p1_0.ci,p1_0.correo,p1_0.direccion,p1_0.fecha_creacion,p1_0.fecha_modificacion,p1_0.nombre_completo,p1_0.ruc,p1_0.telefono,p1_0.tipo_persona from empleados e1_0 join personas p1_0 on p1_0.id=e1_0.persona where 1=1 and e1_0.estado=? order by e1_0.id offset ? rows fetch first ? rows only] [ERROR: column e1_0.persona does not exist
+  Hint: Perhaps you meant to reference the column "e1_0.id_persona".
+  Position: 314] [n/a]; SQL [n/a]
+	at org.springframework.orm.jpa.vendor.HibernateJpaDialect.convertHibernateAccessException(HibernateJpaDialect.java:277)
+	at org.springframework.orm.jpa.vendor.HibernateJpaDialect.translateExceptionIfPossible(HibernateJpaDialect.java:241)
+	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.translateExceptionIfPossible(AbstractEntityManagerFactoryBean.java:550)
+	at org.springframework.dao.support.ChainedPersistenceExceptionTranslator.translateExceptionIfPossible(ChainedPersistenceExceptionTranslator.java:61)
+	at org.springframework.dao.support.DataAccessUtils.translateIfNecessary(DataAccessUtils.java:335)
+	at org.springframework.dao.support.PersistenceExceptionTranslationInterceptor.invoke(PersistenceExceptionTranslationInterceptor.java:152)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184)
+	at org.springframework.data.jpa.repository.support.CrudMethodMetadataPostProcessor$CrudMethodMetadataPopulatingMethodInterceptor.invoke(CrudMethodMetadataPostProcessor.java:164)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184)
+	at org.springframework.aop.interceptor.ExposeInvocationInterceptor.invoke(ExposeInvocationInterceptor.java:97)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184)
+	at org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:220)
+	at jdk.proxy4/jdk.proxy4.$Proxy163.findAll(Unknown Source)
+	at com.distrimarket.inventario.service.EmpleadoServiceImpl.findAllWithSpecifications(EmpleadoServiceImpl.java:127)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:351)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.invokeJoinpoint(ReflectiveMethodInvocation.java:196)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:163)
+	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.proceed(CglibAopProxy.java:765)
+	at org.springframework.transaction.interceptor.TransactionInterceptor$1.proceedWithInvocation(TransactionInterceptor.java:123)
+	at org.springframework.transaction.interceptor.TransactionAspectSupport.invokeWithinTransaction(TransactionAspectSupport.java:392)
+	at org.springframework.transaction.interceptor.TransactionInterceptor.invoke(TransactionInterceptor.java:119)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184)
+	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.proceed(CglibAopProxy.java:765)
+	at org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:717)
+	at com.distrimarket.inventario.service.EmpleadoServiceImpl$$SpringCGLIB$$0.findAllWithSpecifications(<generated>)
+	at com.distrimarket.inventario.controller.EmpleadoController.getAll(EmpleadoController.java:38)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:255)
+	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:188)
+	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:118)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:925)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:830)
+	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:87)
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1089)
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:979)
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1014)
+	at org.springframework.web.servlet.FrameworkServlet.doGet(FrameworkServlet.java:903)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:564)
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:885)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:658)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:205)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149)
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:51)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149)
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149)
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149)
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:167)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:90)
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:482)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:115)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:93)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:74)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:344)
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:391)
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63)
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:896)
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1744)
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1191)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+Caused by: org.hibernate.exception.SQLGrammarException: JDBC exception executing SQL [select e1_0.id,e1_0.cargo,e1_0.estado,e1_0.fecha_creacion,e1_0.fecha_ingreso,e1_0.fecha_modificacion,e1_0.persona,p1_0.id,p1_0.ci,p1_0.correo,p1_0.direccion,p1_0.fecha_creacion,p1_0.fecha_modificacion,p1_0.nombre_completo,p1_0.ruc,p1_0.telefono,p1_0.tipo_persona from empleados e1_0 join personas p1_0 on p1_0.id=e1_0.persona where 1=1 and e1_0.estado=? order by e1_0.id offset ? rows fetch first ? rows only] [ERROR: column e1_0.persona does not exist
+  Hint: Perhaps you meant to reference the column "e1_0.id_persona".
+  Position: 314] [n/a]
+	at org.hibernate.exception.internal.SQLStateConversionDelegate.convert(SQLStateConversionDelegate.java:91)
+	at org.hibernate.exception.internal.StandardSQLExceptionConverter.convert(StandardSQLExceptionConverter.java:58)
+	at org.hibernate.engine.jdbc.spi.SqlExceptionHelper.convert(SqlExceptionHelper.java:108)
+	at org.hibernate.engine.jdbc.spi.SqlExceptionHelper.convert(SqlExceptionHelper.java:94)
+	at org.hibernate.sql.results.jdbc.internal.DeferredResultSetAccess.executeQuery(DeferredResultSetAccess.java:265)
+	at org.hibernate.sql.results.jdbc.internal.DeferredResultSetAccess.getResultSet(DeferredResultSetAccess.java:167)
+	at org.hibernate.sql.results.jdbc.internal.JdbcValuesResultSetImpl.advanceNext(JdbcValuesResultSetImpl.java:218)
+	at org.hibernate.sql.results.jdbc.internal.JdbcValuesResultSetImpl.processNext(JdbcValuesResultSetImpl.java:98)
+	at org.hibernate.sql.results.jdbc.internal.AbstractJdbcValues.next(AbstractJdbcValues.java:19)
+	at org.hibernate.sql.results.internal.RowProcessingStateStandardImpl.next(RowProcessingStateStandardImpl.java:66)
+	at org.hibernate.sql.results.spi.ListResultsConsumer.consume(ListResultsConsumer.java:202)
+	at org.hibernate.sql.results.spi.ListResultsConsumer.consume(ListResultsConsumer.java:33)
+	at org.hibernate.sql.exec.internal.JdbcSelectExecutorStandardImpl.doExecuteQuery(JdbcSelectExecutorStandardImpl.java:209)
+	at org.hibernate.sql.exec.internal.JdbcSelectExecutorStandardImpl.executeQuery(JdbcSelectExecutorStandardImpl.java:83)
+	at org.hibernate.sql.exec.spi.JdbcSelectExecutor.list(JdbcSelectExecutor.java:76)
+	at org.hibernate.sql.exec.spi.JdbcSelectExecutor.list(JdbcSelectExecutor.java:65)
+	at org.hibernate.query.sqm.internal.ConcreteSqmSelectQueryPlan.lambda$new$2(ConcreteSqmSelectQueryPlan.java:137)
+	at org.hibernate.query.sqm.internal.ConcreteSqmSelectQueryPlan.withCacheableSqmInterpretation(ConcreteSqmSelectQueryPlan.java:362)
+	at org.hibernate.query.sqm.internal.ConcreteSqmSelectQueryPlan.performList(ConcreteSqmSelectQueryPlan.java:303)
+	at org.hibernate.query.sqm.internal.QuerySqmImpl.doList(QuerySqmImpl.java:509)
+	at org.hibernate.query.spi.AbstractSelectionQuery.list(AbstractSelectionQuery.java:427)
+	at org.hibernate.query.Query.getResultList(Query.java:120)
+	at org.springframework.data.jpa.repository.support.SimpleJpaRepository.readPage(SimpleJpaRepository.java:697)
+	at org.springframework.data.jpa.repository.support.SimpleJpaRepository.findAll(SimpleJpaRepository.java:449)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:351)
+	at org.springframework.data.repository.core.support.RepositoryMethodInvoker$RepositoryFragmentMethodInvoker.lambda$new$0(RepositoryMethodInvoker.java:277)
+	at org.springframework.data.repository.core.support.RepositoryMethodInvoker.doInvoke(RepositoryMethodInvoker.java:170)
+	at org.springframework.data.repository.core.support.RepositoryMethodInvoker.invoke(RepositoryMethodInvoker.java:158)
+	at org.springframework.data.repository.core.support.RepositoryComposition$RepositoryFragments.invoke(RepositoryComposition.java:516)
+	at org.springframework.data.repository.core.support.RepositoryComposition.invoke(RepositoryComposition.java:285)
+	at org.springframework.data.repository.core.support.RepositoryFactorySupport$ImplementationMethodExecutionInterceptor.invoke(RepositoryFactorySupport.java:628)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184)
+	at org.springframework.data.repository.core.support.QueryExecutorMethodInterceptor.doInvoke(QueryExecutorMethodInterceptor.java:168)
+	at org.springframework.data.repository.core.support.QueryExecutorMethodInterceptor.invoke(QueryExecutorMethodInterceptor.java:143)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184)
+	at org.springframework.data.projection.DefaultMethodInvokingMethodInterceptor.invoke(DefaultMethodInvokingMethodInterceptor.java:70)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184)
+	at org.springframework.transaction.interceptor.TransactionInterceptor$1.proceedWithInvocation(TransactionInterceptor.java:123)
+	at org.springframework.transaction.interceptor.TransactionAspectSupport.invokeWithinTransaction(TransactionAspectSupport.java:392)
+	at org.springframework.transaction.interceptor.TransactionInterceptor.invoke(TransactionInterceptor.java:119)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184)
+	at org.springframework.dao.support.PersistenceExceptionTranslationInterceptor.invoke(PersistenceExceptionTranslationInterceptor.java:137)
+	... 70 common frames omitted
+Caused by: org.postgresql.util.PSQLException: ERROR: column e1_0.persona does not exist
+  Hint: Perhaps you meant to reference the column "e1_0.id_persona".
+  Position: 314
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2713)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2401)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:368)
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:498)
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:415)
+	at org.postgresql.jdbc.PgPreparedStatement.executeWithFlags(PgPreparedStatement.java:190)
+	at org.postgresql.jdbc.PgPreparedStatement.executeQuery(PgPreparedStatement.java:134)
+	at com.zaxxer.hikari.pool.ProxyPreparedStatement.executeQuery(ProxyPreparedStatement.java:52)
+	at com.zaxxer.hikari.pool.HikariProxyPreparedStatement.executeQuery(HikariProxyPreparedStatement.java)
+	at org.hibernate.sql.results.jdbc.internal.DeferredResultSetAccess.executeQuery(DeferredResultSetAccess.java:246)
+	... 109 common frames omitted
+2026-10-07 17:04:53.437 [http-nio-8081-exec-6] WARN  o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.dao.InvalidDataAccessResourceUsageException: JDBC exception executing SQL [select e1_0.id,e1_0.cargo,e1_0.estado,e1_0.fecha_creacion,e1_0.fecha_ingreso,e1_0.fecha_modificacion,e1_0.persona,p1_0.id,p1_0.ci,p1_0.correo,p1_0.direccion,p1_0.fecha_creacion,p1_0.fecha_modificacion,p1_0.nombre_completo,p1_0.ruc,p1_0.telefono,p1_0.tipo_persona from empleados e1_0 join personas p1_0 on p1_0.id=e1_0.persona where 1=1 and e1_0.estado=? order by e1_0.id offset ? rows fetch first ? rows only] [ERROR: column e1_0.persona does not exist<EOL>  Hint: Perhaps you meant to reference the column "e1_0.id_persona".<EOL>  Position: 314] [n/a]; SQL [n/a]]
+2026-10-07 17:08:27.086 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-10-07 17:08:27.089 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-10-07 17:08:27.093 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2026-10-07 17:18:04.871 [background-preinit] INFO  o.h.validator.internal.util.Version - HV000001: Hibernate Validator 8.0.1.Final
+2026-10-07 17:18:04.902 [restartedMain] INFO  c.d.inventario.InventarioApplication - Starting InventarioApplication using Java 21.0.8 with PID 22784 (C:\Users\BAMG\Desktop\Ejercicios\distrimarket\distrimarket-inventario\target\classes started by BAMG in C:\Users\BAMG\Desktop\Ejercicios\distrimarket\distrimarket-inventario)
+2026-10-07 17:18:04.903 [restartedMain] DEBUG c.d.inventario.InventarioApplication - Running with Spring Boot v3.2.4, Spring v6.1.5
+2026-10-07 17:18:04.903 [restartedMain] INFO  c.d.inventario.InventarioApplication - No active profile set, falling back to 1 default profile: "default"
+2026-10-07 17:18:04.941 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2026-10-07 17:18:04.941 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2026-10-07 17:18:05.442 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-10-07 17:18:05.483 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 36 ms. Found 9 JPA repository interfaces.
+2026-10-07 17:18:05.770 [restartedMain] INFO  o.s.cloud.context.scope.GenericScope - BeanFactory id=e2869fe8-a770-37e8-9540-65a893412c1c
+2026-10-07 17:18:06.074 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8081 (http)
+2026-10-07 17:18:06.084 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8081"]
+2026-10-07 17:18:06.085 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-10-07 17:18:06.085 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.19]
+2026-10-07 17:18:06.125 [restartedMain] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-10-07 17:18:06.125 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1183 ms
+2026-10-07 17:18:06.201 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-10-07 17:18:08.245 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@8623929
+2026-10-07 17:18:08.249 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2026-10-07 17:18:09.185 [restartedMain] INFO  liquibase.database - Set default schema name to public
+2026-10-07 17:18:10.199 [restartedMain] INFO  liquibase.changelog - Reading from public.databasechangelog
+2026-10-07 17:18:12.120 [restartedMain] INFO  liquibase.changelog - Reading from public.databasechangelog
+2026-10-07 17:18:12.296 [restartedMain] INFO  liquibase.util - UPDATE SUMMARY
+2026-10-07 17:18:12.297 [restartedMain] INFO  liquibase.util - Run:                          0
+2026-10-07 17:18:12.297 [restartedMain] INFO  liquibase.util - Previously run:              29
+2026-10-07 17:18:12.297 [restartedMain] INFO  liquibase.util - Filtered out:                 0
+2026-10-07 17:18:12.297 [restartedMain] INFO  liquibase.util - -------------------------------
+2026-10-07 17:18:12.297 [restartedMain] INFO  liquibase.util - Total change sets:           29
+2026-10-07 17:18:12.298 [restartedMain] INFO  liquibase.util - Update summary generated
+2026-10-07 17:18:13.155 [restartedMain] INFO  liquibase.lockservice - Successfully released change log lock
+2026-10-07 17:18:13.324 [restartedMain] INFO  liquibase.command - Command execution complete
+2026-10-07 17:18:13.543 [restartedMain] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-10-07 17:18:13.587 [restartedMain] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.4.4.Final
+2026-10-07 17:18:13.619 [restartedMain] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2026-10-07 17:18:13.781 [restartedMain] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-10-07 17:18:15.275 [restartedMain] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-10-07 17:18:15.277 [restartedMain] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-10-07 17:18:15.795 [restartedMain] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-10-07 17:18:16.072 [restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2026-10-07 17:18:16.125 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8081"]
+2026-10-07 17:18:16.137 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8081 (http) with context path ''
+2026-10-07 17:18:16.147 [restartedMain] INFO  c.d.inventario.InventarioApplication - Started InventarioApplication in 11.629 seconds (process running for 12.062)
+2026-10-07 17:18:26.709 [http-nio-8081-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-10-07 17:18:26.709 [http-nio-8081-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2026-10-07 17:18:26.710 [http-nio-8081-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 1 ms
+2026-10-07 17:18:34.843 [http-nio-8081-exec-5] DEBUG c.d.i.service.EmpleadoServiceImpl - Consultando empleados con filtros -> cargo: null, estado: true, página: 0
+2026-10-07 17:18:34.952 [http-nio-8081-exec-5] DEBUG org.hibernate.SQL - select e1_0.id,e1_0.cargo,e1_0.estado,e1_0.fecha_creacion,e1_0.fecha_ingreso,e1_0.fecha_modificacion,e1_0.id_persona,p1_0.id,p1_0.ci,p1_0.correo,p1_0.direccion,p1_0.fecha_creacion,p1_0.fecha_modificacion,p1_0.nombre_completo,p1_0.ruc,p1_0.telefono,p1_0.tipo_persona from empleados e1_0 join personas p1_0 on p1_0.id=e1_0.id_persona where 1=1 and e1_0.estado=? order by e1_0.id offset ? rows fetch first ? rows only
+2026-10-07 17:19:10.948 [http-nio-8081-exec-6] DEBUG c.d.i.s.StockDepositoServiceImpl - Consultando stock con filtros -> depositoId: null, productoId: null, página: 0, tamaño: 10
+2026-10-07 17:19:10.952 [http-nio-8081-exec-6] DEBUG org.hibernate.SQL - select sd1_0.id,sd1_0.cantidad,sd1_0.id_deposito,sd1_0.fecha_creacion,sd1_0.fecha_modificacion,sd1_0.id_producto from stock_deposito sd1_0 where 1=1 and 1=1 order by sd1_0.id offset ? rows fetch first ? rows only
+2026-10-07 17:19:11.139 [http-nio-8081-exec-6] DEBUG org.hibernate.SQL - select d1_0.id,d1_0.estado,d1_0.fecha_creacion,d1_0.fecha_modificacion,d1_0.nombre,d1_0.ubicacion from depositos d1_0 where d1_0.id=?
+2026-10-07 17:19:11.310 [http-nio-8081-exec-6] DEBUG org.hibernate.SQL - select p1_0.id,p1_0.id_categoria,p1_0.codigo_barra,p1_0.descripcion,p1_0.estado,p1_0.fecha_creacion,p1_0.fecha_modificacion,p1_0.id_marca,p1_0.nombre,p1_0.porcentaje_iva,p1_0.precio_costo,p1_0.precio_venta,p1_0.stock_minimo from productos p1_0 where p1_0.id=?
+2026-10-07 17:19:11.486 [http-nio-8081-exec-6] DEBUG org.hibernate.SQL - select p1_0.id,p1_0.id_categoria,p1_0.codigo_barra,p1_0.descripcion,p1_0.estado,p1_0.fecha_creacion,p1_0.fecha_modificacion,p1_0.id_marca,p1_0.nombre,p1_0.porcentaje_iva,p1_0.precio_costo,p1_0.precio_venta,p1_0.stock_minimo from productos p1_0 where p1_0.id=?
+2026-10-07 17:19:11.655 [http-nio-8081-exec-6] DEBUG org.hibernate.SQL - select p1_0.id,p1_0.id_categoria,p1_0.codigo_barra,p1_0.descripcion,p1_0.estado,p1_0.fecha_creacion,p1_0.fecha_modificacion,p1_0.id_marca,p1_0.nombre,p1_0.porcentaje_iva,p1_0.precio_costo,p1_0.precio_venta,p1_0.stock_minimo from productos p1_0 where p1_0.id=?
+2026-10-07 17:19:11.823 [http-nio-8081-exec-6] DEBUG org.hibernate.SQL - select d1_0.id,d1_0.estado,d1_0.fecha_creacion,d1_0.fecha_modificacion,d1_0.nombre,d1_0.ubicacion from depositos d1_0 where d1_0.id=?
+2026-10-07 17:19:11.993 [http-nio-8081-exec-6] DEBUG org.hibernate.SQL - select d1_0.id,d1_0.estado,d1_0.fecha_creacion,d1_0.fecha_modificacion,d1_0.nombre,d1_0.ubicacion from depositos d1_0 where d1_0.id=?
+2026-10-07 17:22:15.308 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-10-07 17:22:15.310 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-10-07 17:22:15.314 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2026-10-07 21:21:29.684 [background-preinit] INFO  o.h.validator.internal.util.Version - HV000001: Hibernate Validator 8.0.1.Final
+2026-10-07 21:21:29.753 [restartedMain] INFO  c.d.inventario.InventarioApplication - Starting InventarioApplication using Java 21.0.8 with PID 45244 (C:\Users\BAMG\Desktop\Ejercicios\distrimarket\distrimarket-inventario\target\classes started by BAMG in C:\Users\BAMG\Desktop\Ejercicios\distrimarket\distrimarket-inventario)
+2026-10-07 21:21:29.754 [restartedMain] DEBUG c.d.inventario.InventarioApplication - Running with Spring Boot v3.2.4, Spring v6.1.5
+2026-10-07 21:21:29.754 [restartedMain] INFO  c.d.inventario.InventarioApplication - No active profile set, falling back to 1 default profile: "default"
+2026-10-07 21:21:29.818 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2026-10-07 21:21:29.818 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2026-10-07 21:21:30.606 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-10-07 21:21:30.669 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 54 ms. Found 9 JPA repository interfaces.
+2026-10-07 21:21:31.143 [restartedMain] INFO  o.s.cloud.context.scope.GenericScope - BeanFactory id=e2869fe8-a770-37e8-9540-65a893412c1c
+2026-10-07 21:21:31.654 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8081 (http)
+2026-10-07 21:21:31.664 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8081"]
+2026-10-07 21:21:31.666 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-10-07 21:21:31.666 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.19]
+2026-10-07 21:21:31.734 [restartedMain] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-10-07 21:21:31.735 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1916 ms
+2026-10-07 21:21:31.875 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-10-07 21:21:34.431 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@36080d5a
+2026-10-07 21:21:34.434 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2026-10-07 21:21:35.622 [restartedMain] INFO  liquibase.database - Set default schema name to public
+2026-10-07 21:21:36.979 [restartedMain] INFO  liquibase.changelog - Reading from public.databasechangelog
+2026-10-07 21:21:39.415 [restartedMain] INFO  liquibase.changelog - Reading from public.databasechangelog
+2026-10-07 21:21:39.611 [restartedMain] INFO  liquibase.util - UPDATE SUMMARY
+2026-10-07 21:21:39.612 [restartedMain] INFO  liquibase.util - Run:                          0
+2026-10-07 21:21:39.612 [restartedMain] INFO  liquibase.util - Previously run:              29
+2026-10-07 21:21:39.612 [restartedMain] INFO  liquibase.util - Filtered out:                 0
+2026-10-07 21:21:39.613 [restartedMain] INFO  liquibase.util - -------------------------------
+2026-10-07 21:21:39.613 [restartedMain] INFO  liquibase.util - Total change sets:           29
+2026-10-07 21:21:39.614 [restartedMain] INFO  liquibase.util - Update summary generated
+2026-10-07 21:21:41.176 [restartedMain] INFO  liquibase.lockservice - Successfully released change log lock
+2026-10-07 21:21:41.382 [restartedMain] INFO  liquibase.command - Command execution complete
+2026-10-07 21:21:41.700 [restartedMain] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-10-07 21:21:41.787 [restartedMain] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.4.4.Final
+2026-10-07 21:21:41.836 [restartedMain] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2026-10-07 21:21:42.133 [restartedMain] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-10-07 21:21:44.949 [restartedMain] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-10-07 21:21:44.958 [restartedMain] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-10-07 21:21:45.730 [restartedMain] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-10-07 21:21:46.168 [restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2026-10-07 21:21:47.201 [restartedMain] INFO  o.s.cloud.commons.util.InetUtils - Cannot determine local hostname
+2026-10-07 21:21:47.288 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8081"]
+2026-10-07 21:21:47.306 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8081 (http) with context path ''
+2026-10-07 21:21:48.326 [restartedMain] INFO  o.s.cloud.commons.util.InetUtils - Cannot determine local hostname
+2026-10-07 21:21:48.343 [restartedMain] INFO  c.d.inventario.InventarioApplication - Started InventarioApplication in 20.253 seconds (process running for 21.017)
+2026-10-07 21:21:58.545 [http-nio-8081-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-10-07 21:21:58.546 [http-nio-8081-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2026-10-07 21:21:58.549 [http-nio-8081-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 3 ms
+2026-10-07 21:21:59.079 [File Watcher] INFO  o.s.b.d.a.LocalDevToolsAutoConfiguration$RestartingClassPathChangeChangedEventListener - Restarting due to 10 class path changes (0 additions, 10 deletions, 0 modifications)
+2026-10-07 21:21:59.091 [Thread-6] INFO  o.a.coyote.http11.Http11NioProtocol - Stopping ProtocolHandler ["http-nio-8081"]
+2026-10-07 21:21:59.123 [Thread-6] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-10-07 21:21:59.134 [Thread-6] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-10-07 21:22:01.145 [Thread-6] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2026-10-07 21:22:02.610 [restartedMain] INFO  c.d.inventario.InventarioApplication - Starting InventarioApplication using Java 21.0.8 with PID 45244 (C:\Users\BAMG\Desktop\Ejercicios\distrimarket\distrimarket-inventario\target\classes started by BAMG in C:\Users\BAMG\Desktop\Ejercicios\distrimarket\distrimarket-inventario)
+2026-10-07 21:22:02.612 [restartedMain] DEBUG c.d.inventario.InventarioApplication - Running with Spring Boot v3.2.4, Spring v6.1.5
+2026-10-07 21:22:02.612 [restartedMain] INFO  c.d.inventario.InventarioApplication - No active profile set, falling back to 1 default profile: "default"
+2026-10-07 21:22:02.897 [restartedMain] WARN  o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.BeanDefinitionStoreException: I/O failure while processing configuration class [com.distrimarket.inventario.controller.AjusteStockController]
+2026-10-07 21:22:03.014 [restartedMain] ERROR o.s.boot.SpringApplication - Application run failed
+org.springframework.beans.factory.BeanDefinitionStoreException: I/O failure while processing configuration class [com.distrimarket.inventario.controller.AjusteStockController]
+	at org.springframework.context.annotation.ConfigurationClassParser.processConfigurationClass(ConfigurationClassParser.java:251)
+	at org.springframework.context.annotation.ConfigurationClassParser.parse(ConfigurationClassParser.java:189)
+	at org.springframework.context.annotation.ConfigurationClassParser.doProcessConfigurationClass(ConfigurationClassParser.java:314)
+	at org.springframework.context.annotation.ConfigurationClassParser.processConfigurationClass(ConfigurationClassParser.java:246)
+	at org.springframework.context.annotation.ConfigurationClassParser.parse(ConfigurationClassParser.java:197)
+	at org.springframework.context.annotation.ConfigurationClassParser.parse(ConfigurationClassParser.java:165)
+	at org.springframework.context.annotation.ConfigurationClassPostProcessor.processConfigBeanDefinitions(ConfigurationClassPostProcessor.java:416)
+	at org.springframework.context.annotation.ConfigurationClassPostProcessor.postProcessBeanDefinitionRegistry(ConfigurationClassPostProcessor.java:289)
+	at org.springframework.context.support.PostProcessorRegistrationDelegate.invokeBeanDefinitionRegistryPostProcessors(PostProcessorRegistrationDelegate.java:349)
+	at org.springframework.context.support.PostProcessorRegistrationDelegate.invokeBeanFactoryPostProcessors(PostProcessorRegistrationDelegate.java:118)
+	at org.springframework.context.support.AbstractApplicationContext.invokeBeanFactoryPostProcessors(AbstractApplicationContext.java:788)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:606)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146)
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:754)
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:456)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:334)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1354)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1343)
+	at com.distrimarket.inventario.InventarioApplication.main(InventarioApplication.java:25)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.springframework.boot.devtools.restart.RestartLauncher.run(RestartLauncher.java:50)
+Caused by: java.io.FileNotFoundException: class path resource [com/distrimarket/inventario/controller/BaseController.class] cannot be opened because it does not exist
+	at org.springframework.core.io.ClassPathResource.getInputStream(ClassPathResource.java:215)
+	at org.springframework.core.type.classreading.SimpleMetadataReader.getClassReader(SimpleMetadataReader.java:54)
+	at org.springframework.core.type.classreading.SimpleMetadataReader.<init>(SimpleMetadataReader.java:48)
+	at org.springframework.core.type.classreading.SimpleMetadataReaderFactory.getMetadataReader(SimpleMetadataReaderFactory.java:103)
+	at org.springframework.boot.type.classreading.ConcurrentReferenceCachingMetadataReaderFactory.createMetadataReader(ConcurrentReferenceCachingMetadataReaderFactory.java:86)
+	at org.springframework.boot.type.classreading.ConcurrentReferenceCachingMetadataReaderFactory.getMetadataReader(ConcurrentReferenceCachingMetadataReaderFactory.java:73)
+	at org.springframework.core.type.classreading.SimpleMetadataReaderFactory.getMetadataReader(SimpleMetadataReaderFactory.java:81)
+	at org.springframework.context.annotation.ConfigurationClassParser.asSourceClass(ConfigurationClassParser.java:630)
+	at org.springframework.context.annotation.ConfigurationClassParser$SourceClass.getSuperClass(ConfigurationClassParser.java:943)
+	at org.springframework.context.annotation.ConfigurationClassParser.doProcessConfigurationClass(ConfigurationClassParser.java:351)
+	at org.springframework.context.annotation.ConfigurationClassParser.processConfigurationClass(ConfigurationClassParser.java:246)
+	... 21 common frames omitted
+2026-10-07 21:22:18.336 [restartedMain] INFO  c.d.inventario.InventarioApplication - Starting InventarioApplication using Java 21.0.8 with PID 45244 (C:\Users\BAMG\Desktop\Ejercicios\distrimarket\distrimarket-inventario\target\classes started by BAMG in C:\Users\BAMG\Desktop\Ejercicios\distrimarket\distrimarket-inventario)
+2026-10-07 21:22:18.338 [restartedMain] DEBUG c.d.inventario.InventarioApplication - Running with Spring Boot v3.2.4, Spring v6.1.5
+2026-10-07 21:22:18.339 [restartedMain] INFO  c.d.inventario.InventarioApplication - No active profile set, falling back to 1 default profile: "default"
+2026-10-07 21:22:18.628 [restartedMain] WARN  o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.BeanDefinitionStoreException: I/O failure while processing configuration class [com.distrimarket.inventario.service.MarcaServiceImpl]
+2026-10-07 21:22:18.644 [restartedMain] ERROR o.s.boot.SpringApplication - Application run failed
+org.springframework.beans.factory.BeanDefinitionStoreException: I/O failure while processing configuration class [com.distrimarket.inventario.service.MarcaServiceImpl]
+	at org.springframework.context.annotation.ConfigurationClassParser.processConfigurationClass(ConfigurationClassParser.java:251)
+	at org.springframework.context.annotation.ConfigurationClassParser.parse(ConfigurationClassParser.java:189)
+	at org.springframework.context.annotation.ConfigurationClassParser.doProcessConfigurationClass(ConfigurationClassParser.java:314)
+	at org.springframework.context.annotation.ConfigurationClassParser.processConfigurationClass(ConfigurationClassParser.java:246)
+	at org.springframework.context.annotation.ConfigurationClassParser.parse(ConfigurationClassParser.java:197)
+	at org.springframework.context.annotation.ConfigurationClassParser.parse(ConfigurationClassParser.java:165)
+	at org.springframework.context.annotation.ConfigurationClassPostProcessor.processConfigBeanDefinitions(ConfigurationClassPostProcessor.java:416)
+	at org.springframework.context.annotation.ConfigurationClassPostProcessor.postProcessBeanDefinitionRegistry(ConfigurationClassPostProcessor.java:289)
+	at org.springframework.context.support.PostProcessorRegistrationDelegate.invokeBeanDefinitionRegistryPostProcessors(PostProcessorRegistrationDelegate.java:349)
+	at org.springframework.context.support.PostProcessorRegistrationDelegate.invokeBeanFactoryPostProcessors(PostProcessorRegistrationDelegate.java:118)
+	at org.springframework.context.support.AbstractApplicationContext.invokeBeanFactoryPostProcessors(AbstractApplicationContext.java:788)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:606)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146)
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:754)
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:456)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:334)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1354)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1343)
+	at com.distrimarket.inventario.InventarioApplication.main(InventarioApplication.java:25)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.springframework.boot.devtools.restart.RestartLauncher.run(RestartLauncher.java:50)
+Caused by: java.io.FileNotFoundException: class path resource [com/distrimarket/inventario/service/MarcaService.class] cannot be opened because it does not exist
+	at org.springframework.core.io.ClassPathResource.getInputStream(ClassPathResource.java:215)
+	at org.springframework.core.type.classreading.SimpleMetadataReader.getClassReader(SimpleMetadataReader.java:54)
+	at org.springframework.core.type.classreading.SimpleMetadataReader.<init>(SimpleMetadataReader.java:48)
+	at org.springframework.core.type.classreading.SimpleMetadataReaderFactory.getMetadataReader(SimpleMetadataReaderFactory.java:103)
+	at org.springframework.boot.type.classreading.ConcurrentReferenceCachingMetadataReaderFactory.createMetadataReader(ConcurrentReferenceCachingMetadataReaderFactory.java:86)
+	at org.springframework.boot.type.classreading.ConcurrentReferenceCachingMetadataReaderFactory.getMetadataReader(ConcurrentReferenceCachingMetadataReaderFactory.java:73)
+	at org.springframework.core.type.classreading.SimpleMetadataReaderFactory.getMetadataReader(SimpleMetadataReaderFactory.java:81)
+	at org.springframework.context.annotation.ConfigurationClassParser.asSourceClass(ConfigurationClassParser.java:630)
+	at org.springframework.context.annotation.ConfigurationClassParser$SourceClass.getInterfaces(ConfigurationClassParser.java:956)
+	at org.springframework.context.annotation.ConfigurationClassParser.processInterfaces(ConfigurationClassParser.java:396)
+	at org.springframework.context.annotation.ConfigurationClassParser.doProcessConfigurationClass(ConfigurationClassParser.java:342)
+	at org.springframework.context.annotation.ConfigurationClassParser.processConfigurationClass(ConfigurationClassParser.java:246)
+	... 21 common frames omitted
+2026-10-07 21:22:21.382 [restartedMain] INFO  c.d.inventario.InventarioApplication - Starting InventarioApplication using Java 21.0.8 with PID 45244 (C:\Users\BAMG\Desktop\Ejercicios\distrimarket\distrimarket-inventario\target\classes started by BAMG in C:\Users\BAMG\Desktop\Ejercicios\distrimarket\distrimarket-inventario)
+2026-10-07 21:22:21.383 [restartedMain] DEBUG c.d.inventario.InventarioApplication - Running with Spring Boot v3.2.4, Spring v6.1.5
+2026-10-07 21:22:21.384 [restartedMain] INFO  c.d.inventario.InventarioApplication - No active profile set, falling back to 1 default profile: "default"
+2026-10-07 21:22:22.397 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-10-07 21:22:22.476 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 77 ms. Found 9 JPA repository interfaces.
+2026-10-07 21:22:23.009 [restartedMain] INFO  o.s.cloud.context.scope.GenericScope - BeanFactory id=cdbcd135-35d4-3100-8ffb-06d3b69c8ec9
+2026-10-07 21:22:23.290 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8081 (http)
+2026-10-07 21:22:23.292 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8081"]
+2026-10-07 21:22:23.293 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-10-07 21:22:23.293 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.19]
+2026-10-07 21:22:23.447 [restartedMain] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-10-07 21:22:23.448 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 2054 ms
+2026-10-07 21:22:23.564 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Starting...
+2026-10-07 21:22:25.823 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-2 - Added connection org.postgresql.jdbc.PgConnection@eca5af7
+2026-10-07 21:22:25.823 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Start completed.
+2026-10-07 21:22:26.817 [restartedMain] INFO  liquibase.database - Set default schema name to public
+2026-10-07 21:22:29.304 [restartedMain] INFO  liquibase.changelog - Reading from public.databasechangelog
+2026-10-07 21:22:31.324 [restartedMain] INFO  liquibase.util - UPDATE SUMMARY
+2026-10-07 21:22:31.324 [restartedMain] INFO  liquibase.util - Run:                          0
+2026-10-07 21:22:31.325 [restartedMain] INFO  liquibase.util - Previously run:              29
+2026-10-07 21:22:31.326 [restartedMain] INFO  liquibase.util - Filtered out:                 0
+2026-10-07 21:22:31.326 [restartedMain] INFO  liquibase.util - -------------------------------
+2026-10-07 21:22:31.326 [restartedMain] INFO  liquibase.util - Total change sets:           29
+2026-10-07 21:22:31.327 [restartedMain] INFO  liquibase.util - Update summary generated
+2026-10-07 21:22:32.727 [restartedMain] INFO  liquibase.lockservice - Successfully released change log lock
+2026-10-07 21:22:32.904 [restartedMain] INFO  liquibase.command - Command execution complete
+2026-10-07 21:22:33.097 [restartedMain] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-10-07 21:22:33.101 [restartedMain] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2026-10-07 21:22:33.110 [restartedMain] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-10-07 21:22:34.285 [restartedMain] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-10-07 21:22:34.286 [restartedMain] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-10-07 21:22:34.994 [restartedMain] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-10-07 21:22:35.574 [restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2026-10-07 21:22:36.647 [restartedMain] INFO  o.s.cloud.commons.util.InetUtils - Cannot determine local hostname
+2026-10-07 21:22:36.709 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8081"]
+2026-10-07 21:22:36.716 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8081 (http) with context path ''
+2026-10-07 21:22:37.737 [restartedMain] INFO  o.s.cloud.commons.util.InetUtils - Cannot determine local hostname
+2026-10-07 21:22:37.742 [restartedMain] INFO  c.d.inventario.InventarioApplication - Started InventarioApplication in 17.547 seconds (process running for 70.415)
+2026-10-07 21:22:37.745 [restartedMain] INFO  o.s.b.d.a.ConditionEvaluationDeltaLoggingListener - Condition evaluation unchanged
+2026-10-07 21:23:13.015 [http-nio-8081-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-10-07 21:23:13.015 [http-nio-8081-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2026-10-07 21:23:13.017 [http-nio-8081-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 2 ms
+2026-10-07 21:23:13.028 [http-nio-8081-exec-1] ERROR c.d.i.e.GlobalExceptionHandler - Error crítico no controlado [500 INTERNAL SERVER ERROR] en GET /empleados: No static resource empleados.
+org.springframework.web.servlet.resource.NoResourceFoundException: No static resource empleados.
+	at org.springframework.web.servlet.resource.ResourceHttpRequestHandler.handleRequest(ResourceHttpRequestHandler.java:585)
+	at org.springframework.web.servlet.mvc.HttpRequestHandlerAdapter.handle(HttpRequestHandlerAdapter.java:52)
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1089)
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:979)
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1014)
+	at org.springframework.web.servlet.FrameworkServlet.doGet(FrameworkServlet.java:903)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:564)
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:885)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:658)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:205)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149)
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:51)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149)
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149)
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149)
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:167)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:90)
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:482)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:115)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:93)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:74)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:344)
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:391)
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63)
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:896)
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1744)
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1191)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+2026-10-07 21:23:13.111 [http-nio-8081-exec-1] WARN  o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.web.servlet.resource.NoResourceFoundException: No static resource empleados.]
+2026-10-07 21:27:13.105 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-10-07 21:27:13.105 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Shutdown initiated...
+2026-10-07 21:27:13.110 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Shutdown completed.
+2026-10-07 21:27:54.119 [background-preinit] INFO  o.h.validator.internal.util.Version - HV000001: Hibernate Validator 8.0.1.Final
+2026-10-07 21:27:54.164 [restartedMain] INFO  c.d.inventario.InventarioApplication - Starting InventarioApplication using Java 21.0.8 with PID 34196 (C:\Users\BAMG\Desktop\Ejercicios\distrimarket\distrimarket-inventario\target\classes started by BAMG in C:\Users\BAMG\Desktop\Ejercicios\distrimarket\distrimarket-inventario)
+2026-10-07 21:27:54.165 [restartedMain] DEBUG c.d.inventario.InventarioApplication - Running with Spring Boot v3.2.4, Spring v6.1.5
+2026-10-07 21:27:54.165 [restartedMain] INFO  c.d.inventario.InventarioApplication - No active profile set, falling back to 1 default profile: "default"
+2026-10-07 21:27:54.227 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2026-10-07 21:27:54.227 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2026-10-07 21:27:54.967 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-10-07 21:27:55.031 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 56 ms. Found 9 JPA repository interfaces.
+2026-10-07 21:27:55.465 [restartedMain] INFO  o.s.cloud.context.scope.GenericScope - BeanFactory id=e2869fe8-a770-37e8-9540-65a893412c1c
+2026-10-07 21:27:55.926 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8081 (http)
+2026-10-07 21:27:55.935 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8081"]
+2026-10-07 21:27:55.936 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-10-07 21:27:55.937 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.19]
+2026-10-07 21:27:55.992 [restartedMain] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-10-07 21:27:55.993 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1765 ms
+2026-10-07 21:27:56.104 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-10-07 21:27:59.140 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@6e159ce8
+2026-10-07 21:27:59.141 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2026-10-07 21:28:00.321 [restartedMain] INFO  liquibase.database - Set default schema name to public
+2026-10-07 21:28:01.797 [restartedMain] INFO  liquibase.changelog - Reading from public.databasechangelog
+2026-10-07 21:28:05.788 [restartedMain] INFO  liquibase.lockservice - Successfully acquired change log lock
+2026-10-07 21:28:05.993 [restartedMain] INFO  liquibase.command - Using deploymentId: 1419285992
+2026-10-07 21:28:06.300 [restartedMain] INFO  liquibase.changelog - Reading from public.databasechangelog
+2026-10-07 21:28:07.536 [restartedMain] INFO  liquibase.changelog - Columns activo(boolean) added to categorias
+2026-10-07 21:28:07.733 [restartedMain] INFO  liquibase.changelog - Columns activo(boolean) added to marcas
+2026-10-07 21:28:07.940 [restartedMain] INFO  liquibase.changelog - Columns activo(boolean) added to depositos
+2026-10-07 21:28:08.173 [restartedMain] INFO  liquibase.changelog - Columns activo(boolean) added to productos
+2026-10-07 21:28:08.778 [restartedMain] INFO  liquibase.changelog - Columns activo(boolean) added to personas
+2026-10-07 21:28:09.065 [restartedMain] INFO  liquibase.changelog - Columns activo(boolean) added to empleados
+2026-10-07 21:28:09.253 [restartedMain] INFO  liquibase.changelog - ChangeSet db/changelog/004-add-soft-delete-inventario.yaml::030-add-column-activo-soft-delete::distrimarket ran successfully in 2128ms
+2026-10-07 21:28:09.891 [restartedMain] INFO  liquibase.util - UPDATE SUMMARY
+2026-10-07 21:28:09.891 [restartedMain] INFO  liquibase.util - Run:                          1
+2026-10-07 21:28:09.892 [restartedMain] INFO  liquibase.util - Previously run:              29
+2026-10-07 21:28:09.892 [restartedMain] INFO  liquibase.util - Filtered out:                 0
+2026-10-07 21:28:09.893 [restartedMain] INFO  liquibase.util - -------------------------------
+2026-10-07 21:28:09.894 [restartedMain] INFO  liquibase.util - Total change sets:           30
+2026-10-07 21:28:09.895 [restartedMain] INFO  liquibase.util - Update summary generated
+2026-10-07 21:28:09.898 [restartedMain] INFO  liquibase.command - Update command completed successfully.
+2026-10-07 21:28:10.600 [restartedMain] INFO  liquibase.lockservice - Successfully released change log lock
+2026-10-07 21:28:10.790 [restartedMain] INFO  liquibase.command - Command execution complete
+2026-10-07 21:28:11.122 [restartedMain] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-10-07 21:28:11.244 [restartedMain] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.4.4.Final
+2026-10-07 21:28:11.328 [restartedMain] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2026-10-07 21:28:11.875 [restartedMain] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-10-07 21:28:15.998 [restartedMain] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-10-07 21:28:16.004 [restartedMain] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-10-07 21:28:19.407 [restartedMain] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-10-07 21:28:21.372 [restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2026-10-07 21:28:22.489 [restartedMain] INFO  o.s.cloud.commons.util.InetUtils - Cannot determine local hostname
+2026-10-07 21:28:22.619 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8081"]
+2026-10-07 21:28:22.656 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8081 (http) with context path ''
+2026-10-07 21:28:23.684 [restartedMain] INFO  o.s.cloud.commons.util.InetUtils - Cannot determine local hostname
+2026-10-07 21:28:23.705 [restartedMain] INFO  c.d.inventario.InventarioApplication - Started InventarioApplication in 31.096 seconds (process running for 31.835)
+2026-10-07 21:35:14.171 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-10-07 21:35:14.174 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-10-07 21:35:14.180 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2026-10-07 21:47:50.629 [background-preinit] INFO  o.h.validator.internal.util.Version - HV000001: Hibernate Validator 8.0.1.Final
+2026-10-07 21:47:50.674 [restartedMain] INFO  c.d.inventario.InventarioApplication - Starting InventarioApplication using Java 21.0.8 with PID 45224 (C:\Users\BAMG\Desktop\Ejercicios\distrimarket\distrimarket-inventario\target\classes started by BAMG in C:\Users\BAMG\Desktop\Ejercicios\distrimarket\distrimarket-inventario)
+2026-10-07 21:47:50.675 [restartedMain] DEBUG c.d.inventario.InventarioApplication - Running with Spring Boot v3.2.4, Spring v6.1.5
+2026-10-07 21:47:50.675 [restartedMain] INFO  c.d.inventario.InventarioApplication - No active profile set, falling back to 1 default profile: "default"
+2026-10-07 21:47:50.738 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2026-10-07 21:47:50.739 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2026-10-07 21:47:51.441 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-10-07 21:47:51.500 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 53 ms. Found 9 JPA repository interfaces.
+2026-10-07 21:47:51.922 [restartedMain] INFO  o.s.cloud.context.scope.GenericScope - BeanFactory id=e2869fe8-a770-37e8-9540-65a893412c1c
+2026-10-07 21:47:52.370 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8081 (http)
+2026-10-07 21:47:52.380 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8081"]
+2026-10-07 21:47:52.382 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-10-07 21:47:52.383 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.19]
+2026-10-07 21:47:52.437 [restartedMain] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-10-07 21:47:52.437 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1698 ms
+2026-10-07 21:47:52.545 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-10-07 21:47:56.401 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@1b08ee48
+2026-10-07 21:47:56.404 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2026-10-07 21:47:57.580 [restartedMain] INFO  liquibase.database - Set default schema name to public
+2026-10-07 21:47:58.948 [restartedMain] INFO  liquibase.changelog - Reading from public.databasechangelog
+2026-10-07 21:48:01.714 [restartedMain] INFO  liquibase.changelog - Reading from public.databasechangelog
+2026-10-07 21:48:01.939 [restartedMain] INFO  liquibase.util - UPDATE SUMMARY
+2026-10-07 21:48:01.940 [restartedMain] INFO  liquibase.util - Run:                          0
+2026-10-07 21:48:01.940 [restartedMain] INFO  liquibase.util - Previously run:              30
+2026-10-07 21:48:01.940 [restartedMain] INFO  liquibase.util - Filtered out:                 0
+2026-10-07 21:48:01.941 [restartedMain] INFO  liquibase.util - -------------------------------
+2026-10-07 21:48:01.941 [restartedMain] INFO  liquibase.util - Total change sets:           30
+2026-10-07 21:48:01.941 [restartedMain] INFO  liquibase.util - Update summary generated
+2026-10-07 21:48:03.050 [restartedMain] INFO  liquibase.lockservice - Successfully released change log lock
+2026-10-07 21:48:03.355 [restartedMain] INFO  liquibase.command - Command execution complete
+2026-10-07 21:48:03.632 [restartedMain] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-10-07 21:48:03.690 [restartedMain] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.4.4.Final
+2026-10-07 21:48:03.726 [restartedMain] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2026-10-07 21:48:03.976 [restartedMain] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-10-07 21:48:06.036 [restartedMain] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-10-07 21:48:06.039 [restartedMain] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-10-07 21:48:06.788 [restartedMain] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-10-07 21:48:07.170 [restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2026-10-07 21:48:08.202 [restartedMain] INFO  o.s.cloud.commons.util.InetUtils - Cannot determine local hostname
+2026-10-07 21:48:08.270 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8081"]
+2026-10-07 21:48:08.288 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8081 (http) with context path ''
+2026-10-07 21:48:09.306 [restartedMain] INFO  o.s.cloud.commons.util.InetUtils - Cannot determine local hostname
+2026-10-07 21:48:09.324 [restartedMain] INFO  c.d.inventario.InventarioApplication - Started InventarioApplication in 20.214 seconds (process running for 21.001)
+2026-10-07 21:48:14.451 [http-nio-8081-exec-2] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-10-07 21:48:14.451 [http-nio-8081-exec-2] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2026-10-07 21:48:14.453 [http-nio-8081-exec-2] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 2 ms
+2026-10-07 21:48:43.545 [http-nio-8081-exec-4] DEBUG c.d.i.service.BaseServiceImpl - [DepositoServiceImpl] Consultando página 0 con tamaño 10
+2026-10-07 21:48:43.971 [http-nio-8081-exec-4] DEBUG org.hibernate.SQL - select d1_0.id,d1_0.activo,d1_0.estado,d1_0.fecha_creacion,d1_0.fecha_modificacion,d1_0.nombre,d1_0.ubicacion from depositos d1_0 where (d1_0.activo = true) order by d1_0.id offset ? rows fetch first ? rows only
+2026-10-07 21:49:48.924 [http-nio-8081-exec-7] DEBUG c.d.i.service.BaseServiceImpl - [DepositoServiceImpl] Consultando página 0 con tamaño 10
+2026-10-07 21:49:48.927 [http-nio-8081-exec-7] DEBUG org.hibernate.SQL - select d1_0.id,d1_0.activo,d1_0.estado,d1_0.fecha_creacion,d1_0.fecha_modificacion,d1_0.nombre,d1_0.ubicacion from depositos d1_0 where (d1_0.activo = true) order by d1_0.id offset ? rows fetch first ? rows only
+2026-10-07 21:50:00.905 [http-nio-8081-exec-8] DEBUG c.d.i.service.BaseServiceImpl - [DepositoServiceImpl] Consultando página 0 con tamaño 10
+2026-10-07 21:50:00.908 [http-nio-8081-exec-8] DEBUG org.hibernate.SQL - select d1_0.id,d1_0.activo,d1_0.estado,d1_0.fecha_creacion,d1_0.fecha_modificacion,d1_0.nombre,d1_0.ubicacion from depositos d1_0 where (d1_0.activo = true) order by d1_0.id offset ? rows fetch first ? rows only
+2026-10-07 21:50:23.697 [http-nio-8081-exec-9] DEBUG org.hibernate.SQL - select d1_0.id,d1_0.activo,d1_0.estado,d1_0.fecha_creacion,d1_0.fecha_modificacion,d1_0.nombre,d1_0.ubicacion from depositos d1_0 where d1_0.id=? and (d1_0.activo = true)
+2026-10-07 21:50:24.142 [http-nio-8081-exec-9] INFO  c.d.i.e.GlobalExceptionHandler - Recurso no encontrado [404 NOT FOUND] en DELETE /depositos/4: No se encuentra el registro con ID: 4
+2026-10-07 21:50:24.160 [http-nio-8081-exec-9] WARN  o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [com.distrimarket.inventario.exception.ResourceNotFoundException: No se encuentra el registro con ID: 4]
+2026-10-07 21:50:29.373 [http-nio-8081-exec-10] DEBUG org.hibernate.SQL - select d1_0.id,d1_0.activo,d1_0.estado,d1_0.fecha_creacion,d1_0.fecha_modificacion,d1_0.nombre,d1_0.ubicacion from depositos d1_0 where d1_0.id=? and (d1_0.activo = true)
+2026-10-07 21:50:29.571 [http-nio-8081-exec-10] INFO  c.d.i.service.BaseServiceImpl - [DepositoServiceImpl] Aplicando borrado lógico para registro con ID: 3
+2026-10-07 21:50:29.591 [http-nio-8081-exec-10] INFO  c.d.i.service.BaseServiceImpl - [DepositoServiceImpl] Registro con ID: 3 marcado como inactivo (borrado lógico)
+2026-10-07 21:50:29.644 [http-nio-8081-exec-10] DEBUG org.hibernate.SQL - update depositos set activo=?,estado=?,fecha_modificacion=?,nombre=?,ubicacion=? where id=?
+2026-10-07 21:51:00.189 [http-nio-8081-exec-2] DEBUG c.d.i.service.BaseServiceImpl - [DepositoServiceImpl] Consultando página 0 con tamaño 10
+2026-10-07 21:51:00.191 [http-nio-8081-exec-2] DEBUG org.hibernate.SQL - select d1_0.id,d1_0.activo,d1_0.estado,d1_0.fecha_creacion,d1_0.fecha_modificacion,d1_0.nombre,d1_0.ubicacion from depositos d1_0 where (d1_0.activo = true) order by d1_0.id offset ? rows fetch first ? rows only
+2026-10-07 21:52:21.433 [http-nio-8081-exec-3] DEBUG c.d.i.service.BaseServiceImpl - [DepositoServiceImpl] Consultando página 0 con tamaño 10
+2026-10-07 21:52:21.436 [http-nio-8081-exec-3] DEBUG org.hibernate.SQL - select d1_0.id,d1_0.activo,d1_0.estado,d1_0.fecha_creacion,d1_0.fecha_modificacion,d1_0.nombre,d1_0.ubicacion from depositos d1_0 where (d1_0.activo = true) order by d1_0.id offset ? rows fetch first ? rows only
+2026-10-07 21:52:37.679 [http-nio-8081-exec-5] DEBUG c.d.i.service.EmpleadoServiceImpl - Consultando empleados con filtros -> cargo: null, estado: true, página: 0
+2026-10-07 21:52:37.781 [http-nio-8081-exec-5] DEBUG org.hibernate.SQL - select e1_0.id,e1_0.activo,e1_0.cargo,e1_0.estado,e1_0.fecha_creacion,e1_0.fecha_ingreso,e1_0.fecha_modificacion,e1_0.id_persona,p1_0.id,p1_0.activo,p1_0.ci,p1_0.correo,p1_0.direccion,p1_0.fecha_creacion,p1_0.fecha_modificacion,p1_0.nombre_completo,p1_0.ruc,p1_0.telefono,p1_0.tipo_persona from empleados e1_0 join personas p1_0 on p1_0.id=e1_0.id_persona and (p1_0.activo = true) where (e1_0.activo = true) and 1=1 and e1_0.estado=? order by e1_0.id offset ? rows fetch first ? rows only
+2026-10-07 21:54:39.842 [http-nio-8081-exec-6] INFO  c.d.i.service.EmpleadoServiceImpl - Iniciando creación de empleado con cargo: 'Depositario'
+2026-10-07 21:54:39.867 [http-nio-8081-exec-6] DEBUG org.hibernate.SQL - select p1_0.id from personas p1_0 where (p1_0.activo = true) and p1_0.ci=? fetch first ? rows only
+2026-10-07 21:54:40.155 [http-nio-8081-exec-6] DEBUG c.d.i.service.EmpleadoServiceImpl - Registrando nueva persona física para el empleado: Juan Carlos Bodoque
+2026-10-07 21:54:40.156 [http-nio-8081-exec-6] DEBUG c.d.i.service.PersonaServiceImpl - Validando reglas documentales para nueva persona [FISICA] - CI: '4123123', RUC: '80012345-6'
+2026-10-07 21:54:40.158 [http-nio-8081-exec-6] DEBUG org.hibernate.SQL - select p1_0.id from personas p1_0 where (p1_0.activo = true) and p1_0.ci=? fetch first ? rows only
+2026-10-07 21:54:40.453 [http-nio-8081-exec-6] DEBUG org.hibernate.SQL - select p1_0.id from personas p1_0 where (p1_0.activo = true) and p1_0.ruc=? fetch first ? rows only
+2026-10-07 21:54:40.871 [http-nio-8081-exec-6] WARN  c.d.i.e.GlobalExceptionHandler - Conflicto de unicidad [409 CONFLICT] en POST /empleados: Ya existe una persona registrada con el RUC: 80012345-6
+2026-10-07 21:54:40.872 [http-nio-8081-exec-6] WARN  o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [com.distrimarket.inventario.exception.DuplicateResourceException: Ya existe una persona registrada con el RUC: 80012345-6]
+2026-10-07 21:54:57.147 [http-nio-8081-exec-7] INFO  c.d.i.service.EmpleadoServiceImpl - Iniciando creación de empleado con cargo: 'Depositario'
+2026-10-07 21:54:57.149 [http-nio-8081-exec-7] DEBUG org.hibernate.SQL - select p1_0.id from personas p1_0 where (p1_0.activo = true) and p1_0.ci=? fetch first ? rows only
+2026-10-07 21:54:57.455 [http-nio-8081-exec-7] DEBUG c.d.i.service.EmpleadoServiceImpl - Registrando nueva persona física para el empleado: Juan Carlos Bodoque
+2026-10-07 21:54:57.455 [http-nio-8081-exec-7] DEBUG c.d.i.service.PersonaServiceImpl - Validando reglas documentales para nueva persona [FISICA] - CI: '4123123', RUC: '4123123-0'
+2026-10-07 21:54:57.457 [http-nio-8081-exec-7] DEBUG org.hibernate.SQL - select p1_0.id from personas p1_0 where (p1_0.activo = true) and p1_0.ci=? fetch first ? rows only
+2026-10-07 21:54:57.660 [http-nio-8081-exec-7] DEBUG org.hibernate.SQL - select p1_0.id from personas p1_0 where (p1_0.activo = true) and p1_0.ruc=? fetch first ? rows only
+2026-10-07 21:54:57.864 [http-nio-8081-exec-7] INFO  c.d.i.service.BaseServiceImpl - [PersonaServiceImpl] Creando nuevo registro...
+2026-10-07 21:54:57.877 [http-nio-8081-exec-7] DEBUG org.hibernate.SQL - insert into personas (activo,ci,correo,direccion,fecha_creacion,fecha_modificacion,nombre_completo,ruc,telefono,tipo_persona) values (?,?,?,?,?,?,?,?,?,?)
+2026-10-07 21:54:58.096 [http-nio-8081-exec-7] INFO  c.d.i.service.BaseServiceImpl - [PersonaServiceImpl] Registro creado exitosamente con ID: 8
+2026-10-07 21:54:58.104 [http-nio-8081-exec-7] DEBUG org.hibernate.SQL - select e1_0.id from empleados e1_0 left join personas p1_0 on p1_0.id=e1_0.id_persona and (p1_0.activo = true) where (e1_0.activo = true) and p1_0.id=? fetch first ? rows only
+2026-10-07 21:54:58.339 [http-nio-8081-exec-7] DEBUG org.hibernate.SQL - insert into empleados (activo,cargo,estado,fecha_creacion,fecha_ingreso,fecha_modificacion,id_persona) values (?,?,?,?,?,?,?)
+2026-10-07 21:54:58.535 [http-nio-8081-exec-7] INFO  c.d.i.service.EmpleadoServiceImpl - Empleado registrado exitosamente con ID: 3 asociado a Persona ID: 8
+2026-10-07 21:55:13.019 [http-nio-8081-exec-8] DEBUG c.d.i.service.EmpleadoServiceImpl - Consultando empleados con filtros -> cargo: null, estado: true, página: 0
+2026-10-07 21:55:13.025 [http-nio-8081-exec-8] DEBUG org.hibernate.SQL - select e1_0.id,e1_0.activo,e1_0.cargo,e1_0.estado,e1_0.fecha_creacion,e1_0.fecha_ingreso,e1_0.fecha_modificacion,e1_0.id_persona,p1_0.id,p1_0.activo,p1_0.ci,p1_0.correo,p1_0.direccion,p1_0.fecha_creacion,p1_0.fecha_modificacion,p1_0.nombre_completo,p1_0.ruc,p1_0.telefono,p1_0.tipo_persona from empleados e1_0 join personas p1_0 on p1_0.id=e1_0.id_persona and (p1_0.activo = true) where (e1_0.activo = true) and 1=1 and e1_0.estado=? order by e1_0.id offset ? rows fetch first ? rows only
+2026-10-07 21:55:58.885 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-10-07 21:55:58.889 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-10-07 21:55:59.084 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.

@@ -4,6 +4,21 @@ import com.distrimarket.commons.entity.BaseEntity;
 import org.springframework.data.jpa.domain.Specification;
 
 public abstract class BaseSpecification<E extends BaseEntity> {
+    // Filtro base para entidades SoftDeletable
+    public Specification<E> isActivo() {
+        return (root, query, criteriaBuilder) -> criteriaBuilder.isTrue(root.get("activo"));
+    }
+
+    // Permite al frontend consultar inactivos si envía explícitamente ?activo=false
+    public Specification<E> hasActivo(Boolean activo) {
+        return (root, query, criteriaBuilder) -> {
+            if (activo == null) {
+                return criteriaBuilder.conjunction();
+            }
+            return criteriaBuilder.equal(root.get("activo"), activo);
+        };
+    }
+
     public Specification<E> hasRelationId(String relation, Long id) {
         return (root, query, criteriaBuilder) -> {
             if (id == null) {

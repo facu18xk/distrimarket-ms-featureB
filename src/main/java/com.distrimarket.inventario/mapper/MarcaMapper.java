@@ -17,6 +17,7 @@ public interface MarcaMapper extends BaseMapper<Marca, MarcaRequestDTO, MarcaRes
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "fechaCreacion", ignore = true)
     @Mapping(target = "fechaModificacion", ignore = true)
+    @Mapping(target = "activo", ignore = true)
     Marca toEntity(MarcaRequestDTO dto);
 
     @Override
@@ -29,5 +30,6 @@ public interface MarcaMapper extends BaseMapper<Marca, MarcaRequestDTO, MarcaRes
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "fechaCreacion", ignore = true)
     @Mapping(target = "fechaModificacion", ignore = true)
+    @Mapping(target = "activo", ignore = true)
     void updateEntityFromDto(MarcaRequestDTO dto, @MappingTarget Marca entity);
 }

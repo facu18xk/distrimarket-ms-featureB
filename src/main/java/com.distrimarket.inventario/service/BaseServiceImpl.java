@@ -1,6 +1,7 @@
 package com.distrimarket.inventario.service;
 
 import com.distrimarket.commons.entity.BaseEntity;
+import com.distrimarket.commons.model.SoftDeletable;
 import com.distrimarket.inventario.mapper.BaseMapper;
 import com.distrimarket.inventario.repository.BaseRepository;
 import com.distrimarket.inventario.exception.ResourceNotFoundException;
@@ -45,6 +46,10 @@ public abstract class BaseServiceImpl<E extends BaseEntity, CREATE_DTO, RESPONSE
         log.debug("[{}] Buscando registro con ID: {}", getServiceName(), id);
         E entity = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Recurso no encontrado con ID: " + id));
+        // Si es SoftDeletable y está inactivo, se considera no encontrado para consultas normales
+        if (entity instanceof SoftDeletable softDeletable && Boolean.FALSE.equals(softDeletable.getActivo())) {
+            throw new ResourceNotFoundException("Recurso inactivo o no disponible con ID: " + id);
+        }
         return mapper.toDTO(entity);
     }
 
@@ -53,6 +58,10 @@ public abstract class BaseServiceImpl<E extends BaseEntity, CREATE_DTO, RESPONSE
     public RESPONSE_DTO create(CREATE_DTO createDTO) {
         log.info("[{}] Creando nuevo registro...", getServiceName());
         E entity = mapper.toEntity(createDTO);
+        // Si soporta borrado lógico, nace activo por defecto
+        if (entity instanceof SoftDeletable softDeletable && softDeletable.getActivo() == null) {
+            softDeletable.setActivo(true);
+        }
         E savedEntity = repository.save(entity);
         log.info("[{}] Registro creado exitosamente con ID: {}", getServiceName(), savedEntity.getId());
         return mapper.toDTO(savedEntity);
@@ -64,6 +73,10 @@ public abstract class BaseServiceImpl<E extends BaseEntity, CREATE_DTO, RESPONSE
         log.info("[{}] Actualizando registro con ID: {}", getServiceName(), id);
         E entity = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("No se encuentra el registro para actualizar con ID: " + id));
+        // Si la entidad está inactiva, no se puede actualizar
+        if (entity instanceof SoftDeletable softDeletable && Boolean.FALSE.equals(softDeletable.getActivo())) {
+            throw new ResourceNotFoundException("No se puede actualizar un registro dado de baja (ID: " + id + ")");
+        }
         mapper.updateEntityFromDto(createDTO, entity);
         E updatedEntity = repository.save(entity);
         log.info("[{}] Registro con ID: {} actualizado exitosamente", getServiceName(), id);
@@ -73,11 +86,33 @@ public abstract class BaseServiceImpl<E extends BaseEntity, CREATE_DTO, RESPONSE
     @Override
     @Transactional
     public void deleteById(Long id) {
-        log.info("[{}] Eliminando registro con ID: {}", getServiceName(), id);
         E entity = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("No se encuentra el registro con ID: " + id));
-        repository.delete(entity);
-        log.info("[{}] Registro con ID: {} eliminado exitosamente", getServiceName(), id);
+
+        if (entity instanceof SoftDeletable softDeletable) {
+            log.info("[{}] Aplicando borrado lógico para registro con ID: {}", getServiceName(), id);
+            softDeletable.setActivo(false);
+            repository.save(entity);
+            log.info("[{}] Registro con ID: {} marcado como inactivo (borrado lógico)", getServiceName(), id);
+        } else {
+            log.info("[{}] Aplicando borrado físico para registro con ID: {}", getServiceName(), id);
+            repository.delete(entity);
+            log.info("[{}] Registro con ID: {} eliminado físicamente de la base de datos", getServiceName(), id);
+        }
+    }
+
+    @Transactional
+    public void reactivarById(Long id) {
+        E entity = repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("No se encuentra el registro con ID: " + id));
+
+        if (entity instanceof SoftDeletable softDeletable) {
+            softDeletable.setActivo(true);
+            repository.save(entity);
+            log.info("[{}] Registro ID: {} reactivado con éxito", getServiceName(), id);
+        } else {
+            throw new UnsupportedOperationException("Esta entidad no admite reactivación lógica.");
+        }
     }
 
     // Helper para que el log indique qué servicio concreto está actuando

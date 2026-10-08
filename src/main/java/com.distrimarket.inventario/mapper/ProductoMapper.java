@@ -21,6 +21,7 @@ public interface ProductoMapper extends BaseMapper<Producto, ProductoRequestDTO,
     @Mapping(target = "fechaModificacion", ignore = true)
     @Mapping(target = "categoria.id", source = "idCategoria")
     @Mapping(target = "marca.id", source = "idMarca")
+    @Mapping(target = "activo", ignore = true)
     Producto toEntity(ProductoRequestDTO dto);
 
     @Override
@@ -38,6 +39,7 @@ public interface ProductoMapper extends BaseMapper<Producto, ProductoRequestDTO,
     @Mapping(target = "fechaModificacion", ignore = true)
     @Mapping(target = "categoria.id", source = "idCategoria")
     @Mapping(target = "marca.id", source = "idMarca")
+    @Mapping(target = "activo", ignore = true)
     void updateEntityFromDto(ProductoRequestDTO dto, @MappingTarget Producto entity);
 
     default BigDecimal mapPorcentajeIva(PorcentajeIvaEnum value) {

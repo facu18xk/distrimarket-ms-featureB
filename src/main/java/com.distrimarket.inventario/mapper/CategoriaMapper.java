@@ -17,6 +17,7 @@ public interface CategoriaMapper extends BaseMapper<Categoria, CategoriaRequestD
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "fechaCreacion", ignore = true)
     @Mapping(target = "fechaModificacion", ignore = true)
+    @Mapping(target = "activo", ignore = true)
     Categoria toEntity(CategoriaRequestDTO dto);
 
     @Override
@@ -29,5 +30,6 @@ public interface CategoriaMapper extends BaseMapper<Categoria, CategoriaRequestD
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "fechaCreacion", ignore = true)
     @Mapping(target = "fechaModificacion", ignore = true)
+    @Mapping(target = "activo", ignore = true)
     void updateEntityFromDto(CategoriaRequestDTO dto, @MappingTarget Categoria entity);
 }

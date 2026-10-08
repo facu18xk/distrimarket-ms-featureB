@@ -55,4 +55,10 @@ public abstract class BaseController<E extends BaseEntity, CREATE_DTO, RESPONSE_
         service.deleteById(id);
         return ResponseEntity.noContent().build();
     }
+
+    @PatchMapping("/{id}/reactivar")
+    public ResponseEntity<Void> reactivar(@PathVariable Long id) {
+        service.reactivarById(id);
+        return ResponseEntity.noContent().build();
+    }
 }

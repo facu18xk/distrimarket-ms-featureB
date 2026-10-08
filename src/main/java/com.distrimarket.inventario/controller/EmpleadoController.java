@@ -2,6 +2,7 @@ package com.distrimarket.inventario.controller;
 
 import com.distrimarket.commons.dto.EmpleadoRequestDTO;
 import com.distrimarket.commons.dto.EmpleadoResponseDTO;
+import com.distrimarket.commons.dto.ProductoResponseDTO;
 import com.distrimarket.commons.entity.Empleado;
 import com.distrimarket.inventario.service.EmpleadoService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -26,8 +27,15 @@ public class EmpleadoController extends BaseController<Empleado, EmpleadoRequest
     }
 
     @GetMapping
-    public ResponseEntity<Page<EmpleadoResponseDTO>> getAll(@PageableDefault(size = 10, sort = "id") Pageable pageable) {
-        return doGetAll(pageable);
+    @Operation(summary = "Listar empleados con paginación y filtros opcionales por cargo o estado")
+    public ResponseEntity<Page<EmpleadoResponseDTO>> getAll(
+            @Parameter(description = "Cargo del empleado (opcional)")
+            @RequestParam(name = "cargo", required = false) String cargo,
+            @Parameter(description = "Estado del empleado (opcional)")
+            @RequestParam(name = "estado", required = false) Boolean estado,
+            @PageableDefault(size = 10, sort = "id") Pageable pageable) {
+
+        return ResponseEntity.ok(empleadoService.findAllWithSpecifications(cargo, estado, pageable));
     }
 
     @GetMapping("/persona/{personaId}")
