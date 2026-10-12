@@ -5,6 +5,7 @@ import com.distrimarket.commons.dto.TransferenciaStockRequestDTO;
 import com.distrimarket.commons.dto.TransferenciaStockResponseDTO;
 import com.distrimarket.commons.entity.*;
 import com.distrimarket.inventario.exception.BadRequestException;
+import com.distrimarket.inventario.exception.InsufficientStockException;
 import com.distrimarket.inventario.exception.ResourceNotFoundException;
 import com.distrimarket.inventario.mapper.TransferenciaStockDetalleMapper;
 import com.distrimarket.inventario.mapper.TransferenciaStockMapper;
@@ -27,7 +28,7 @@ public class TransferenciaStockServiceImpl
     private final DepositoRepository depositoRepository;
     private final EmpleadoRepository empleadoRepository;
     private final ProductoRepository productoRepository;
-    private final StockDepositoRepository stockDepositoRepository;
+    private final StockDepositoService stockDepositoService;
     private final TransferenciaStockDetalleMapper detalleMapper;
     private final TransferenciaStockSpecification specification;
 
@@ -36,7 +37,7 @@ public class TransferenciaStockServiceImpl
                                          DepositoRepository depositoRepository,
                                          EmpleadoRepository empleadoRepository,
                                          ProductoRepository productoRepository,
-                                         StockDepositoRepository stockDepositoRepository,
+                                         StockDepositoService stockDepositoService,
                                          TransferenciaStockDetalleMapper detalleMapper,
                                          TransferenciaStockSpecification specification) {
         super(transferenciaStockRepository, transferenciaStockMapper);
@@ -44,7 +45,7 @@ public class TransferenciaStockServiceImpl
         this.depositoRepository = depositoRepository;
         this.empleadoRepository = empleadoRepository;
         this.productoRepository = productoRepository;
-        this.stockDepositoRepository = stockDepositoRepository;
+        this.stockDepositoService = stockDepositoService;
         this.detalleMapper = detalleMapper;
         this.specification = specification;
     }
@@ -99,37 +100,18 @@ public class TransferenciaStockServiceImpl
 
     private void ejecutarMovimientoInventario(Deposito origen, Deposito destino, Producto producto, Integer cantidad) {
         // 1. Validar y descontar del depósito de origen
-        StockDeposito stockOrigen = stockDepositoRepository.findByDepositoIdAndProductoId(origen.getId(), producto.getId())
-                .orElseThrow(() -> {
-                    log.warn("Fallo de transferencia: no existe registro de stock para el producto ID {} en el depósito origen ID {}",
-                            producto.getId(), origen.getId());
-                    return new BadRequestException(String.format(
-                            "No existe stock registrado para el producto '%s' (ID %d) en el depósito de origen '%s'",
-                            producto.getNombre(), producto.getId(), origen.getNombre()));
-                });
-
-        if (stockOrigen.getCantidad() < cantidad) {
-            log.warn("Fallo de transferencia: Stock insuficiente para producto '{}' (ID {}). Disponible: {}, Solicitado: {}",
-                    producto.getNombre(), producto.getId(), stockOrigen.getCantidad(), cantidad);
-            throw new BadRequestException(String.format(
-                    "Stock insuficiente para transferir '%s' (ID %d). Disponible en origen: %d, Solicitado: %d",
-                    producto.getNombre(), producto.getId(), stockOrigen.getCantidad(), cantidad));
+        // La regla de stock (bloqueo de fila y validación de existencias) vive en StockDepositoService.
+        log.debug("Descontando {} unidades del depósito {}", cantidad, origen.getId());
+        try {
+            stockDepositoService.aplicarMovimiento(origen, producto, -cantidad);
+        } catch (InsufficientStockException ex) {
+            log.warn("Fallo de transferencia desde el depósito origen ID {}: {}", origen.getId(), ex.getMessage());
+            // Las transferencias siempre respondieron 400 ante stock insuficiente en el origen.
+            throw new BadRequestException(ex.getMessage());
         }
 
-        log.debug("Descontando {} unidades del depósito {}", cantidad, origen.getId());
-        stockOrigen.setCantidad(stockOrigen.getCantidad() - cantidad);
-        stockDepositoRepository.save(stockOrigen);
-
         // 2. Acreditar en el depósito de destino
-        StockDeposito stockDestino = stockDepositoRepository.findByDepositoIdAndProductoId(destino.getId(), producto.getId())
-                .orElseGet(() -> StockDeposito.builder()
-                        .deposito(destino)
-                        .producto(producto)
-                        .cantidad(0)
-                        .build());
-
-        stockDestino.setCantidad(stockDestino.getCantidad() + cantidad);
-        stockDepositoRepository.save(stockDestino);
+        stockDepositoService.aplicarMovimiento(destino, producto, cantidad);
     }
 
     private void validarRequest(TransferenciaStockRequestDTO dto) {

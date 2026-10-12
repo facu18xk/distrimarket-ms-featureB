@@ -5,7 +5,11 @@ import com.distrimarket.commons.dto.StockDepositoResponseDTO;
 import com.distrimarket.commons.entity.Deposito;
 import com.distrimarket.commons.entity.Producto;
 import com.distrimarket.commons.entity.StockDeposito;
+import com.distrimarket.commons.dto.StockMovimientoDetalleRequestDTO;
+import com.distrimarket.commons.dto.StockMovimientoRequestDTO;
 import com.distrimarket.inventario.exception.DuplicateResourceException;
+import com.distrimarket.inventario.exception.IllegalArgumentException;
+import com.distrimarket.inventario.exception.InsufficientStockException;
 import com.distrimarket.inventario.exception.ResourceNotFoundException;
 import com.distrimarket.inventario.mapper.StockDepositoMapper;
 import com.distrimarket.inventario.repository.DepositoRepository;
@@ -18,6 +22,11 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 @Slf4j
 @Service
@@ -120,6 +129,80 @@ public class StockDepositoServiceImpl
                 .orElseThrow(() -> new ResourceNotFoundException(
                         String.format("No existe registro de stock para el depósito %d y producto %d", depositoId, productoId)));
         return mapper.toDTO(stock);
+    }
+
+    @Override
+    @Transactional
+    public StockDeposito aplicarMovimiento(Deposito deposito, Producto producto, int cantidad) {
+        if (cantidad == 0) {
+            throw new IllegalArgumentException("La cantidad de un movimiento de stock no puede ser cero.");
+        }
+        StockDeposito stock = stockDepositoRepository
+                .findWithLockByDepositoIdAndProductoId(deposito.getId(), producto.getId())
+                .orElseGet(() -> StockDeposito.builder()
+                        .deposito(deposito)
+                        .producto(producto)
+                        .cantidad(0)
+                        .build());
+
+        int cantidadAnterior = stock.getCantidad() == null ? 0 : stock.getCantidad();
+        long cantidadResultante = (long) cantidadAnterior + cantidad;
+        if (cantidadResultante < 0) {
+            log.warn("Stock insuficiente para producto ID {} en depósito ID {}. Disponible: {}, Solicitado descontar: {}",
+                    producto.getId(), deposito.getId(), cantidadAnterior, -cantidad);
+            throw new InsufficientStockException(String.format(
+                    "Stock insuficiente para el producto '%s' (ID %d). Disponible: %d, Solicitado descontar: %d",
+                    producto.getNombre(), producto.getId(), cantidadAnterior, -cantidad));
+        }
+        if (cantidadResultante > Integer.MAX_VALUE) {
+            throw new IllegalArgumentException(
+                    "El movimiento excede la cantidad máxima de stock permitida para el producto ID " + producto.getId());
+        }
+
+        stock.setCantidad((int) cantidadResultante);
+        StockDeposito guardado = stockDepositoRepository.save(stock);
+        log.debug("Stock actualizado para producto ID {} en depósito ID {}: {} -> {} (movimiento {})",
+                producto.getId(), deposito.getId(), cantidadAnterior, cantidadResultante, cantidad);
+        return guardado;
+    }
+
+    @Override
+    @Transactional
+    public List<StockDepositoResponseDTO> aplicarMovimientos(StockMovimientoRequestDTO dto) {
+        if (dto.getDetalles() == null || dto.getDetalles().isEmpty()) {
+            throw new IllegalArgumentException("El movimiento debe contener al menos un detalle de producto.");
+        }
+        log.info("Aplicando movimiento de stock en depósito ID {} con {} detalle(s). Motivo: {}",
+                dto.getIdDeposito(), dto.getDetalles().size(), dto.getMotivo());
+
+        Deposito deposito = depositoRepository.findById(dto.getIdDeposito())
+                .orElseThrow(() -> new ResourceNotFoundException("Depósito no encontrado con ID: " + dto.getIdDeposito()));
+
+        // Se agrupa por producto y se recorre en orden de ID: mismo orden de bloqueo en toda operación.
+        Map<Long, Integer> cantidadPorProducto = new TreeMap<>();
+        for (StockMovimientoDetalleRequestDTO detalle : dto.getDetalles()) {
+            if (detalle.getIdProducto() == null || detalle.getCantidad() == null || detalle.getCantidad() == 0) {
+                throw new IllegalArgumentException("Cada detalle debe indicar un producto y una cantidad distinta de cero.");
+            }
+            try {
+                cantidadPorProducto.merge(detalle.getIdProducto(), detalle.getCantidad(), Math::addExact);
+            } catch (ArithmeticException ex) {
+                throw new IllegalArgumentException(
+                        "La cantidad total del producto ID " + detalle.getIdProducto() + " excede el rango permitido.");
+            }
+        }
+
+        List<StockDepositoResponseDTO> resultado = new ArrayList<>();
+        for (Map.Entry<Long, Integer> movimiento : cantidadPorProducto.entrySet()) {
+            if (movimiento.getValue() == 0) {
+                continue;
+            }
+            Producto producto = productoRepository.findById(movimiento.getKey())
+                    .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado con ID: " + movimiento.getKey()));
+            resultado.add(mapper.toDTO(aplicarMovimiento(deposito, producto, movimiento.getValue())));
+        }
+        log.info("Movimiento de stock aplicado en depósito ID {}: {} producto(s) afectados", deposito.getId(), resultado.size());
+        return resultado;
     }
 
     private void validarExistenciaPadres(Long depositoId, Long productoId) {

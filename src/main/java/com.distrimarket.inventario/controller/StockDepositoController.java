@@ -2,7 +2,9 @@ package com.distrimarket.inventario.controller;
 
 import com.distrimarket.commons.dto.StockDepositoRequestDTO;
 import com.distrimarket.commons.dto.StockDepositoResponseDTO;
+import com.distrimarket.commons.dto.StockMovimientoRequestDTO;
 import com.distrimarket.commons.entity.StockDeposito;
+import jakarta.validation.Valid;
 import com.distrimarket.inventario.service.StockDepositoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -12,6 +14,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/stock-depositos")
@@ -43,5 +47,12 @@ public class StockDepositoController extends BaseController<StockDeposito, Stock
             @PathVariable Long depositoId,
             @PathVariable Long productoId) {
         return ResponseEntity.ok(stockDepositoService.findByDepositoIdAndProductoId(depositoId, productoId));
+    }
+
+    @PostMapping("/movimientos")
+    @Operation(summary = "Aplicar movimientos de stock en un depósito (cantidad positiva ingresa, negativa descuenta)")
+    public ResponseEntity<List<StockDepositoResponseDTO>> aplicarMovimientos(
+            @Valid @RequestBody StockMovimientoRequestDTO movimientoDTO) {
+        return ResponseEntity.ok(stockDepositoService.aplicarMovimientos(movimientoDTO));
     }
 }

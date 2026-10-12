@@ -5,7 +5,6 @@ import com.distrimarket.commons.dto.AjusteStockRequestDTO;
 import com.distrimarket.commons.dto.AjusteStockResponseDTO;
 import com.distrimarket.commons.entity.*;
 import com.distrimarket.commons.enums.TipoAjuste;
-import com.distrimarket.inventario.exception.InsufficientStockException;
 import com.distrimarket.inventario.exception.ResourceNotFoundException;
 import com.distrimarket.inventario.exception.IllegalArgumentException;
 import com.distrimarket.inventario.mapper.AjusteStockDetalleMapper;
@@ -31,7 +30,7 @@ public class AjusteStockServiceImpl
     private final DepositoRepository depositoRepository;
     private final EmpleadoRepository empleadoRepository;
     private final ProductoRepository productoRepository;
-    private final StockDepositoRepository stockDepositoRepository;
+    private final StockDepositoService stockDepositoService;
     private final AjusteStockDetalleMapper detalleMapper;
     private final AjusteStockSpecification ajusteStockSpecification;
 
@@ -40,7 +39,7 @@ public class AjusteStockServiceImpl
                                   DepositoRepository depositoRepository,
                                   EmpleadoRepository empleadoRepository,
                                   ProductoRepository productoRepository,
-                                  StockDepositoRepository stockDepositoRepository,
+                                  StockDepositoService stockDepositoService,
                                   AjusteStockDetalleMapper detalleMapper,
                                   AjusteStockSpecification ajusteStockSpecification) {
         super(ajusteStockRepository, ajusteStockMapper);
@@ -48,7 +47,7 @@ public class AjusteStockServiceImpl
         this.depositoRepository = depositoRepository;
         this.empleadoRepository = empleadoRepository;
         this.productoRepository = productoRepository;
-        this.stockDepositoRepository = stockDepositoRepository;
+        this.stockDepositoService = stockDepositoService;
         this.detalleMapper = detalleMapper;
         this.ajusteStockSpecification = ajusteStockSpecification;
     }
@@ -98,29 +97,12 @@ public class AjusteStockServiceImpl
     }
 
     private void updateStockDeposito(Deposito deposito, Producto producto, Integer cantidad, TipoAjuste tipo) {
-        StockDeposito stock = stockDepositoRepository.findByDepositoIdAndProductoId(deposito.getId(), producto.getId())
-                .orElseGet(() -> StockDeposito.builder()
-                        .deposito(deposito)
-                        .producto(producto)
-                        .cantidad(0)
-                        .build());
-
-        int cantidadAnterior = stock.getCantidad();
-
+        // La regla de stock (bloqueo de fila y validación de existencias) vive en StockDepositoService.
         if (tipo == TipoAjuste.POSITIVO) {
-            stock.setCantidad(cantidadAnterior + cantidad);
+            stockDepositoService.aplicarMovimiento(deposito, producto, cantidad);
         } else if (tipo == TipoAjuste.NEGATIVO) {
-            if (cantidadAnterior < cantidad) {
-                throw new InsufficientStockException(String.format(
-                        "Stock insuficiente para el producto '%s' (ID %d). Disponible: %d, Solicitado descontar: %d",
-                        producto.getNombre(), producto.getId(), cantidadAnterior, cantidad));
-            }
-            stock.setCantidad(cantidadAnterior - cantidad);
+            stockDepositoService.aplicarMovimiento(deposito, producto, -cantidad);
         }
-
-        stockDepositoRepository.save(stock);
-        log.debug("Stock actualizado para producto ID {} en depósito ID {}: {} -> {} (Ajuste {})",
-                producto.getId(), deposito.getId(), cantidadAnterior, stock.getCantidad(), tipo);
     }
 
     private void validateRequest(AjusteStockRequestDTO dto) {
