@@ -13,6 +13,11 @@ import com.distrimarket.inventario.specification.ProductoSpecification;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import lombok.extern.slf4j.Slf4j;
@@ -24,16 +29,27 @@ public class ProductoServiceImpl extends BaseServiceImpl<Producto, ProductoReque
     private final ProductoRepository productoRepository;
     private final ProductoMapper productoMapper;
     private final ProductoSpecification productoSpecification;
+    private final CacheManager cacheManager;
 
-    public ProductoServiceImpl(ProductoRepository productoRepository, ProductoMapper productoMapper, ProductoSpecification productoSpecification) {
+    public ProductoServiceImpl(ProductoRepository productoRepository, ProductoMapper productoMapper, ProductoSpecification productoSpecification, CacheManager cacheManager) {
         super(productoRepository, productoMapper);
         this.productoRepository = productoRepository;
         this.productoMapper = productoMapper;
         this.productoSpecification = productoSpecification;
+        this.cacheManager = cacheManager;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    @Cacheable(value = "productos", key = "'api_producto_' + #id")
+    public ProductoResponseDTO findById(Long id) {
+        log.debug("Cache miss para producto con clave 'api_producto_{}'. Consultando BD...", id);
+        return super.findById(id);
     }
 
     @Override
     @Transactional
+    @CachePut(value = "productos", key = "'api_producto_' + #result.id", condition = "#result != null && #result.id != null")
     public ProductoResponseDTO create(ProductoRequestDTO createDTO) {
         validateCreate(createDTO);
         return super.create(createDTO);
@@ -41,9 +57,20 @@ public class ProductoServiceImpl extends BaseServiceImpl<Producto, ProductoReque
 
     @Override
     @Transactional
+    @CacheEvict(value = "productos", key = "'api_producto_' + #id")
     public ProductoResponseDTO update(Long id, ProductoRequestDTO updateDTO) {
         validateUpdate(id, updateDTO);
+        log.debug("Actualizando producto ID {} y desalojando clave 'api_producto_{}' de Redis", id, id);
         return super.update(id, updateDTO);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<ProductoResponseDTO> findAll(Pageable pageable) {
+        Page<ProductoResponseDTO> entityPage = super.findAll(pageable);
+        // Cada producto recuperado se guarda individualmente
+        cachearProductosPage(entityPage, "general");
+        return entityPage;
     }
 
     @Transactional(readOnly = true)
@@ -55,8 +82,20 @@ public class ProductoServiceImpl extends BaseServiceImpl<Producto, ProductoReque
                 .and(productoSpecification.hasMarcaId(marcaId));
 
         Page<Producto> entityPage = productoRepository.findAll(spec, pageable);
+        Page<ProductoResponseDTO> dtoPage = entityPage.map(productoMapper::toDTO);
 
-        return entityPage.map(productoMapper::toDTO);
+        // Cada producto recuperado se guarda individualmente
+        cachearProductosPage(dtoPage, "con especificaciones");
+
+        return dtoPage;
+    }
+
+    @Override
+    @Transactional
+    @CacheEvict(value = "productos", key = "'api_producto_' + #id")
+    public void deleteById(Long id) {
+        log.debug("Eliminando producto ID {} y desalojando clave 'api_producto_{}' de Redis", id, id);
+        super.deleteById(id);
     }
 
     private void validateCreate(ProductoRequestDTO dto) {
@@ -80,6 +119,20 @@ public class ProductoServiceImpl extends BaseServiceImpl<Producto, ProductoReque
         if (dto.getCodigoBarra() != null && !dto.getCodigoBarra().isBlank()
                 && productoRepository.existsByCodigoBarraAndIdNot(dto.getCodigoBarra(), id)) {
             throw new DuplicateResourceException("Ya existe otro producto con el código de barra: " + dto.getCodigoBarra());
+        }
+    }
+
+    private void cachearProductosPage(Page<ProductoResponseDTO> page, String tipoConsulta) {
+        Cache cache = cacheManager.getCache("productos");
+        if (cache != null) {
+            page.forEach(dto -> {
+                if (dto.getId() != null) {
+                    String customKey = "api_producto_" + dto.getId();
+                    cache.put(customKey, dto);
+                }
+            });
+            log.debug("Se almacenaron {} productos en caché bajo 'api_producto_*' desde consulta {}",
+                    page.getNumberOfElements(), tipoConsulta);
         }
     }
 }
