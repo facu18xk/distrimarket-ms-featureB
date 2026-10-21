@@ -7,7 +7,7 @@
       <env name="DB_USER" value="postgres.hltteizngqjulmnetvhk" />
       <env name="DB_PASSWORD" value="onemoretimei'mgonacelebrate" />
     </envs>
-    <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UnknownPolicyInFreeMode" />
+    <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
     <module name="distrimarket-inventario" />
     <option name="SPRING_BOOT_MAIN_CLASS" value="com.distrimarket.inventario.InventarioApplication" />
     <extension name="coverage">

@@ -9,6 +9,30 @@ spring:
   devtools:
     restart:
       enabled: false
+  data:
+    redis:
+      host: localhost
+      port: 6379
+    cache:
+      type: redis
+
+  # Propiedades para TTLs personalizados (en segundos)
+  cache:
+    enabled: true
+    categoria:
+      ttl-seconds: 3600   # 1 hora para categorías
+    marca:
+      ttl-seconds: 3600   # 1 hora para marcas
+    producto:
+      ttl-seconds: 900    # 15 minutos para productos
+    empleado:
+      ttl-seconds: 1800   # 30 minutos para empleados
+
+  # Logs de traza para verificar Cache Hits y Misses en consola
+  logging:
+    level:
+      org.springframework.cache: TRACE
+      org.springframework.cache.interceptor: TRACE
 
   # Configuración de la Base de Datos (PostgreSQL)
   datasource:
