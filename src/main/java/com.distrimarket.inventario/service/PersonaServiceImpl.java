@@ -10,25 +10,43 @@ import com.distrimarket.inventario.mapper.PersonaMapper;
 import com.distrimarket.inventario.repository.PersonaRepository;
 import com.distrimarket.inventario.service.BaseServiceImpl;
 import com.distrimarket.inventario.service.PersonaService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 
 @Slf4j
 @Service
 public class PersonaServiceImpl extends BaseServiceImpl<Persona, PersonaRequestDTO, PersonaResponseDTO> implements PersonaService {
 
     private final PersonaRepository personaRepository;
+    private final CacheManager cacheManager;
 
-    public PersonaServiceImpl(PersonaRepository personaRepository, PersonaMapper personaMapper) {
+    public PersonaServiceImpl(PersonaRepository personaRepository, PersonaMapper personaMapper, CacheManager cacheManager) {
         super(personaRepository, personaMapper);
         this.personaRepository = personaRepository;
+        this.cacheManager = cacheManager;
     }
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(value = "personas", key = "'api_persona_' + #id")
+    public PersonaResponseDTO findById(Long id) {
+        log.debug("Cache miss para 'api_persona_{}'. Consultando base de datos...", id);
+        return super.findById(id);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    @Cacheable(value = "personas", key = "'api_persona_ci_' + #ci")
     public PersonaResponseDTO findByCi(String ci) {
-        log.debug("Buscando persona por CI: {}", ci);
+        log.debug("Cache miss para 'api_persona_ci_{}'. Consultando base de datos...", ci);
         Persona persona = personaRepository.findByCi(ci)
                 .orElseThrow(() -> new ResourceNotFoundException("No existe una persona con el CI: " + ci));
         return mapper.toDTO(persona);
@@ -36,25 +54,77 @@ public class PersonaServiceImpl extends BaseServiceImpl<Persona, PersonaRequestD
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(value = "personas", key = "'api_persona_ruc_' + #ruc")
     public PersonaResponseDTO findByRuc(String ruc) {
-        log.debug("Buscando persona por RUC: {}", ruc);
+        log.debug("Cache miss para 'api_persona_ruc_{}'. Consultando base de datos...", ruc);
         Persona persona = personaRepository.findByRuc(ruc)
                 .orElseThrow(() -> new ResourceNotFoundException("No existe una persona con el RUC: " + ruc));
         return mapper.toDTO(persona);
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public Page<PersonaResponseDTO> findAll(Pageable pageable) {
+        Page<PersonaResponseDTO> page = super.findAll(pageable);
+        Cache cache = cacheManager.getCache("personas");
+        if (cache != null) {
+            page.forEach(p -> {
+                if (p.getId() != null) {
+                    cache.put("api_persona_" + p.getId(), p);
+                    if (p.getCi() != null && !p.getCi().isBlank()) {
+                        cache.put("api_persona_ci_" + p.getCi(), p);
+                    }
+                    if (p.getRuc() != null && !p.getRuc().isBlank()) {
+                        cache.put("api_persona_ruc_" + p.getRuc(), p);
+                    }
+                }
+            });
+            log.debug("Se poblaron {} personas individualmente en caché desde la página {}",
+                    page.getNumberOfElements(), pageable.getPageNumber());
+        }
+        return page;
+    }
+
+    @Override
     @Transactional
+    @CachePut(value = "personas", key = "'api_persona_' + #result.id", condition = "#result != null && #result.id != null")
     public PersonaResponseDTO create(PersonaRequestDTO requestDTO) {
         validateCreate(requestDTO);
-        return super.create(requestDTO);
+        PersonaResponseDTO creada = super.create(requestDTO);
+        // Precalentar también sus claves de CI o RUC si están presentes
+        Cache cache = cacheManager.getCache("personas");
+        if (cache != null) {
+            if (creada.getCi() != null && !creada.getCi().isBlank()) {
+                cache.put("api_persona_ci_" + creada.getCi(), creada);
+            }
+            if (creada.getRuc() != null && !creada.getRuc().isBlank()) {
+                cache.put("api_persona_ruc_" + creada.getRuc(), creada);
+            }
+        }
+
+        return creada;
     }
 
     @Override
     @Transactional
     public PersonaResponseDTO update(Long id, PersonaRequestDTO requestDTO) {
+        Persona actual = personaRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("No se encuentra la persona con ID: " + id));
+
         validateUpdate(id, requestDTO);
+        deletePersonaKeys(id, actual.getCi(), actual.getRuc());
+
         return super.update(id, requestDTO);
+    }
+
+    @Override
+    @Transactional
+    public void deleteById(Long id) {
+        Persona persona = personaRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("No se encuentra la persona con ID: " + id));
+
+        deletePersonaKeys(id, persona.getCi(), persona.getRuc());
+        super.deleteById(id);
     }
 
     private void validateCreate(PersonaRequestDTO dto) {
@@ -103,6 +173,20 @@ public class PersonaServiceImpl extends BaseServiceImpl<Persona, PersonaRequestD
             if (personaRepository.existsByRuc(dto.getRuc())) {
                 throw new DuplicateResourceException("El nuevo RUC ya pertenece a otra persona: " + dto.getRuc());
             }
+        }
+    }
+
+    private void deletePersonaKeys(Long id, String ci, String ruc) {
+        Cache cache = cacheManager.getCache("personas");
+        if (cache != null) {
+            cache.evict("api_persona_" + id);
+            if (ci != null && !ci.isBlank()) {
+                cache.evict("api_persona_ci_" + ci);
+            }
+            if (ruc != null && !ruc.isBlank()) {
+                cache.evict("api_persona_ruc_" + ruc);
+            }
+            log.debug("Caché invalidado para persona ID {}, CI {} y RUC {}", id, ci, ruc);
         }
     }
 }
