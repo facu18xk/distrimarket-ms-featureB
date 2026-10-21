@@ -33,6 +33,9 @@ public class RedisCacheConfig {
     @Value("${cache.producto.ttl-seconds:900}")
     private long productoTtl;
 
+    @Value("${cache.deposito.ttl-seconds:1800}")
+    private long depositoTtl;
+
     @Value("${cache.persona.ttl-seconds:1800}")
     private long personaTtl;
 
@@ -62,6 +65,7 @@ public class RedisCacheConfig {
         cacheConfigurations.put("categorias", baseConfig.entryTtl(Duration.ofSeconds(categoriaTtl)));
         cacheConfigurations.put("marcas", baseConfig.entryTtl(Duration.ofSeconds(marcaTtl)));
         cacheConfigurations.put("productos", baseConfig.entryTtl(Duration.ofSeconds(productoTtl)));
+        cacheConfigurations.put("depositos", baseConfig.entryTtl(Duration.ofSeconds(depositoTtl)));
         cacheConfigurations.put("personas", baseConfig.entryTtl(Duration.ofSeconds(personaTtl)));
         cacheConfigurations.put("empleados", baseConfig.entryTtl(Duration.ofSeconds(empleadoTtl)));
 
