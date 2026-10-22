@@ -4,6 +4,7 @@ import com.distrimarket.commons.dto.ErrorResponseDTO;
 import com.distrimarket.commons.dto.FieldErrorDTO;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.mapping.PropertyReferenceException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 //import org.springframework.security.access.AccessDeniedException;
@@ -23,6 +24,16 @@ import java.util.List;
 public class GlobalExceptionHandler {
 
     // --- 400 BAD REQUEST ---
+    @ExceptionHandler(PropertyReferenceException.class)
+    public ResponseEntity<ErrorResponseDTO> handleInvalidProperty(PropertyReferenceException ex, HttpServletRequest request) {
+        log.warn("Campo inválido [400 BAD REQUEST] en {} {}: {}",
+                request.getMethod(), request.getRequestURI(), ex.getPropertyName());
+        return buildResponse(HttpStatus.BAD_REQUEST,
+                "Campo de ordenamiento inválido: " + ex.getPropertyName()
+                        + ". Use un campo válido del recurso u omita el parámetro sort.",
+                request, null);
+    }
+
     @ExceptionHandler({BadRequestException.class, IllegalArgumentException.class})
     public ResponseEntity<ErrorResponseDTO> handleBadRequest(RuntimeException ex, HttpServletRequest request) {
         log.warn("Solicitud inválida [400 BAD REQUEST] en {} {}: {}",

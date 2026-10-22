@@ -1,5 +1,5 @@
 server:
-  port: 8081 # Inventario correrá en el puerto 8081
+  port: ${PORT:8081}
   servlet:
     context-path: /inventario
 
@@ -12,9 +12,9 @@ spring:
 
   # Configuración de la Base de Datos (PostgreSQL)
   datasource:
-    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:pos_db}?sslmode=require
+    url: ${SPRING_DATASOURCE_URL:${DB_URL:jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:pos_db}?sslmode=${DB_SSLMODE:${DB_SSL_MODE:require}}&prepareThreshold=${DB_PREPARE_THRESHOLD:0}}}
     username: ${DB_USER:postgres}
-    password: ${DB_PASSWORD:postgres}
+    password: ${DB_PASSWORD:}
     driver-class-name: org.postgresql.Driver
 
   jpa:
@@ -24,7 +24,7 @@ spring:
 
   # Configuración de Liquibase (Hereda los changelogs de commons)
   liquibase:
-    enabled: true
+    enabled: ${LIQUIBASE_ENABLED:true}
     change-log: classpath:db/changelog/db.changelog-master.yaml
 
 # Configuración de Spring Cloud OpenFeign
@@ -47,9 +47,9 @@ info:
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:8761/eureka/
-    register-with-eureka: true
-    fetch-registry: true
+      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:${EUREKA_URL:http://localhost:8761/eureka/}}
+    register-with-eureka: ${EUREKA_REGISTER:true}
+    fetch-registry: ${EUREKA_FETCH:true}
   instance:
     prefer-ip-address: true
     instance-id: ${spring.application.name}:${server.port}
