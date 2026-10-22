@@ -21,27 +21,12 @@
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <distrimarket-common.version>1.0.1-SNAPSHOT</distrimarket-common.version>
-        <org.springframework.cloud.version>4.1.0</org.springframework.cloud.version>
         <lombok.version>1.18.30</lombok.version>
         <org.mapstruct.version>1.5.5.Final</org.mapstruct.version>
         <lombok-mapstruct-binding.version>0.2.0</lombok-mapstruct-binding.version>
         <org.springdoc.version>2.5.0</org.springdoc.version>
-        <spring-cloud.version>2023.0.1</spring-cloud.version>
 
     </properties>
-
-    <!-- Gestión de versiones de Spring Cloud -->
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.springframework.cloud</groupId>
-                <artifactId>spring-cloud-dependencies</artifactId>
-                <version>${spring-cloud.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 
     <dependencies>
         <!-- 1. Módulo Común (distrimarket-common) -->
@@ -65,14 +50,7 @@
             <optional>true</optional>
         </dependency>
 
-        <!-- 4. Spring Cloud OpenFeign -->
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-openfeign</artifactId>
-            <version>${org.springframework.cloud.version}</version>
-        </dependency>
-
-        <!-- 5. Lombok -->
+        <!-- 4. Lombok -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
@@ -107,11 +85,6 @@
             <scope>runtime</scope>
         </dependency>
 
-        <!-- 10. Cliente Eureka -->
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
-        </dependency>
     </dependencies>
 
     <build>
