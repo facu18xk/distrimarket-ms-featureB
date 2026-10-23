@@ -167,6 +167,10 @@ security:
     - pattern: /stock-depositos/**
       methods: [GET]
       roles: [ADMIN, VENDEDOR, COMPRADOR, DEPOSITERO]
+    # Movimientos de ventas y compras: el método valida además que el origen coincida con el rol.
+    - pattern: /stock-depositos/movimientos
+      methods: [POST]
+      roles: [ADMIN, VENDEDOR, COMPRADOR]
     - pattern: /stock-depositos/**
       roles: [ADMIN, DEPOSITERO]
 
@@ -183,6 +187,10 @@ security:
     - pattern: /personas/**
       roles: [ADMIN]
 
+    # Lectura de empleados para elegir vendedor (ventas) o responsable (ajustes y transferencias).
+    - pattern: /empleados/**
+      methods: [GET]
+      roles: [ADMIN, VENDEDOR, DEPOSITERO]
     - pattern: /empleados/**
       roles: [ADMIN]
 

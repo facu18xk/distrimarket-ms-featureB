@@ -33,14 +33,14 @@ public class EmpleadoController extends BaseController<Empleado, EmpleadoRequest
     }
 
     @Override
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'VENDEDOR', 'DEPOSITERO')")
     @Operation(summary = "Obtener un empleado por su ID")
     public ResponseEntity<EmpleadoResponseDTO> getById(@PathVariable Long id) {
         return super.getById(id);
     }
 
     @GetMapping
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'VENDEDOR', 'DEPOSITERO')")
     @Operation(summary = "Listar empleados con paginación y filtros opcionales por cargo o estado")
     public ResponseEntity<Page<EmpleadoResponseDTO>> getAll(
             @Parameter(description = "Cargo del empleado (opcional)")

@@ -65,9 +65,16 @@ public class StockDepositoController extends BaseController<StockDeposito, Stock
         return ResponseEntity.ok(stockDepositoService.findByDepositoIdAndProductoId(depositoId, productoId));
     }
 
+    /*
+     * Lo usan ventas y compras con el token del usuario. El origen tiene que corresponder a su rol:
+     * un vendedor solo mueve stock por ventas y un comprador solo por compras (ADMIN, ambos).
+     * Las cantidades pueden ser de los dos signos: anular una venta repone stock.
+     */
     @PostMapping("/movimientos")
-    @PreAuthorize("hasAnyRole('ADMIN', 'DEPOSITERO')")
-    @Operation(summary = "Aplicar movimientos de stock en un depósito (cantidad positiva ingresa, negativa descuenta)")
+    @PreAuthorize("hasRole('ADMIN')"
+            + " or (#movimientoDTO.origen?.name() == 'VENTA' and hasRole('VENDEDOR'))"
+            + " or (#movimientoDTO.origen?.name() == 'COMPRA' and hasRole('COMPRADOR'))")
+    @Operation(summary = "Aplicar movimientos de stock de una venta o compra (cantidad positiva ingresa, negativa descuenta)")
     public ResponseEntity<List<StockDepositoResponseDTO>> aplicarMovimientos(
             @Valid @RequestBody StockMovimientoRequestDTO movimientoDTO) {
         return ResponseEntity.ok(stockDepositoService.aplicarMovimientos(movimientoDTO));

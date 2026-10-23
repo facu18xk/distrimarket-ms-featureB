@@ -172,8 +172,8 @@ public class StockDepositoServiceImpl
         if (dto.getDetalles() == null || dto.getDetalles().isEmpty()) {
             throw new IllegalArgumentException("El movimiento debe contener al menos un detalle de producto.");
         }
-        log.info("Aplicando movimiento de stock en depósito ID {} con {} detalle(s). Motivo: {}",
-                dto.getIdDeposito(), dto.getDetalles().size(), dto.getMotivo());
+        log.info("Aplicando movimiento de stock ({}) en depósito ID {} con {} detalle(s). Motivo: {}",
+                dto.getOrigen(), dto.getIdDeposito(), dto.getDetalles().size(), dto.getMotivo());
 
         Deposito deposito = depositoRepository.findById(dto.getIdDeposito())
                 .orElseThrow(() -> new ResourceNotFoundException("Depósito no encontrado con ID: " + dto.getIdDeposito()));
