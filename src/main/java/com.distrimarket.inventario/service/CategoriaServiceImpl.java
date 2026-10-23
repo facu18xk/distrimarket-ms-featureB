@@ -3,6 +3,7 @@ package com.distrimarket.inventario.service;
 import com.distrimarket.commons.dto.CategoriaRequestDTO;
 import com.distrimarket.commons.dto.CategoriaResponseDTO;
 import com.distrimarket.commons.entity.Categoria;
+import com.distrimarket.inventario.config.CacheConfig;
 import com.distrimarket.inventario.exception.DuplicateResourceException;
 import com.distrimarket.inventario.mapper.CategoriaMapper;
 import com.distrimarket.inventario.repository.CategoriaRepository;
@@ -38,9 +39,9 @@ public class CategoriaServiceImpl extends BaseServiceImpl<Categoria, CategoriaRe
 
     @Override
     @Transactional(readOnly = true)
-    @Cacheable(value = "categorias", key = "'api_categoria_' + #id")
+    @Cacheable(value = CacheConfig.CATEGORIA, key = "#id")
     public CategoriaResponseDTO findById(Long id) {
-        log.debug("Cache miss para 'api_categoria_{}'. Consultando base de datos...", id);
+        log.debug("Cache miss para categoría ID {}. Consultando base de datos...", id);
         return super.findById(id);
     }
 
@@ -49,15 +50,14 @@ public class CategoriaServiceImpl extends BaseServiceImpl<Categoria, CategoriaRe
     public Page<CategoriaResponseDTO> findAll(Pageable pageable) {
         Page<CategoriaResponseDTO> paginaCategorias = super.findAll(pageable);
 
-        Cache cache = cacheManager.getCache("categorias");
+        Cache cache = cacheManager.getCache(CacheConfig.CATEGORIA);
         if (cache != null) {
             paginaCategorias.forEach(categoria -> {
                 if (categoria.getId() != null) {
-                    String customKey = "api_categoria_" + categoria.getId();
-                    cache.put(customKey, categoria);
+                    cache.put(categoria.getId(), categoria);
                 }
             });
-            log.debug("Se almacenaron {} categorías de la página {} individualmente en Redis con prefijo 'api_categoria_'",
+            log.debug("Se almacenaron {} categorías de la página {} individualmente en Redis",
                     paginaCategorias.getNumberOfElements(), pageable.getPageNumber());
         }
 
@@ -66,7 +66,7 @@ public class CategoriaServiceImpl extends BaseServiceImpl<Categoria, CategoriaRe
 
     @Override
     @Transactional
-    @CachePut(value = "categorias", key = "'api_categoria_' + #result.id", condition = "#result != null && #result.id != null")
+    @CachePut(value = CacheConfig.CATEGORIA, key = "#result.id", condition = "#result != null && #result.id != null")
     public CategoriaResponseDTO create(CategoriaRequestDTO createDTO) {
         log.debug("Comprobando disponibilidad de nombre de categoría: '{}'", createDTO.getNombre());
         if (categoriaRepository.existsByNombreIgnoreCase(createDTO.getNombre())) {
@@ -79,7 +79,7 @@ public class CategoriaServiceImpl extends BaseServiceImpl<Categoria, CategoriaRe
     // Borra la clave de Redis. La próxima lectura forzará consulta limpia a la BD.
     @Override
     @Transactional
-    @CacheEvict(value = "categorias", key = "'api_categoria_' + #id")
+    @CacheEvict(value = CacheConfig.CATEGORIA, key = "#id")
     public CategoriaResponseDTO update(Long id, CategoriaRequestDTO createDTO) {
         log.debug("Comprobando disponibilidad de nombre para categoría ID {}: '{}'", id, createDTO.getNombre());
         if (categoriaRepository.existsByNombreIgnoreCaseAndIdNot(createDTO.getNombre(), id)) {
@@ -107,9 +107,9 @@ public class CategoriaServiceImpl extends BaseServiceImpl<Categoria, CategoriaRe
 
     @Override
     @Transactional
-    @CacheEvict(value = "categorias", key = "'api_categoria_' + #id")
+    @CacheEvict(value = CacheConfig.CATEGORIA, key = "#id")
     public void deleteById(Long id) {
-        log.debug("Eliminando categoría ID {} y desalojando clave 'api_categoria_{}'", id, id);
+        log.debug("Eliminando categoría ID {} y desalojando clave de Redis", id);
         super.deleteById(id);
     }
 }

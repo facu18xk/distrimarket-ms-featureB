@@ -2,6 +2,9 @@ server:
   port: 8081
   servlet:
     context-path: /inventario
+  error:
+    include-stacktrace: never
+    include-message: never
 
 spring:
   application:
@@ -9,51 +12,82 @@ spring:
   devtools:
     restart:
       enabled: false
-  data:
-    redis:
-      host: localhost
-      port: 6379
-    cache:
-      type: redis
 
-  # Propiedades para TTLs personalizados (en segundos)
-  cache:
-    enabled: true
-    categoria:
-      ttl-seconds: 3600   # 1 hora para categorías
-    marca:
-      ttl-seconds: 3600   # 1 hora para marcas
-    producto:
-      ttl-seconds: 900    # 15 minutos para productos
-    deposito:
-      ttl-seconds: 1800   # 30 minutos para depósitos
-    persona:
-      ttl-seconds: 1800   # 30 minutos para personas
-    empleado:
-      ttl-seconds: 1800   # 30 minutos para empleados
-
-  # Logs de traza para verificar Cache Hits y Misses en consola
-  logging:
-    level:
-      org.springframework.cache: TRACE
-      org.springframework.cache.interceptor: TRACE
-
-  # Configuración de la Base de Datos (PostgreSQL)
   datasource:
-    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:pos_db}?sslmode=require
-    username: ${DB_USER:postgres}
-    password: ${DB_PASSWORD:postgres}
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:pos_db}?sslmode=${DB_SSL_MODE:require}&prepareThreshold=${DB_PREPARE_THRESHOLD:0}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: ${DB_POOL_MAX_SIZE:10}
+      minimum-idle: ${DB_POOL_MIN_IDLE:2}
+      connection-timeout: ${DB_CONNECTION_TIMEOUT_MS:30000}
+      idle-timeout: ${DB_IDLE_TIMEOUT_MS:600000}
+      max-lifetime: ${DB_MAX_LIFETIME_MS:1800000}
 
   jpa:
+    open-in-view: false
     hibernate:
-      ddl-auto: none
-    show-sql: true # Útil tenerlo en true durante el desarrollo para ver las consultas en consola
+      ddl-auto: ${JPA_DDL_AUTO:none}
+    properties:
+      hibernate:
+        format_sql: ${JPA_FORMAT_SQL:false}
+        jdbc:
+          time_zone: UTC
+    show-sql: ${JPA_SHOW_SQL:true} # Útil tenerlo en true durante el desarrollo para ver las consultas en consola
 
-  # Configuración de Liquibase (Hereda los changelogs de commons)
   liquibase:
-    enabled: true
+    enabled: ${LIQUIBASE_ENABLED:true}
     change-log: classpath:db/changelog/db.changelog-master.yaml
+    default-schema: public
+
+  mvc:
+    contentnegotiation:
+      default-content-type: application/json
+
+  cloud:
+    openfeign:
+      client:
+        config:
+          default:
+            connect-timeout: ${INVENTARIO_CONNECT_TIMEOUT_MS:3000}
+            read-timeout: ${INVENTARIO_READ_TIMEOUT_MS:15000}
+
+distrimarket:
+  cache:
+    enabled: ${CACHE_ENABLED:true}
+    key-prefix: ${CACHE_KEY_PREFIX:distrimarket:inventario}
+    default-ttl: ${CACHE_DEFAULT_TTL:10m}
+    scan-batch-size: ${CACHE_SCAN_BATCH_SIZE:100}
+    domains:
+      categoria: ${CACHE_TTL_CATEGORIA:60m}
+      marca: ${CACHE_TTL_MARCA:60m}
+      producto: ${CACHE_TTL_PRODUCTO:15m}
+      deposito: ${CACHE_TTL_DEPOSITO:30m}
+      persona: ${CACHE_TTL_PERSONA:30m}
+      empleado: ${CACHE_TTL_EMPLEADO:30m}
+
+# Logs de traza para verificar Cache Hits y Misses en consola
+logging:
+  file:
+    name: ${LOG_FILE:logs/distrimarket-inventario.log}
+  level:
+    root: ${LOG_LEVEL_ROOT:INFO}
+    com.distrimarket: ${LOG_LEVEL_APP:INFO}
+    com.distrimarket.inventario.service: ${LOG_LEVEL_SERVICE:DEBUG}
+    com.distrimarket.inventario.repository: ${LOG_LEVEL_REPOSITORY:DEBUG}
+    org.hibernate.SQL: ${LOG_LEVEL_SQL:WARN}
+    # Trazabilidad de HIT/MISS/SET/DELETE generada por tu LoggingCache
+    com.distrimarket.inventario.config.LoggingCache: ${LOG_LEVEL_CACHE:INFO}
+    org.springframework.security: ${LOG_LEVEL_SECURITY:INFO}
+    org.springframework.cache: TRACE
+    org.springframework.cache.interceptor: TRACE
+
+pagination:
+  default-page: ${PAGINATION_DEFAULT_PAGE:0}
+  default-page-size: ${PAGINATION_DEFAULT_PAGE_SIZE:10}
+  max-page-size: ${PAGINATION_MAX_PAGE_SIZE:${PAGINATION_SEARCH_LIMIT:100}}
+  one-indexed-parameters: ${PAGINATION_ONE_INDEXED:false}
 
 # Configuración de Spring Cloud OpenFeign
 springdoc:
@@ -84,3 +118,74 @@ eureka:
     instance-id: ${spring.application.name}:${server.port}
     status-page-url-path: /inventario/actuator/info
     health-check-url-path: /inventario/actuator/health
+
+# Seguridad: valida los tokens emitidos por distrimarket-ms-auth
+security:
+  jwt:
+    # Misma clave y emisor compartidos en todo el ecosistema
+    secret: ${JWT_SECRET:distrimarket-dev-secret-cambiar-en-produccion-2026}
+    issuer: ${JWT_ISSUER:distrimarket-auth}
+  # Rutas públicas (documentación OpenAPI, Swagger y salud del servicio)
+  public-paths:
+    - /actuator/health/**
+    - /actuator/info
+    - /openapi.yaml
+    - /swagger-ui.html
+    - /swagger-ui/**
+    - /v3/api-docs/**
+    - /error
+  # Reglas base por URL en orden de evaluación
+  rules:
+    # 1. Catálogos base: lectura compartida para ventas y compras
+    - pattern: /categorias/**
+      methods: [GET]
+      roles: [ADMIN, VENDEDOR, COMPRADOR, DEPOSITERO]
+    - pattern: /categorias/**
+      roles: [ADMIN]
+
+    - pattern: /marcas/**
+      methods: [GET]
+      roles: [ADMIN, VENDEDOR, COMPRADOR, DEPOSITERO]
+    - pattern: /marcas/**
+      roles: [ADMIN]
+
+    # 2. Productos: lectura abierta al negocio; modificaciones restringidas
+    - pattern: /productos/**
+      methods: [GET]
+      roles: [ADMIN, VENDEDOR, COMPRADOR, DEPOSITERO]
+    - pattern: /productos/**
+      roles: [ADMIN, DEPOSITERO]
+
+    # 3. Depósitos: lectura general; gestión reservada
+    - pattern: /depositos/**
+      methods: [GET]
+      roles: [ADMIN, VENDEDOR, COMPRADOR, DEPOSITERO]
+    - pattern: /depositos/**
+      roles: [ADMIN, DEPOSITERO]
+
+    # 4. Movimientos y existencias de stock
+    - pattern: /stock-depositos/**
+      methods: [GET]
+      roles: [ADMIN, VENDEDOR, COMPRADOR, DEPOSITERO]
+    - pattern: /stock-depositos/**
+      roles: [ADMIN, DEPOSITERO]
+
+    - pattern: /ajustes-stock/**
+      roles: [ADMIN, DEPOSITERO]
+
+    - pattern: /transferencias-stock/**
+      roles: [ADMIN, DEPOSITERO]
+
+    # 5. Personas y Empleados: datos sensibles / RRHH
+    - pattern: /personas/**
+      methods: [GET]
+      roles: [ADMIN, VENDEDOR, COMPRADOR]
+    - pattern: /personas/**
+      roles: [ADMIN]
+
+    - pattern: /empleados/**
+      roles: [ADMIN]
+
+    # 6. Regla de cierre: cualquier otro endpoint requiere autenticación de administrador
+    - pattern: /**
+      roles: [ADMIN]

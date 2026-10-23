@@ -13,7 +13,15 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/ajustes-stock")
@@ -27,14 +35,15 @@ public class AjusteStockController extends BaseController<AjusteStock, AjusteSto
         this.ajusteStockService = ajusteStockService;
     }
 
-    /*@GetMapping
-    @Operation(summary = "Listar ajustes de stock con paginación")
-    public ResponseEntity<Page<AjusteStockResponseDTO>> getAll(
-            @PageableDefault(size = 10, sort = "fechaCreacion") Pageable pageable) {
-        return doGetAll(pageable);
-    }*/
+    @Override
+    @PreAuthorize("hasAnyRole('ADMIN', 'DEPOSITERO')")
+    @Operation(summary = "Obtener un ajuste de stock por su ID")
+    public ResponseEntity<AjusteStockResponseDTO> getById(@PathVariable Long id) {
+        return super.getById(id);
+    }
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'DEPOSITERO')")
     @Operation(summary = "Listar ajustes de stock con paginación y filtros opcionales por depósito o empleado")
     public ResponseEntity<Page<AjusteStockResponseDTO>> getAll(
             @Parameter(description = "ID del depósito a filtrar (opcional)")
@@ -48,6 +57,7 @@ public class AjusteStockController extends BaseController<AjusteStock, AjusteSto
 
     @Override
     @PostMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'DEPOSITERO')")
     @Operation(summary = "Registrar un nuevo ajuste de stock e impactar el inventario")
     public ResponseEntity<AjusteStockResponseDTO> create(@Valid @RequestBody AjusteStockRequestDTO createDTO) {
         return ResponseEntity.status(HttpStatus.CREATED).body(ajusteStockService.create(createDTO));
@@ -55,15 +65,23 @@ public class AjusteStockController extends BaseController<AjusteStock, AjusteSto
 
     @Override
     @PutMapping("/{id}")
-    @Operation(summary = "Operación no soportada (inmutable)")
+    @PreAuthorize("hasAnyRole('ADMIN', 'DEPOSITERO')")
+    @Operation(summary = "Operación no soportada (los ajustes de stock son inmutables)")
     public ResponseEntity<AjusteStockResponseDTO> update(@PathVariable Long id, @Valid @RequestBody AjusteStockRequestDTO createDTO) {
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).build();
     }
 
     @Override
-    @DeleteMapping("/{id}")
-    @Operation(summary = "Operación no soportada (inmutable)")
+    @PreAuthorize("hasAnyRole('ADMIN', 'DEPOSITERO')")
+    @Operation(summary = "Operación no soportada (los ajustes de stock no se pueden eliminar)")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
+        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).build();
+    }
+
+    @Override
+    @PreAuthorize("hasAnyRole('ADMIN', 'DEPOSITERO')")
+    @Operation(summary = "Operación no soportada (los ajustes de stock no se reactivan)")
+    public ResponseEntity<Void> reactivar(@PathVariable Long id) {
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).build();
     }
 }

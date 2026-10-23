@@ -1,18 +1,16 @@
 package com.distrimarket.inventario.service;
 
-import com.distrimarket.commons.entity.Producto;
 import com.distrimarket.commons.dto.ProductoRequestDTO;
 import com.distrimarket.commons.dto.ProductoResponseDTO;
+import com.distrimarket.commons.entity.Producto;
+import com.distrimarket.inventario.config.CacheConfig;
 import com.distrimarket.inventario.exception.DuplicateResourceException;
-import com.distrimarket.inventario.exception.ResourceNotFoundException;
 import com.distrimarket.inventario.mapper.ProductoMapper;
 import com.distrimarket.inventario.repository.ProductoRepository;
 import com.distrimarket.inventario.service.BaseServiceImpl;
 import com.distrimarket.inventario.service.ProductoService;
 import com.distrimarket.inventario.specification.ProductoSpecification;
-import org.springframework.data.jpa.domain.Specification;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheEvict;
@@ -20,7 +18,9 @@ import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
@@ -31,7 +31,10 @@ public class ProductoServiceImpl extends BaseServiceImpl<Producto, ProductoReque
     private final ProductoSpecification productoSpecification;
     private final CacheManager cacheManager;
 
-    public ProductoServiceImpl(ProductoRepository productoRepository, ProductoMapper productoMapper, ProductoSpecification productoSpecification, CacheManager cacheManager) {
+    public ProductoServiceImpl(ProductoRepository productoRepository,
+                               ProductoMapper productoMapper,
+                               ProductoSpecification productoSpecification,
+                               CacheManager cacheManager) {
         super(productoRepository, productoMapper);
         this.productoRepository = productoRepository;
         this.productoMapper = productoMapper;
@@ -41,15 +44,15 @@ public class ProductoServiceImpl extends BaseServiceImpl<Producto, ProductoReque
 
     @Override
     @Transactional(readOnly = true)
-    @Cacheable(value = "productos", key = "'api_producto_' + #id")
+    @Cacheable(value = CacheConfig.PRODUCTO, key = "#id")
     public ProductoResponseDTO findById(Long id) {
-        log.debug("Cache miss para producto con clave 'api_producto_{}'. Consultando BD...", id);
+        log.debug("Cache miss para producto ID {}. Consultando base de datos...", id);
         return super.findById(id);
     }
 
     @Override
     @Transactional
-    @CachePut(value = "productos", key = "'api_producto_' + #result.id", condition = "#result != null && #result.id != null")
+    @CachePut(value = CacheConfig.PRODUCTO, key = "#result.id", condition = "#result != null && #result.id != null")
     public ProductoResponseDTO create(ProductoRequestDTO createDTO) {
         validateCreate(createDTO);
         return super.create(createDTO);
@@ -57,18 +60,25 @@ public class ProductoServiceImpl extends BaseServiceImpl<Producto, ProductoReque
 
     @Override
     @Transactional
-    @CacheEvict(value = "productos", key = "'api_producto_' + #id")
+    @CacheEvict(value = CacheConfig.PRODUCTO, key = "#id")
     public ProductoResponseDTO update(Long id, ProductoRequestDTO updateDTO) {
         validateUpdate(id, updateDTO);
-        log.debug("Actualizando producto ID {} y desalojando clave 'api_producto_{}' de Redis", id, id);
+        log.debug("Actualizando producto ID {} e invalidando clave de Redis", id);
         return super.update(id, updateDTO);
+    }
+
+    @Override
+    @Transactional
+    @CacheEvict(value = CacheConfig.PRODUCTO, key = "#id")
+    public void deleteById(Long id) {
+        log.debug("Eliminando producto ID {} y desalojando clave de Redis", id);
+        super.deleteById(id);
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<ProductoResponseDTO> findAll(Pageable pageable) {
         Page<ProductoResponseDTO> entityPage = super.findAll(pageable);
-        // Cada producto recuperado se guarda individualmente
         cachearProductosPage(entityPage, "general");
         return entityPage;
     }
@@ -77,6 +87,7 @@ public class ProductoServiceImpl extends BaseServiceImpl<Producto, ProductoReque
     public Page<ProductoResponseDTO> findAllWithSpecifications(Long categoriaId, Long marcaId, Pageable pageable) {
         log.debug("Consultando productos con filtros -> categoriaId: {}, marcaId: {}, página: {}, tamaño: {}",
                 categoriaId, marcaId, pageable.getPageNumber(), pageable.getPageSize());
+
         Specification<Producto> spec = Specification
                 .where(productoSpecification.hasCategoriaId(categoriaId))
                 .and(productoSpecification.hasMarcaId(marcaId));
@@ -84,18 +95,23 @@ public class ProductoServiceImpl extends BaseServiceImpl<Producto, ProductoReque
         Page<Producto> entityPage = productoRepository.findAll(spec, pageable);
         Page<ProductoResponseDTO> dtoPage = entityPage.map(productoMapper::toDTO);
 
-        // Cada producto recuperado se guarda individualmente
         cachearProductosPage(dtoPage, "con especificaciones");
 
         return dtoPage;
     }
 
-    @Override
-    @Transactional
-    @CacheEvict(value = "productos", key = "'api_producto_' + #id")
-    public void deleteById(Long id) {
-        log.debug("Eliminando producto ID {} y desalojando clave 'api_producto_{}' de Redis", id, id);
-        super.deleteById(id);
+    private void cachearProductosPage(Page<ProductoResponseDTO> page, String tipoConsulta) {
+        Cache cache = cacheManager.getCache(CacheConfig.PRODUCTO);
+        if (cache != null) {
+            page.forEach(dto -> {
+                if (dto.getId() != null) {
+                    // Se usa directamente el Long id como clave
+                    cache.put(dto.getId(), dto);
+                }
+            });
+            log.debug("Se almacenaron {} productos individualmente en caché desde consulta {}",
+                    page.getNumberOfElements(), tipoConsulta);
+        }
     }
 
     private void validateCreate(ProductoRequestDTO dto) {
@@ -119,20 +135,6 @@ public class ProductoServiceImpl extends BaseServiceImpl<Producto, ProductoReque
         if (dto.getCodigoBarra() != null && !dto.getCodigoBarra().isBlank()
                 && productoRepository.existsByCodigoBarraAndIdNot(dto.getCodigoBarra(), id)) {
             throw new DuplicateResourceException("Ya existe otro producto con el código de barra: " + dto.getCodigoBarra());
-        }
-    }
-
-    private void cachearProductosPage(Page<ProductoResponseDTO> page, String tipoConsulta) {
-        Cache cache = cacheManager.getCache("productos");
-        if (cache != null) {
-            page.forEach(dto -> {
-                if (dto.getId() != null) {
-                    String customKey = "api_producto_" + dto.getId();
-                    cache.put(customKey, dto);
-                }
-            });
-            log.debug("Se almacenaron {} productos en caché bajo 'api_producto_*' desde consulta {}",
-                    page.getNumberOfElements(), tipoConsulta);
         }
     }
 }

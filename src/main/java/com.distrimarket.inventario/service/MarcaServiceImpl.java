@@ -1,21 +1,22 @@
 package com.distrimarket.inventario.service;
 
-import com.distrimarket.commons.entity.Marca;
 import com.distrimarket.commons.dto.MarcaRequestDTO;
 import com.distrimarket.commons.dto.MarcaResponseDTO;
+import com.distrimarket.commons.entity.Marca;
+import com.distrimarket.inventario.config.CacheConfig;
 import com.distrimarket.inventario.exception.DuplicateResourceException;
 import com.distrimarket.inventario.mapper.MarcaMapper;
 import com.distrimarket.inventario.repository.MarcaRepository;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
@@ -32,9 +33,9 @@ public class MarcaServiceImpl extends BaseServiceImpl<Marca, MarcaRequestDTO, Ma
 
     @Override
     @Transactional(readOnly = true)
-    @Cacheable(value = "marcas", key = "'api_marca_' + #id")
+    @Cacheable(value = CacheConfig.MARCA, key = "#id")
     public MarcaResponseDTO findById(Long id) {
-        log.debug("Cache miss para 'api_marca_{}'. Consultando base de datos...", id);
+        log.debug("Cache miss para marca ID {}. Consultando base de datos...", id);
         return super.findById(id);
     }
 
@@ -43,15 +44,14 @@ public class MarcaServiceImpl extends BaseServiceImpl<Marca, MarcaRequestDTO, Ma
     public Page<MarcaResponseDTO> findAll(Pageable pageable) {
         Page<MarcaResponseDTO> paginaMarcas = super.findAll(pageable);
 
-        Cache cache = cacheManager.getCache("marcas");
+        Cache cache = cacheManager.getCache(CacheConfig.MARCA);
         if (cache != null) {
             paginaMarcas.forEach(marca -> {
                 if (marca.getId() != null) {
-                    String customKey = "api_marca_" + marca.getId();
-                    cache.put(customKey, marca);
+                    cache.put(marca.getId(), marca);
                 }
             });
-            log.debug("Se almacenaron {} marcas de la página {} individualmente en Redis con prefijo 'api_marca_'",
+            log.debug("Se almacenaron {} marcas de la página {} individualmente en Redis",
                     paginaMarcas.getNumberOfElements(), pageable.getPageNumber());
         }
 
@@ -60,7 +60,7 @@ public class MarcaServiceImpl extends BaseServiceImpl<Marca, MarcaRequestDTO, Ma
 
     @Override
     @Transactional
-    @CachePut(value = "marcas", key = "'api_marca_' + #result.id", condition = "#result != null && #result.id != null")
+    @CachePut(value = CacheConfig.MARCA, key = "#result.id", condition = "#result != null && #result.id != null")
     public MarcaResponseDTO create(MarcaRequestDTO createDTO) {
         log.debug("Comprobando disponibilidad de nombre de marca: '{}'", createDTO.getNombre());
         if (marcaRepository.existsByNombreIgnoreCase(createDTO.getNombre())) {
@@ -71,7 +71,7 @@ public class MarcaServiceImpl extends BaseServiceImpl<Marca, MarcaRequestDTO, Ma
 
     @Override
     @Transactional
-    @CacheEvict(value = "marcas", key = "'api_marca_' + #id")
+    @CacheEvict(value = CacheConfig.MARCA, key = "#id")
     public MarcaResponseDTO update(Long id, MarcaRequestDTO createDTO) {
         log.debug("Comprobando disponibilidad de nombre para marca ID {}: '{}'", id, createDTO.getNombre());
         if (marcaRepository.existsByNombreIgnoreCaseAndIdNot(createDTO.getNombre(), id)) {
@@ -83,9 +83,9 @@ public class MarcaServiceImpl extends BaseServiceImpl<Marca, MarcaRequestDTO, Ma
 
     @Override
     @Transactional
-    @CacheEvict(value = "marcas", key = "'api_marca_' + #id")
+    @CacheEvict(value = CacheConfig.MARCA, key = "#id")
     public void deleteById(Long id) {
-        log.debug("Eliminando marca ID {} y desalojando clave 'api_marca_{}'", id, id);
+        log.debug("Eliminando marca ID {} y desalojando clave de Redis", id);
         super.deleteById(id);
     }
 }

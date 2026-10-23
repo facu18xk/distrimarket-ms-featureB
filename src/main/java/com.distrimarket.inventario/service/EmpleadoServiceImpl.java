@@ -6,15 +6,15 @@ import com.distrimarket.commons.dto.PersonaResponseDTO;
 import com.distrimarket.commons.entity.Empleado;
 import com.distrimarket.commons.entity.Persona;
 import com.distrimarket.commons.enums.TipoPersona;
+import com.distrimarket.inventario.config.CacheConfig;
 import com.distrimarket.inventario.exception.DuplicateResourceException;
 import com.distrimarket.inventario.exception.ResourceNotFoundException;
-import com.distrimarket.inventario.mapper.PersonaMapper;
 import com.distrimarket.inventario.mapper.EmpleadoMapper;
+import com.distrimarket.inventario.mapper.PersonaMapper;
 import com.distrimarket.inventario.repository.EmpleadoRepository;
 import com.distrimarket.inventario.repository.PersonaRepository;
 import com.distrimarket.inventario.specification.EmpleadoSpecification;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheEvict;
@@ -23,7 +23,8 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
@@ -56,15 +57,15 @@ public class EmpleadoServiceImpl
 
     @Override
     @Transactional(readOnly = true)
-    @Cacheable(value = "empleados", key = "'api_empleado_' + #id")
+    @Cacheable(value = CacheConfig.EMPLEADO, key = "#id")
     public EmpleadoResponseDTO findById(Long id) {
-        log.debug("Cache miss para 'api_empleado_{}'. Consultando base de datos...", id);
+        log.debug("Cache miss para empleado con ID {}. Consultando base de datos...", id);
         return super.findById(id);
     }
 
     @Override
     @Transactional(readOnly = true)
-    @Cacheable(value = "empleados", key = "'api_empleado_persona_' + #personaId")
+    @Cacheable(value = CacheConfig.EMPLEADO, key = "'persona:' + #personaId")
     public EmpleadoResponseDTO findByPersonaId(Long personaId) {
         log.debug("Cache miss para empleado con persona ID {}. Consultando base de datos...", personaId);
         Empleado empleado = empleadoRepository.findByPersonaId(personaId)
@@ -74,7 +75,7 @@ public class EmpleadoServiceImpl
 
     @Override
     @Transactional
-    @CachePut(value = "empleados", key = "'api_empleado_' + #result.id", condition = "#result != null && #result.id != null")
+    @CachePut(value = CacheConfig.EMPLEADO, key = "#result.id", condition = "#result != null && #result.id != null")
     public EmpleadoResponseDTO create(EmpleadoRequestDTO createDTO) {
         log.info("Iniciando creación de empleado con cargo: '{}'", createDTO.getCargo());
 
@@ -110,12 +111,20 @@ public class EmpleadoServiceImpl
         Empleado guardado = empleadoRepository.save(empleado);
         log.info("Empleado registrado exitosamente con ID: {} asociado a Persona ID: {}", guardado.getId(), persona.getId());
 
-        return mapper.toDTO(guardado);
+        EmpleadoResponseDTO dto = mapper.toDTO(guardado);
+
+        // Precalentar la clave secundaria persona:<personaId>
+        Cache cache = cacheManager.getCache(CacheConfig.EMPLEADO);
+        if (cache != null && guardado.getPersona() != null) {
+            cache.put("persona:" + guardado.getPersona().getId(), dto);
+        }
+
+        return dto;
     }
 
     @Override
     @Transactional
-    @CacheEvict(value = "empleados", key = "'api_empleado_' + #id")
+    @CacheEvict(value = CacheConfig.EMPLEADO, key = "#id")
     public EmpleadoResponseDTO update(Long id, EmpleadoRequestDTO updateDTO) {
         log.info("Actualizando datos del empleado con ID: {}", id);
 
@@ -131,9 +140,9 @@ public class EmpleadoServiceImpl
         personaService.update(personaId, updateDTO.getPersona());
 
         // Invalida la búsqueda por personaId si estaba en caché
-        Cache cache = cacheManager.getCache("empleados");
+        Cache cache = cacheManager.getCache(CacheConfig.EMPLEADO);
         if (cache != null) {
-            cache.evict("api_empleado_persona_" + personaId);
+            cache.evict("persona:" + personaId);
         }
 
         mapper.updateEntityFromDto(updateDTO, empleadoExistente);
@@ -145,17 +154,17 @@ public class EmpleadoServiceImpl
 
     @Override
     @Transactional
-    @CacheEvict(value = "empleados", key = "'api_empleado_' + #id")
+    @CacheEvict(value = CacheConfig.EMPLEADO, key = "#id")
     public void deleteById(Long id) {
         Empleado empleado = empleadoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Empleado no encontrado con ID: " + id));
 
-        Cache cache = cacheManager.getCache("empleados");
+        Cache cache = cacheManager.getCache(CacheConfig.EMPLEADO);
         if (cache != null && empleado.getPersona() != null) {
-            cache.evict("api_empleado_persona_" + empleado.getPersona().getId());
+            cache.evict("persona:" + empleado.getPersona().getId());
         }
 
-        log.debug("Eliminando empleado ID {} y desalojando clave 'api_empleado_{}' de Redis", id, id);
+        log.debug("Eliminando empleado ID {} y desalojando clave de Redis", id);
         super.deleteById(id);
     }
 
@@ -182,6 +191,23 @@ public class EmpleadoServiceImpl
         return dtoPage;
     }
 
+    private void cachearEmpleados(Page<EmpleadoResponseDTO> page) {
+        Cache cache = cacheManager.getCache(CacheConfig.EMPLEADO);
+        if (cache != null) {
+            page.forEach(dto -> {
+                if (dto.getId() != null) {
+                    // Guarda por ID directo
+                    cache.put(dto.getId(), dto);
+                    // Si el DTO expone persona o personaId, guarda también persona:<id>
+                    if (dto.getPersona() != null && dto.getPersona().getId() != null) {
+                        cache.put("persona:" + dto.getPersona().getId(), dto);
+                    }
+                }
+            });
+            log.debug("Se almacenaron {} empleados individualmente en caché", page.getNumberOfElements());
+        }
+    }
+
     private Persona validatePersona(Long personaId) {
         log.debug("Verificando existencia y tipo de persona para ID: {}", personaId);
         Persona persona = personaRepository.findById(personaId)
@@ -192,17 +218,5 @@ public class EmpleadoServiceImpl
         }
 
         return persona;
-    }
-
-    private void cachearEmpleados(Page<EmpleadoResponseDTO> page) {
-        Cache cache = cacheManager.getCache("empleados");
-        if (cache != null) {
-            page.forEach(dto -> {
-                if (dto.getId() != null) {
-                    cache.put("api_empleado_" + dto.getId(), dto);
-                }
-            });
-            log.debug("Se almacenaron {} empleados individualmente en caché", page.getNumberOfElements());
-        }
     }
 }
