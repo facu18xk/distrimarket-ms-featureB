@@ -7,8 +7,8 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.mapping.PropertyReferenceException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-//import org.springframework.security.access.AccessDeniedException;
-//import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -59,18 +59,20 @@ public class GlobalExceptionHandler {
     }
 
     // --- 401 UNAUTHORIZED ---
-    // Atrapa fallos de autenticación cuando se use Spring Security
-    /*@ExceptionHandler(AuthenticationException.class)
+    @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<ErrorResponseDTO> handleUnauthorized(AuthenticationException ex, HttpServletRequest request) {
+        log.warn("Solicitud no autorizada [401 UNAUTHORIZED] en {} {}: {}",
+                request.getMethod(), request.getRequestURI(), ex.getMessage());
         return buildResponse(HttpStatus.UNAUTHORIZED, "No autenticado: se requiere token o credenciales válidas.", request, null);
-    }*/
+    }
 
     // --- 403 FORBIDDEN ---
-    // Atrapa intentos sin privilegios/roles suficientes
-    /*@ExceptionHandler(AccessDeniedException.class)
+    @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ErrorResponseDTO> handleAccessDenied(AccessDeniedException ex, HttpServletRequest request) {
+        log.warn("Permisos insuficientes [403 FORBIDDEN] en {} {}: {}",
+                request.getMethod(), request.getRequestURI(), ex.getMessage());
         return buildResponse(HttpStatus.FORBIDDEN, "Acceso denegado: permisos insuficientes para ejecutar esta acción.", request, null);
-    }*/
+    }
 
     // --- 404 NOT FOUND ---
     @ExceptionHandler(ResourceNotFoundException.class)
