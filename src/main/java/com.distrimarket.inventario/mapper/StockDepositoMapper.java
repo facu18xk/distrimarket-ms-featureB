@@ -19,6 +19,7 @@ public interface StockDepositoMapper extends BaseMapper<StockDeposito, StockDepo
     @Mapping(target = "fechaModificacion", ignore = true)
     @Mapping(target = "deposito.id", source = "idDeposito")
     @Mapping(target = "producto.id", source = "idProducto")
+    @Mapping(target = "activo", ignore = true)
     StockDeposito toEntity(StockDepositoRequestDTO dto);
 
     @Override
@@ -37,5 +38,6 @@ public interface StockDepositoMapper extends BaseMapper<StockDeposito, StockDepo
     @Mapping(target = "fechaModificacion", ignore = true)
     @Mapping(target = "deposito.id", source = "idDeposito")
     @Mapping(target = "producto.id", source = "idProducto")
+    @Mapping(target = "activo", ignore = true)
     void updateEntityFromDto(StockDepositoRequestDTO dto, @MappingTarget StockDeposito entity);
 }

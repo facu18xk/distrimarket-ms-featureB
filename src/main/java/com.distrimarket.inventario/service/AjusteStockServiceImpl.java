@@ -73,6 +73,7 @@ public class AjusteStockServiceImpl
         AjusteStock ajuste = mapper.toEntity(dto);
         ajuste.setDeposito(deposito);
         ajuste.setEmpleado(empleado);
+        ajuste.setActivo(true);
 
         // Procesar detalles y actualizar stock en depósito de forma atómica
         for (AjusteStockDetalleRequestDTO detDto : dto.getDetalles()) {
@@ -124,8 +125,44 @@ public class AjusteStockServiceImpl
     }
 
     @Override
+    @Transactional
     public void deleteById(Long id) {
-        throw new UnsupportedOperationException("Operación no permitida: No se pueden eliminar registros históricos de ajuste de stock.");
+        log.info("Iniciando anulación (borrado lógico) del ajuste de stock con ID: {}", id);
+
+        AjusteStock ajuste = ajusteStockRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Ajuste de stock no encontrado con ID: " + id));
+
+        if (Boolean.FALSE.equals(ajuste.getActivo())) {
+            throw new IllegalArgumentException("El ajuste de stock con ID " + id + " ya se encuentra anulado.");
+        }
+
+        // Rollback compensatorio sobre el stock en depósito
+        for (AjusteStockDetalle detalle : ajuste.getDetalles()) {
+            Producto producto = detalle.getProducto();
+            Integer cantidad = detalle.getCantidad();
+
+            // Si el ajuste original sumó stock (POSITIVO), la anulación lo descuenta (-cantidad).
+            // Si el ajuste original restó stock (NEGATIVO), la anulación lo devuelve (+cantidad).
+            if (ajuste.getTipoAjuste() == TipoAjuste.POSITIVO) {
+                log.info("Revirtiendo ajuste positivo: descontando {} unidades de producto ID {} en depósito ID {}",
+                        cantidad, producto.getId(), ajuste.getDeposito().getId());
+                stockDepositoService.aplicarMovimiento(ajuste.getDeposito(), producto, -cantidad);
+            } else if (ajuste.getTipoAjuste() == TipoAjuste.NEGATIVO) {
+                log.info("Revirtiendo ajuste negativo: reincorporando {} unidades de producto ID {} en depósito ID {}",
+                        cantidad, producto.getId(), ajuste.getDeposito().getId());
+                stockDepositoService.aplicarMovimiento(ajuste.getDeposito(), producto, cantidad);
+            }
+        }
+
+        // Marcar el registro como inactivo
+        ajuste.setActivo(false);
+        ajusteStockRepository.save(ajuste);
+        log.info("Ajuste de stock ID: {} anulado exitosamente.", id);
+    }
+
+    @Override
+    public void reactivarById(Long id) {
+        throw new UnsupportedOperationException("No está permitido reactivar un ajuste de stock anulado. Registre un nuevo ajuste si corresponde.");
     }
 
     @Override

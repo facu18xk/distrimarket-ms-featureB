@@ -78,9 +78,10 @@ public class TransferenciaStockController extends BaseController<TransferenciaSt
     @Override
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'DEPOSITERO')")
-    @Operation(summary = "Operación no permitida (las transferencias no se pueden eliminar)")
+    @Operation(summary = "Anular una transferencia de stock y revertir el movimiento entre depósitos")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).build();
+        transferenciaStockService.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 
     @Override

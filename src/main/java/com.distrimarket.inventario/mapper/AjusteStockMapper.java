@@ -19,7 +19,8 @@ public interface AjusteStockMapper extends BaseMapper<AjusteStock, AjusteStockRe
     @Mapping(target = "fechaModificacion", ignore = true)
     @Mapping(target = "deposito.id", source = "idDeposito")
     @Mapping(target = "empleado.id", source = "idEmpleado")
-    @Mapping(target = "detalles", ignore = true) // Los detalles se vinculan con método bidireccional addDetalle
+    @Mapping(target = "detalles", ignore = true)
+    @Mapping(target = "activo", ignore = true)
     AjusteStock toEntity(AjusteStockRequestDTO dto);
 
     @Override

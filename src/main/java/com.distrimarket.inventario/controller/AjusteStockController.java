@@ -14,14 +14,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/ajustes-stock")
@@ -72,10 +65,12 @@ public class AjusteStockController extends BaseController<AjusteStock, AjusteSto
     }
 
     @Override
+    @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'DEPOSITERO')")
-    @Operation(summary = "Operación no soportada (los ajustes de stock no se pueden eliminar)")
+    @Operation(summary = "Anular un ajuste de stock e impactar la compensación en el inventario")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).build();
+        ajusteStockService.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 
     @Override

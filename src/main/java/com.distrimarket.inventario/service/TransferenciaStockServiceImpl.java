@@ -75,6 +75,7 @@ public class TransferenciaStockServiceImpl
         transferencia.setDepositoDestino(depositoDestino);
         transferencia.setEmpleado(empleado);
         transferencia.setEstado("COMPLETADO");
+        transferencia.setActivo(true);
 
         // Procesar detalles y mover existencias
         for (TransferenciaStockDetalleRequestDTO detDto : dto.getDetalles()) {
@@ -140,7 +141,51 @@ public class TransferenciaStockServiceImpl
     }
 
     @Override
+    @Transactional
     public void deleteById(Long id) {
-        throw new UnsupportedOperationException("Operación no permitida: No se pueden eliminar transferencias de stock registradas.");
+        log.info("Iniciando anulación (borrado lógico) de la transferencia de stock ID: {}", id);
+
+        TransferenciaStock transferencia = transferenciaStockRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Transferencia de stock no encontrada con ID: " + id));
+
+        if (Boolean.FALSE.equals(transferencia.getActivo())) {
+            throw new BadRequestException("La transferencia de stock con ID " + id + " ya se encuentra anulada.");
+        }
+
+        Deposito origen = transferencia.getDepositoOrigen();
+        Deposito destino = transferencia.getDepositoDestino();
+
+        // Rollback compensatorio para cada producto transferido
+        for (TransferenciaStockDetalle detalle : transferencia.getDetalles()) {
+            Producto producto = detalle.getProducto();
+            Integer cantidad = detalle.getCantidad();
+
+            log.debug("Revirtiendo transferencia: descontando {} unidades del depósito destino ID {} y reingresando al depósito origen ID {}",
+                    cantidad, destino.getId(), origen.getId());
+
+            // 1. Descontar del destino (falla con 400 si el destino ya consumió o vendió ese stock)
+            try {
+                stockDepositoService.aplicarMovimiento(destino, producto, -cantidad);
+            } catch (InsufficientStockException ex) {
+                log.warn("Fallo al revertir transferencia: stock insuficiente en depósito destino ID {}: {}", destino.getId(), ex.getMessage());
+                throw new BadRequestException("No se puede anular la transferencia: el depósito destino no cuenta con stock suficiente para devolver el producto '"
+                        + producto.getNombre() + "'.");
+            }
+
+            // 2. Acreditar de regreso en el origen
+            stockDepositoService.aplicarMovimiento(origen, producto, cantidad);
+        }
+
+        // Marcar la transferencia como inactiva y actualizar estado
+        transferencia.setActivo(false);
+        transferencia.setEstado("ANULADO");
+        transferenciaStockRepository.save(transferencia);
+
+        log.info("Transferencia de stock ID: {} anulada con éxito.", id);
+    }
+
+    @Override
+    public void reactivarById(Long id) {
+        throw new UnsupportedOperationException("No se permite reactivar una transferencia anulada. Genere una nueva transferencia si corresponde.");
     }
 }

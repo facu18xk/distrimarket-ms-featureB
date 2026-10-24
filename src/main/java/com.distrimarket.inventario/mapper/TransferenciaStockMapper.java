@@ -22,6 +22,7 @@ public interface TransferenciaStockMapper extends BaseMapper<TransferenciaStock,
     @Mapping(target = "empleado.id", source = "idEmpleado")
     @Mapping(target = "estado", ignore = true)
     @Mapping(target = "detalles", ignore = true)
+    @Mapping(target = "activo", ignore = true)
     TransferenciaStock toEntity(TransferenciaStockRequestDTO dto);
 
     @Override

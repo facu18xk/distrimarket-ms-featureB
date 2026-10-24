@@ -23,10 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -58,14 +55,25 @@ public class StockDepositoServiceImpl
                 createDTO.getIdDeposito(), createDTO.getIdProducto(), createDTO.getCantidad());
         validarExistenciaPadres(createDTO.getIdDeposito(), createDTO.getIdProducto());
 
-        if (stockDepositoRepository.existsByDepositoIdAndProductoId(createDTO.getIdDeposito(), createDTO.getIdProducto())) {
+        Optional<StockDeposito> existenteOpt = stockDepositoRepository
+                .findByDepositoIdAndProductoId(createDTO.getIdDeposito(), createDTO.getIdProducto());
+
+        if (existenteOpt.isPresent()) {
+            StockDeposito existente = existenteOpt.get();
+            // Si ya existe pero estaba inactivo, lo reactivamos con la nueva cantidad
+            if (Boolean.FALSE.equals(existente.getActivo())) {
+                existente.setActivo(true);
+                existente.setCantidad(createDTO.getCantidad() != null ? createDTO.getCantidad() : 0);
+                StockDeposito reactivado = stockDepositoRepository.save(existente);
+                log.info("Registro de stock previo reactivado con ID: {}", reactivado.getId());
+                return mapper.toDTO(reactivado);
+            }
             throw new DuplicateResourceException(
-                    String.format("El producto con ID %d ya posee un registro de stock en el depósito con ID %d",
+                    String.format("El producto con ID %d ya posee un registro de stock activo en el depósito con ID %d",
                             createDTO.getIdProducto(), createDTO.getIdDeposito())
             );
         }
 
-        // Cargamos las entidades administradas para poblar los nombres en el ResponseDTO devuelto
         Deposito deposito = depositoRepository.findById(createDTO.getIdDeposito())
                 .orElseThrow(() -> new ResourceNotFoundException("Depósito no encontrado"));
         Producto producto = productoRepository.findById(createDTO.getIdProducto())
@@ -74,6 +82,7 @@ public class StockDepositoServiceImpl
         StockDeposito entity = mapper.toEntity(createDTO);
         entity.setDeposito(deposito);
         entity.setProducto(producto);
+        entity.setActivo(true);
 
         StockDeposito saved = stockDepositoRepository.save(entity);
         log.info("Registro de stock creado exitosamente con ID: {} (Depósito: '{}', Producto: '{}', Cantidad: {})",
@@ -145,6 +154,14 @@ public class StockDepositoServiceImpl
                         .cantidad(0)
                         .build());
 
+        // Si el registro existe pero fue dado de baja lógica, no se permiten movimientos operativos
+        if (Boolean.FALSE.equals(stock.getActivo())) {
+            throw new IllegalArgumentException(String.format(
+                    "El registro de stock para el producto '%s' en el depósito '%s' se encuentra inactivo.",
+                    producto.getNombre(), deposito.getNombre()
+            ));
+        }
+
         int cantidadAnterior = stock.getCantidad() == null ? 0 : stock.getCantidad();
         long cantidadResultante = (long) cantidadAnterior + cantidad;
         if (cantidadResultante < 0) {
@@ -203,6 +220,26 @@ public class StockDepositoServiceImpl
         }
         log.info("Movimiento de stock aplicado en depósito ID {}: {} producto(s) afectados", deposito.getId(), resultado.size());
         return resultado;
+    }
+
+    @Override
+    @Transactional
+    public void deleteById(Long id) {
+        log.info("Solicitud de borrado lógico para StockDeposito con ID: {}", id);
+        StockDeposito stock = stockDepositoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("No se encuentra el registro de stock con ID: " + id));
+
+        // Regla contable: No se puede desactivar una posición con saldo disponible
+        if (stock.getCantidad() != null && stock.getCantidad() > 0) {
+            throw new IllegalArgumentException(String.format(
+                    "No se puede dar de baja el registro de stock ID %d porque posee %d unidades disponibles. Realice un ajuste o transferencia previa a 0.",
+                    id, stock.getCantidad()
+            ));
+        }
+
+        stock.setActivo(false);
+        stockDepositoRepository.save(stock);
+        log.info("StockDeposito ID: {} marcado como inactivo satisfactoriamente.", id);
     }
 
     private void validarExistenciaPadres(Long depositoId, Long productoId) {
