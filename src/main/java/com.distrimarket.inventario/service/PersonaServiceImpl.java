@@ -108,13 +108,17 @@ public class PersonaServiceImpl extends BaseServiceImpl<Persona, PersonaRequestD
     @Override
     @Transactional
     public PersonaResponseDTO update(Long id, PersonaRequestDTO requestDTO) {
+        // Se recupera la persona una sola vez y se reutiliza para validar, limpiar caché y actualizar
+        // (evitando 3 consultas findById(id) redundantes en la misma operación).
         Persona actual = personaRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("No se encuentra la persona con ID: " + id));
 
-        validateUpdate(id, requestDTO);
+        validateUpdate(actual, requestDTO);
         deletePersonaKeys(id, actual.getCi(), actual.getRuc());
 
-        return super.update(id, requestDTO);
+        mapper.updateEntityFromDto(requestDTO, actual);
+        Persona actualizada = personaRepository.save(actual);
+        return mapper.toDTO(actualizada);
     }
 
     @Override
@@ -168,10 +172,8 @@ public class PersonaServiceImpl extends BaseServiceImpl<Persona, PersonaRequestD
         }
     }
 
-    private void validateUpdate(Long id, PersonaRequestDTO dto) {
-        log.debug("Validando unicidad de documentos para actualización de persona ID: {}", id);
-        Persona actual = personaRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("No se encuentra la persona con ID: " + id));
+    private void validateUpdate(Persona actual, PersonaRequestDTO dto) {
+        log.debug("Validando unicidad de documentos para actualización de persona ID: {}", actual.getId());
 
         if (dto.getCi() != null && !dto.getCi().equals(actual.getCi())) {
             if (personaRepository.existsByCi(dto.getCi())) {

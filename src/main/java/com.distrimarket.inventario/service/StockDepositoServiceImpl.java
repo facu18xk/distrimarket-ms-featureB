@@ -24,6 +24,8 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -53,7 +55,12 @@ public class StockDepositoServiceImpl
     public StockDepositoResponseDTO create(StockDepositoRequestDTO createDTO) {
         log.info("Creando registro de stock para depósito ID: {} y producto ID: {} con cantidad inicial: {}",
                 createDTO.getIdDeposito(), createDTO.getIdProducto(), createDTO.getCantidad());
-        validarExistenciaPadres(createDTO.getIdDeposito(), createDTO.getIdProducto());
+
+        // Se cargan las entidades padre una sola vez (evitando existsById + findById duplicados).
+        Deposito deposito = depositoRepository.findById(createDTO.getIdDeposito())
+                .orElseThrow(() -> new ResourceNotFoundException("No existe el depósito con ID: " + createDTO.getIdDeposito()));
+        Producto producto = productoRepository.findById(createDTO.getIdProducto())
+                .orElseThrow(() -> new ResourceNotFoundException("No existe el producto con ID: " + createDTO.getIdProducto()));
 
         Optional<StockDeposito> existenteOpt = stockDepositoRepository
                 .findByDepositoIdAndProductoId(createDTO.getIdDeposito(), createDTO.getIdProducto());
@@ -74,11 +81,6 @@ public class StockDepositoServiceImpl
             );
         }
 
-        Deposito deposito = depositoRepository.findById(createDTO.getIdDeposito())
-                .orElseThrow(() -> new ResourceNotFoundException("Depósito no encontrado"));
-        Producto producto = productoRepository.findById(createDTO.getIdProducto())
-                .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado"));
-
         StockDeposito entity = mapper.toEntity(createDTO);
         entity.setDeposito(deposito);
         entity.setProducto(producto);
@@ -97,17 +99,16 @@ public class StockDepositoServiceImpl
         StockDeposito stockExistente = stockDepositoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Registro de stock no encontrado con ID: " + id));
 
-        validarExistenciaPadres(updateDTO.getIdDeposito(), updateDTO.getIdProducto());
+        // Se cargan las entidades padre directamente sin ejecutar existsById previos redundantes.
+        Deposito deposito = depositoRepository.findById(updateDTO.getIdDeposito())
+                .orElseThrow(() -> new ResourceNotFoundException("No existe el depósito con ID: " + updateDTO.getIdDeposito()));
+        Producto producto = productoRepository.findById(updateDTO.getIdProducto())
+                .orElseThrow(() -> new ResourceNotFoundException("No existe el producto con ID: " + updateDTO.getIdProducto()));
 
         if (stockDepositoRepository.existsByDepositoIdAndProductoIdAndIdNot(
                 updateDTO.getIdDeposito(), updateDTO.getIdProducto(), id)) {
             throw new DuplicateResourceException("Ya existe otro registro para este mismo depósito y producto.");
         }
-
-        Deposito deposito = depositoRepository.findById(updateDTO.getIdDeposito())
-                .orElseThrow(() -> new ResourceNotFoundException("Depósito no encontrado"));
-        Producto producto = productoRepository.findById(updateDTO.getIdProducto())
-                .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado"));
 
         mapper.updateEntityFromDto(updateDTO, stockExistente);
         stockExistente.setDeposito(deposito);
@@ -209,13 +210,27 @@ public class StockDepositoServiceImpl
             }
         }
 
+        // Carga en lote (1 sola consulta SQL con WHERE id IN (...)) de todos los productos involucrados
+        // en el movimiento, evitando N consultas a productoRepository.findById dentro del bucle.
+        Set<Long> idsProductoActivos = cantidadPorProducto.entrySet().stream()
+                .filter(e -> e.getValue() != 0)
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toSet());
+
+        Map<Long, Producto> productosPorId = idsProductoActivos.isEmpty()
+                ? Map.of()
+                : productoRepository.findAllById(idsProductoActivos).stream()
+                        .collect(Collectors.toMap(Producto::getId, Function.identity()));
+
         List<StockDepositoResponseDTO> resultado = new ArrayList<>();
         for (Map.Entry<Long, Integer> movimiento : cantidadPorProducto.entrySet()) {
             if (movimiento.getValue() == 0) {
                 continue;
             }
-            Producto producto = productoRepository.findById(movimiento.getKey())
-                    .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado con ID: " + movimiento.getKey()));
+            Producto producto = productosPorId.get(movimiento.getKey());
+            if (producto == null) {
+                throw new ResourceNotFoundException("Producto no encontrado con ID: " + movimiento.getKey());
+            }
             resultado.add(mapper.toDTO(aplicarMovimiento(deposito, producto, movimiento.getValue())));
         }
         log.info("Movimiento de stock aplicado en depósito ID {}: {} producto(s) afectados", deposito.getId(), resultado.size());
@@ -240,15 +255,5 @@ public class StockDepositoServiceImpl
         stock.setActivo(false);
         stockDepositoRepository.save(stock);
         log.info("StockDeposito ID: {} marcado como inactivo satisfactoriamente.", id);
-    }
-
-    private void validarExistenciaPadres(Long depositoId, Long productoId) {
-        log.debug("Verificando existencia de entidades padre -> Depósito ID: {}, Producto ID: {}", depositoId, productoId);
-        if (!depositoRepository.existsById(depositoId)) {
-            throw new ResourceNotFoundException("No existe el depósito con ID: " + depositoId);
-        }
-        if (!productoRepository.existsById(productoId)) {
-            throw new ResourceNotFoundException("No existe el producto con ID: " + productoId);
-        }
     }
 }

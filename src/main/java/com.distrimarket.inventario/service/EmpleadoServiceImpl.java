@@ -90,10 +90,14 @@ public class EmpleadoServiceImpl
         String ci = createDTO.getPersona().getCi();
         Persona persona;
 
-        if (ci != null && !ci.isBlank() && personaRepository.existsByCi(ci)) {
+        // Una sola consulta findByCi en lugar de existsByCi + findByCi.
+        java.util.Optional<Persona> personaExistente = (ci != null && !ci.isBlank())
+                ? personaRepository.findByCi(ci)
+                : java.util.Optional.empty();
+
+        if (personaExistente.isPresent()) {
             log.debug("La persona con CI {} ya existe. Vinculando ficha de empleado...", ci);
-            persona = personaRepository.findByCi(ci)
-                    .orElseThrow(() -> new ResourceNotFoundException("No se encontró la persona con CI: " + ci));
+            persona = personaExistente.get();
         } else {
             log.debug("Registrando nueva persona física para el empleado: {}", createDTO.getPersona().getNombreCompleto());
             PersonaResponseDTO personaCreadaDTO = personaService.create(createDTO.getPersona());

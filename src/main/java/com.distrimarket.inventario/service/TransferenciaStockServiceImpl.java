@@ -18,6 +18,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
 @Slf4j
 @Service
 public class TransferenciaStockServiceImpl
@@ -77,15 +83,29 @@ public class TransferenciaStockServiceImpl
         transferencia.setEstado("COMPLETADO");
         transferencia.setActivo(true);
 
-        // Procesar detalles y mover existencias
+        // Validar cantidades primero y cargar todos los productos de la transferencia en una sola
+        // consulta SQL (WHERE id IN (...)), evitando N consultas individuales dentro del bucle.
         for (TransferenciaStockDetalleRequestDTO detDto : dto.getDetalles()) {
-            log.debug("Procesando detalle: Producto ID {}, Cantidad {}", detDto.getIdProducto(), detDto.getCantidad());
             if (detDto.getCantidad() == null || detDto.getCantidad() <= 0) {
                 throw new BadRequestException("La cantidad a transferir debe ser mayor a cero.");
             }
+        }
 
-            Producto producto = productoRepository.findById(detDto.getIdProducto())
-                    .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado con ID: " + detDto.getIdProducto()));
+        Set<Long> idsProducto = dto.getDetalles().stream()
+                .map(TransferenciaStockDetalleRequestDTO::getIdProducto)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
+
+        Map<Long, Producto> productosPorId = productoRepository.findAllById(idsProducto).stream()
+                .collect(Collectors.toMap(Producto::getId, Function.identity()));
+
+        // Procesar detalles y mover existencias
+        for (TransferenciaStockDetalleRequestDTO detDto : dto.getDetalles()) {
+            log.debug("Procesando detalle: Producto ID {}, Cantidad {}", detDto.getIdProducto(), detDto.getCantidad());
+            Producto producto = productosPorId.get(detDto.getIdProducto());
+            if (producto == null) {
+                throw new ResourceNotFoundException("Producto no encontrado con ID: " + detDto.getIdProducto());
+            }
 
             TransferenciaStockDetalle detalle = detalleMapper.toEntity(detDto);
             detalle.setProducto(producto);

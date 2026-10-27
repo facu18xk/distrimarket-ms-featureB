@@ -26,15 +26,21 @@ spring:
       max-lifetime: ${DB_MAX_LIFETIME_MS:1800000}
 
   jpa:
+    # Desactiva Open-Session-In-View para cerrar la sesión JPA al terminar la transacción
+    # del servicio y evitar consultas LAZY accidentales fuera de la capa transaccional.
     open-in-view: false
     hibernate:
       ddl-auto: ${JPA_DDL_AUTO:none}
     properties:
       hibernate:
         format_sql: ${JPA_FORMAT_SQL:false}
+        # Agrupa la carga diferida (LAZY) de colecciones (@OneToMany como detalles de ajustes
+        # y transferencias) y proxies en una sola consulta SQL con WHERE IN (...) para hasta 100 registros,
+        # eliminando el problema N+1 sin romper la paginación SQL (LIMIT/OFFSET).
+        default_batch_fetch_size: ${JPA_BATCH_FETCH_SIZE:100}
         jdbc:
           time_zone: UTC
-    show-sql: ${JPA_SHOW_SQL:true} # Útil tenerlo en true durante el desarrollo para ver las consultas en consola
+    show-sql: ${JPA_SHOW_SQL:false}
 
   liquibase:
     enabled: ${LIQUIBASE_ENABLED:true}

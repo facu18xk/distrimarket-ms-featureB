@@ -19,6 +19,11 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -75,14 +80,28 @@ public class AjusteStockServiceImpl
         ajuste.setEmpleado(empleado);
         ajuste.setActivo(true);
 
-        // Procesar detalles y actualizar stock en depósito de forma atómica
+        // Validar cantidades primero y cargar todos los productos en una sola consulta SQL (WHERE id IN (...)),
+        // evitando N llamadas a productoRepository.findById dentro del bucle.
         for (AjusteStockDetalleRequestDTO detDto : dto.getDetalles()) {
             if (detDto.getCantidad() == null || detDto.getCantidad() <= 0) {
                 throw new IllegalArgumentException("La cantidad en cada detalle debe ser mayor a cero.");
             }
+        }
 
-            Producto producto = productoRepository.findById(detDto.getIdProducto())
-                    .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado con ID: " + detDto.getIdProducto()));
+        Set<Long> idsProducto = dto.getDetalles().stream()
+                .map(AjusteStockDetalleRequestDTO::getIdProducto)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
+
+        Map<Long, Producto> productosPorId = productoRepository.findAllById(idsProducto).stream()
+                .collect(Collectors.toMap(Producto::getId, Function.identity()));
+
+        // Procesar detalles y actualizar stock en depósito de forma atómica
+        for (AjusteStockDetalleRequestDTO detDto : dto.getDetalles()) {
+            Producto producto = productosPorId.get(detDto.getIdProducto());
+            if (producto == null) {
+                throw new ResourceNotFoundException("Producto no encontrado con ID: " + detDto.getIdProducto());
+            }
 
             AjusteStockDetalle detalleEntity = detalleMapper.toEntity(detDto);
             detalleEntity.setProducto(producto);
@@ -116,7 +135,7 @@ public class AjusteStockServiceImpl
     @Transactional(readOnly = true)
     public Page<AjusteStockResponseDTO> findAllByDepositoId(Long depositoId, Pageable pageable) {
         log.debug("Consultando ajustes de stock para depósito ID: {}, página: {}", depositoId, pageable.getPageNumber());
-        return ajusteStockRepository.findAll(pageable).map(mapper::toDTO);
+        return ajusteStockRepository.findByDepositoId(depositoId, pageable).map(mapper::toDTO);
     }
 
     @Override
