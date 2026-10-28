@@ -67,7 +67,9 @@ public class DepositoServiceImpl extends BaseServiceImpl<Deposito, DepositoReque
     @Override
     @Transactional(readOnly = true)
     public Page<DepositoResponseDTO> findAllWithSpecifications(String q, Pageable pageable) {
-        Specification<Deposito> spec = depositoSpecification.searchByText(q);
+        Specification<Deposito> spec = Specification
+                .where(depositoSpecification.search(q));
+
         return depositoRepository.findAll(spec, pageable).map(mapper::toDTO);
     }
 
