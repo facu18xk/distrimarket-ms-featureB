@@ -1,6 +1,5 @@
 package com.distrimarket.inventario.specification;
 
-import com.distrimarket.commons.entity.Producto;
 import com.distrimarket.commons.entity.StockDeposito;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;

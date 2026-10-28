@@ -7,5 +7,5 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface TransferenciaStockService extends BaseService<TransferenciaStock, TransferenciaStockRequestDTO, TransferenciaStockResponseDTO> {
-    Page<TransferenciaStockResponseDTO> findAllWithSpecifications(Long origenId, Long destinoId, Long empleadoId, Pageable pageable);
+    Page<TransferenciaStockResponseDTO> findAllWithSpecifications(String q, Long origenId, Long destinoId, Long empleadoId, Pageable pageable);
 }
