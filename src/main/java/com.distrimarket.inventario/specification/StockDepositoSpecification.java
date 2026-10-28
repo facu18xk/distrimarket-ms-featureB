@@ -1,5 +1,6 @@
 package com.distrimarket.inventario.specification;
 
+import com.distrimarket.commons.entity.Producto;
 import com.distrimarket.commons.entity.StockDeposito;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
@@ -11,5 +12,8 @@ public class StockDepositoSpecification extends BaseSpecification<StockDeposito>
     }
     public Specification<StockDeposito> hasProductoId(Long productoId) {
         return hasRelationId("producto", productoId);
+    }
+    public Specification<StockDeposito> search(String q) {
+        return searchByNestedText(q, "producto.nombre", "deposito.nombre");
     }
 }

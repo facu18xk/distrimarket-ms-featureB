@@ -1,6 +1,7 @@
 package com.distrimarket.inventario.specification;
 
 import com.distrimarket.commons.entity.BaseEntity;
+import jakarta.persistence.criteria.Path;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -66,6 +67,31 @@ public abstract class BaseSpecification<E extends BaseEntity> {
             }
 
             return criteriaBuilder.or(predicates.toArray(new Predicate[0]));
+        };
+    }
+
+    public Specification<E> searchByNestedText(String q, String... paths) {
+        return (root, query, cb) -> {
+            if (q == null || q.isBlank() || paths == null || paths.length == 0) {
+                return cb.conjunction();
+            }
+
+            String pattern = "%" + q.trim().toLowerCase() + "%";
+            List<Predicate> predicates = new ArrayList<>();
+
+            for (String path : paths) {
+                try {
+                    Path<?> current = root;
+                    for (String part : path.split("\\.")) {
+                        current = current.get(part);
+                    }
+                    predicates.add(cb.like(cb.lower(current.as(String.class)), pattern));
+                } catch (IllegalArgumentException ignored) {
+                    // Ignora propiedades no existentes
+                }
+            }
+
+            return predicates.isEmpty() ? cb.conjunction() : cb.or(predicates.toArray(new Predicate[0]));
         };
     }
 }
