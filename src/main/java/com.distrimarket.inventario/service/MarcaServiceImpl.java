@@ -22,6 +22,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class MarcaServiceImpl extends BaseServiceImpl<Marca, MarcaRequestDTO, MarcaResponseDTO> implements MarcaService {
 
+    /** Los listados se arman desde la caché de este dominio, objeto por objeto. */
+    @Override
+    protected String dominioCache() {
+        return CacheConfig.MARCA;
+    }
+
     private final MarcaRepository marcaRepository;
     private final CacheManager cacheManager;
 

@@ -1,5 +1,7 @@
 package com.distrimarket.inventario.service;
 
+import com.distrimarket.commons.service.BusquedaTexto;
+import com.distrimarket.commons.service.Paginas;
 import com.distrimarket.commons.dto.ProductoRequestDTO;
 import com.distrimarket.commons.dto.ProductoResponseDTO;
 import com.distrimarket.commons.entity.Producto;
@@ -25,6 +27,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 @Service
 public class ProductoServiceImpl extends BaseServiceImpl<Producto, ProductoRequestDTO, ProductoResponseDTO> implements ProductoService {
+
+    @Override
+    protected String dominioCache() {
+        return CacheConfig.PRODUCTO;
+    }
 
     private final ProductoRepository productoRepository;
     private final ProductoMapper productoMapper;
@@ -84,7 +91,7 @@ public class ProductoServiceImpl extends BaseServiceImpl<Producto, ProductoReque
     }
 
     @Transactional(readOnly = true)
-    public Page<ProductoResponseDTO> findAllWithSpecifications(Long categoriaId, Long marcaId, Pageable pageable) {
+    public Page<ProductoResponseDTO> findAllWithSpecifications(Long categoriaId, Long marcaId, String q, Pageable pageable) {
         log.debug("Consultando productos con filtros -> categoriaId: {}, marcaId: {}, página: {}, tamaño: {}",
                 categoriaId, marcaId, pageable.getPageNumber(), pageable.getPageSize());
 
@@ -92,12 +99,8 @@ public class ProductoServiceImpl extends BaseServiceImpl<Producto, ProductoReque
                 .where(productoSpecification.hasCategoriaId(categoriaId))
                 .and(productoSpecification.hasMarcaId(marcaId));
 
-        Page<Producto> entityPage = productoRepository.findAll(spec, pageable);
-        Page<ProductoResponseDTO> dtoPage = entityPage.map(productoMapper::toDTO);
-
-        cachearProductosPage(dtoPage, "con especificaciones");
-
-        return dtoPage;
+        // Ids de la base y cada producto desde la caché (GET); solo los que faltan van a la base (SET).
+        return paginaDesdeCache(spec.and(BusquedaTexto.en(q, "nombre", "codigoBarra", "descripcion")), pageable);
     }
 
     private void cachearProductosPage(Page<ProductoResponseDTO> page, String tipoConsulta) {

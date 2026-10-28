@@ -1,5 +1,8 @@
 package com.distrimarket.inventario.service;
 
+import com.distrimarket.commons.service.BusquedaTexto;
+import com.distrimarket.commons.service.Paginas;
+import com.distrimarket.inventario.security.DepositoDelUsuario;
 import com.distrimarket.commons.dto.AjusteStockDetalleRequestDTO;
 import com.distrimarket.commons.dto.AjusteStockRequestDTO;
 import com.distrimarket.commons.dto.AjusteStockResponseDTO;
@@ -60,6 +63,7 @@ public class AjusteStockServiceImpl
     @Override
     @Transactional
     public AjusteStockResponseDTO create(AjusteStockRequestDTO dto) {
+        dto.setIdDeposito(DepositoDelUsuario.resolver(dto.getIdDeposito()));
         log.info("Iniciando ajuste de stock [{}] para depósito ID {} por empleado ID {} con {} detalle(s)",
                 dto.getTipoAjuste(), dto.getIdDeposito(), dto.getIdEmpleado(),
                 dto.getDetalles() != null ? dto.getDetalles().size() : 0);
@@ -186,13 +190,14 @@ public class AjusteStockServiceImpl
 
     @Override
     @Transactional(readOnly = true)
-    public Page<AjusteStockResponseDTO> findAllWithSpecifications(Long depositoId, Long empleadoId, Pageable pageable) {
+    public Page<AjusteStockResponseDTO> findAllWithSpecifications(Long depositoId, Long empleadoId, String q, Pageable pageable) {
         log.debug("Consultando ajustes con filtros -> depósitoId: {}, empleadoId: {}, página: {}",
                 depositoId, empleadoId, pageable.getPageNumber());
         Specification<AjusteStock> spec = Specification
                 .where(ajusteStockSpecification.hasDepositoId(depositoId))
                 .and(ajusteStockSpecification.hasEmpleadoId(empleadoId));
 
-        return ajusteStockRepository.findAll(spec, pageable).map(mapper::toDTO);
+        // Desempate por id: hay ajustes con la misma fechaCreacion y sin él las páginas se repiten.
+        return ajusteStockRepository.findAll(spec.and(BusquedaTexto.en(q, "motivo", "deposito.nombre", "empleado.persona.nombreCompleto")), Paginas.conDesempatePorId(pageable)).map(mapper::toDTO);
     }
 }

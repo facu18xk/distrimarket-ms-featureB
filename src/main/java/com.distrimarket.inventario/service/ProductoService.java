@@ -7,5 +7,5 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface ProductoService extends BaseService<Producto, ProductoRequestDTO, ProductoResponseDTO> {
-    Page<ProductoResponseDTO> findAllWithSpecifications(Long categoriaId, Long marcaId, Pageable pageable);
+    Page<ProductoResponseDTO> findAllWithSpecifications(Long categoriaId, Long marcaId, String q, Pageable pageable);
 }

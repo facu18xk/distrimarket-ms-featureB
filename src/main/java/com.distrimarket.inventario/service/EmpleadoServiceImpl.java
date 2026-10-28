@@ -1,5 +1,7 @@
 package com.distrimarket.inventario.service;
 
+import com.distrimarket.commons.service.BusquedaTexto;
+import com.distrimarket.commons.service.Paginas;
 import com.distrimarket.commons.dto.EmpleadoRequestDTO;
 import com.distrimarket.commons.dto.EmpleadoResponseDTO;
 import com.distrimarket.commons.dto.PersonaResponseDTO;
@@ -11,6 +13,7 @@ import com.distrimarket.inventario.exception.DuplicateResourceException;
 import com.distrimarket.inventario.exception.ResourceNotFoundException;
 import com.distrimarket.inventario.mapper.EmpleadoMapper;
 import com.distrimarket.inventario.mapper.PersonaMapper;
+import com.distrimarket.inventario.repository.DepositoRepository;
 import com.distrimarket.inventario.repository.EmpleadoRepository;
 import com.distrimarket.inventario.repository.PersonaRepository;
 import com.distrimarket.inventario.specification.EmpleadoSpecification;
@@ -32,12 +35,18 @@ public class EmpleadoServiceImpl
         extends BaseServiceImpl<Empleado, EmpleadoRequestDTO, EmpleadoResponseDTO>
         implements EmpleadoService {
 
+    @Override
+    protected String dominioCache() {
+        return CacheConfig.EMPLEADO;
+    }
+
     private final EmpleadoRepository empleadoRepository;
     private final PersonaRepository personaRepository;
     private final PersonaService personaService;
     private final PersonaMapper personaMapper;
     private final EmpleadoSpecification empleadoSpecification;
     private final CacheManager cacheManager;
+    private final DepositoRepository depositoRepository;
 
     public EmpleadoServiceImpl(EmpleadoRepository empleadoRepository,
                                EmpleadoMapper empleadoMapper,
@@ -45,7 +54,8 @@ public class EmpleadoServiceImpl
                                PersonaService personaService,
                                PersonaMapper personaMapper,
                                EmpleadoSpecification empleadoSpecification,
-                               CacheManager cacheManager) {
+                               CacheManager cacheManager,
+                               DepositoRepository depositoRepository) {
         super(empleadoRepository, empleadoMapper);
         this.empleadoRepository = empleadoRepository;
         this.personaRepository = personaRepository;
@@ -53,6 +63,17 @@ public class EmpleadoServiceImpl
         this.personaMapper = personaMapper;
         this.empleadoSpecification = empleadoSpecification;
         this.cacheManager = cacheManager;
+        this.depositoRepository = depositoRepository;
+    }
+
+    /** Asigna el depósito donde trabaja el empleado (si se indicó): debe existir y estar activo. */
+    private void asignarDeposito(Empleado empleado, Long idDeposito) {
+        if (idDeposito == null) {
+            return;
+        }
+        empleado.setDeposito(depositoRepository.findById(idDeposito)
+                .filter(d -> Boolean.TRUE.equals(d.getActivo()) && Boolean.TRUE.equals(d.getEstado()))
+                .orElseThrow(() -> new ResourceNotFoundException("Depósito no encontrado o inactivo con ID: " + idDeposito)));
     }
 
     @Override
@@ -111,6 +132,7 @@ public class EmpleadoServiceImpl
 
         Empleado empleado = mapper.toEntity(createDTO);
         empleado.setPersona(persona);
+        asignarDeposito(empleado, createDTO.getIdDeposito());
 
         Empleado guardado = empleadoRepository.save(empleado);
         log.info("Empleado registrado exitosamente con ID: {} asociado a Persona ID: {}", guardado.getId(), persona.getId());
@@ -150,6 +172,9 @@ public class EmpleadoServiceImpl
         }
 
         mapper.updateEntityFromDto(updateDTO, empleadoExistente);
+        // PUT reemplaza el empleado completo: sin idDeposito, queda sin depósito asignado.
+        empleadoExistente.setDeposito(null);
+        asignarDeposito(empleadoExistente, updateDTO.getIdDeposito());
         Empleado actualizado = empleadoRepository.save(empleadoExistente);
 
         log.info("Empleado ID: {} y datos de Persona ID: {} actualizados exitosamente", id, personaId);
@@ -182,7 +207,7 @@ public class EmpleadoServiceImpl
 
     @Override
     @Transactional(readOnly = true)
-    public Page<EmpleadoResponseDTO> findAllWithSpecifications(String cargo, Boolean estado, Pageable pageable) {
+    public Page<EmpleadoResponseDTO> findAllWithSpecifications(String cargo, Boolean estado, String q, Pageable pageable) {
         log.debug("Consultando empleados con filtros -> cargo: {}, estado: {}, página: {}",
                 cargo, estado, pageable.getPageNumber());
 
@@ -190,9 +215,8 @@ public class EmpleadoServiceImpl
                 .where(empleadoSpecification.withCargo(cargo))
                 .and(empleadoSpecification.withEstado(estado));
 
-        Page<EmpleadoResponseDTO> dtoPage = empleadoRepository.findAll(spec, pageable).map(mapper::toDTO);
-        cachearEmpleados(dtoPage);
-        return dtoPage;
+        // Ids de la base y cada empleado desde la caché (GET); solo los que faltan van a la base (SET).
+        return paginaDesdeCache(spec.and(BusquedaTexto.en(q, "persona.nombreCompleto", "persona.ci", "cargo")), pageable);
     }
 
     private void cachearEmpleados(Page<EmpleadoResponseDTO> page) {

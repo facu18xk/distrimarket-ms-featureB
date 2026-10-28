@@ -34,8 +34,9 @@ public class CategoriaController extends BaseController<Categoria, CategoriaRequ
     @PreAuthorize("hasAnyRole('ADMIN', 'VENDEDOR', 'COMPRADOR', 'DEPOSITERO')")
     @Operation(summary = "Listar categorías de forma paginada")
     public ResponseEntity<Page<CategoriaResponseDTO>> getAll(
+            @RequestParam(name = "q", required = false) String q,
             @PageableDefault(size = 10, sort = "id") Pageable pageable) {
-        return doGetAll(pageable);
+        return ResponseEntity.ok(service.buscarTexto(q, pageable, "nombre", "descripcion"));
     }
 
     @Override

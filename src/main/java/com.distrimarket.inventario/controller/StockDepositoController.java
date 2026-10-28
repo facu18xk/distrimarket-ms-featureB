@@ -51,9 +51,11 @@ public class StockDepositoController extends BaseController<StockDeposito, Stock
             @RequestParam(name = "depositoId", required = false) Long depositoId,
             @Parameter(description = "ID del producto a filtrar (opcional)")
             @RequestParam(name = "productoId", required = false) Long productoId,
+            @Parameter(description = "Texto a buscar (opcional)")
+            @RequestParam(name = "q", required = false) String q,
             @PageableDefault(size = 10, sort = "id") Pageable pageable) {
 
-        return ResponseEntity.ok(stockDepositoService.findAllWithSpecifications(depositoId, productoId, pageable));
+        return ResponseEntity.ok(stockDepositoService.findAllWithSpecifications(depositoId, productoId, q, pageable));
     }
 
     @GetMapping("/deposito/{depositoId}/producto/{productoId}")

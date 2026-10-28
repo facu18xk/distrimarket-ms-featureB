@@ -1,11 +1,20 @@
 package com.distrimarket.inventario.service;
 
+import com.distrimarket.commons.service.Paginas;
 import com.distrimarket.commons.entity.BaseEntity;
 import com.distrimarket.commons.model.SoftDeletable;
 import com.distrimarket.inventario.mapper.BaseMapper;
 import com.distrimarket.inventario.repository.BaseRepository;
 import com.distrimarket.inventario.exception.ResourceNotFoundException;
 import com.distrimarket.inventario.service.BaseService;
+import com.distrimarket.commons.service.CacheEnLote;
+import com.distrimarket.commons.service.ConsultaIds;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.CacheManager;
+import org.springframework.core.GenericTypeResolver;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +34,46 @@ public abstract class BaseServiceImpl<E extends BaseEntity, CREATE_DTO, RESPONSE
         this.mapper = mapper;
     }
 
+    @PersistenceContext
+    private EntityManager entityManagerBase;
+    private CacheManager cacheManagerBase;
+
+    @Autowired(required = false)
+    public void setCacheManagerBase(CacheManager cacheManager) {
+        this.cacheManagerBase = cacheManager;
+    }
+
+    /** Dominio de caché de los objetos de este servicio (por ejemplo "producto"); null = sin caché. */
+    protected String dominioCache() {
+        return null;
+    }
+
+    /**
+     * Página desde la caché, objeto por objeto: de la base solo los ids (filtro y orden), cada objeto
+     * de Redis por id (GET) y los que faltan de la base en UNA consulta (SET). La página no se
+     * guarda: la segunda vez que se pide, todo sale de Redis con HIT y sin SET.
+     */
+    protected Page<RESPONSE_DTO> paginaDesdeCache(Specification<E> filtro, Pageable pageable) {
+        String dominio = dominioCache();
+        if (dominio == null || cacheManagerBase == null) {
+            return repository.findAll(filtro, Paginas.conDesempatePorId(pageable)).map(mapper::toDTO);
+        }
+        Class<E> tipo = tipoEntidad();
+        Page<Long> ids = ConsultaIds.pagina(entityManagerBase, tipo, filtro, pageable);
+        return CacheEnLote.pagina(ids, cacheManagerBase.getCache(dominio),
+                faltan -> repository.findAll(ConsultaIds.<E>idEn(faltan), Pageable.unpaged()).map(mapper::toDTO).getContent(),
+                dto -> ConsultaIds.idDe(dto, tipo));
+    }
+
+    @SuppressWarnings("unchecked")
+    private Class<E> tipoEntidad() {
+        Class<?>[] tipos = GenericTypeResolver.resolveTypeArguments(getClass(), BaseServiceImpl.class);
+        if (tipos == null || tipos[0] == null) {
+            throw new IllegalStateException("No se pudo determinar la entidad de " + getClass().getSimpleName());
+        }
+        return (Class<E>) tipos[0];
+    }
+
     /*@Override
     @Transactional(readOnly = true)
     public List<RESPONSE_DTO> findAll() {
@@ -34,9 +83,18 @@ public abstract class BaseServiceImpl<E extends BaseEntity, CREATE_DTO, RESPONSE
 
     @Override
     @Transactional(readOnly = true)
+    public Page<RESPONSE_DTO> buscarTexto(String q, Pageable pageable, String... campos) {
+        if (dominioCache() == null && (q == null || q.isBlank())) {
+            return findAll(pageable);
+        }
+        return paginaDesdeCache(com.distrimarket.commons.service.BusquedaTexto.<E>en(q, campos), pageable);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public Page<RESPONSE_DTO> findAll(Pageable pageable) {
         log.debug("[{}] Consultando página {} con tamaño {}", getServiceName(), pageable.getPageNumber(), pageable.getPageSize());
-        Page<E> entityPage = repository.findAll(pageable);
+        Page<E> entityPage = repository.findAll(Paginas.conDesempatePorId(pageable));
         return entityPage.map(mapper::toDTO);
     }
 

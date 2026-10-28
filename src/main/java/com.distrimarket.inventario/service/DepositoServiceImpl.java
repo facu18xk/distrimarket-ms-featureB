@@ -24,6 +24,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class DepositoServiceImpl extends BaseServiceImpl<Deposito, DepositoRequestDTO, DepositoResponseDTO> implements DepositoService {
 
+    /** Los listados se arman desde la caché de este dominio, objeto por objeto. */
+    @Override
+    protected String dominioCache() {
+        return CacheConfig.DEPOSITO;
+    }
+
     private final DepositoRepository depositoRepository;
     private final CacheManager cacheManager;
 

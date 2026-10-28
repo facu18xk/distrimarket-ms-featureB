@@ -13,16 +13,20 @@ import java.util.List;
 @Mapper(componentModel = "spring", uses = {PersonaMapper.class}, builder = @Builder(disableBuilder = true))
 public interface EmpleadoMapper extends BaseMapper<Empleado, EmpleadoRequestDTO, EmpleadoResponseDTO> {
 
+    /** El depósito lo asigna el servicio a partir de idDeposito (debe existir y estar activo). */
     @Override
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "fechaCreacion", ignore = true)
     @Mapping(target = "fechaModificacion", ignore = true)
     @Mapping(target = "persona", source = "persona")
     @Mapping(target = "activo", ignore = true)
+    @Mapping(target = "deposito", ignore = true)
     Empleado toEntity(EmpleadoRequestDTO dto);
 
     @Override
     @Mapping(target = "persona", source = "persona")
+    @Mapping(target = "idDeposito", source = "deposito.id")
+    @Mapping(target = "nombreDeposito", source = "deposito.nombre")
     EmpleadoResponseDTO toDTO(Empleado entity);
 
     @Override
@@ -34,5 +38,6 @@ public interface EmpleadoMapper extends BaseMapper<Empleado, EmpleadoRequestDTO,
     @Mapping(target = "fechaModificacion", ignore = true)
     @Mapping(target = "persona", ignore = true)
     @Mapping(target = "activo", ignore = true)
+    @Mapping(target = "deposito", ignore = true)
     void updateEntityFromDto(EmpleadoRequestDTO dto, @MappingTarget Empleado entity);
 }
