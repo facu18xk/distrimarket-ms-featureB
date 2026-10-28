@@ -10,12 +10,13 @@ public class TransferenciaStockSpecification extends BaseSpecification<Transfere
     public Specification<TransferenciaStock> hasDepositoOrigenId(Long depositoOrigenId) {
         return hasRelationId("depositoOrigen", depositoOrigenId);
     }
-
     public Specification<TransferenciaStock> hasDepositoDestinoId(Long depositoDestinoId) {
         return hasRelationId("depositoDestino", depositoDestinoId);
     }
-
     public Specification<TransferenciaStock> hasEmpleadoId(Long empleadoId) {
         return hasRelationId("empleado", empleadoId);
+    }
+    public Specification<TransferenciaStock> search(String q) {
+        return searchByNestedText(q, "depositoOrigen.nombre", "depositoDestino.nombre", "empleado.persona.nombreCompleto");
     }
 }

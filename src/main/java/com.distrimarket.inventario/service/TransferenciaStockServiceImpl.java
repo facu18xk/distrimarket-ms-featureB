@@ -148,9 +148,10 @@ public class TransferenciaStockServiceImpl
 
     @Override
     @Transactional(readOnly = true)
-    public Page<TransferenciaStockResponseDTO> findAllWithSpecifications(Long origenId, Long destinoId, Long empleadoId, String q, Pageable pageable) {
+    public Page<TransferenciaStockResponseDTO> findAllWithSpecifications(String q, Long origenId, Long destinoId, Long empleadoId, Pageable pageable) {
         Specification<TransferenciaStock> spec = Specification
-                .where(specification.hasDepositoOrigenId(origenId))
+                .where(specification.search(q))
+                .and(specification.hasDepositoOrigenId(origenId))
                 .and(specification.hasDepositoDestinoId(destinoId))
                 .and(specification.hasEmpleadoId(empleadoId));
 

@@ -127,11 +127,12 @@ public class StockDepositoServiceImpl
 
     @Override
     @Transactional(readOnly = true)
-    public Page<StockDepositoResponseDTO> findAllWithSpecifications(Long depositoId, Long productoId, String q, Pageable pageable) {
+    public Page<StockDepositoResponseDTO> findAllWithSpecifications(String q, Long depositoId, Long productoId, Pageable pageable) {
         log.debug("Consultando stock con filtros -> depositoId: {}, productoId: {}, página: {}, tamaño: {}",
                 depositoId, productoId, pageable.getPageNumber(), pageable.getPageSize());
         Specification<StockDeposito> spec = Specification
-                .where(stockDepositoSpecification.hasDepositoId(depositoId))
+                .where(stockDepositoSpecification.search(q))
+                .and(stockDepositoSpecification.hasDepositoId(depositoId))
                 .and(stockDepositoSpecification.hasProductoId(productoId));
 
         return stockDepositoRepository.findAll(spec.and(BusquedaTexto.en(q, "producto.nombre", "producto.codigoBarra", "deposito.nombre")), Paginas.conDesempatePorId(pageable)).map(mapper::toDTO);

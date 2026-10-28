@@ -7,6 +7,7 @@ import com.distrimarket.inventario.config.CacheConfig;
 import com.distrimarket.inventario.exception.DuplicateResourceException;
 import com.distrimarket.inventario.mapper.DepositoMapper;
 import com.distrimarket.inventario.repository.DepositoRepository;
+import com.distrimarket.inventario.specification.DepositoSpecification;
 import com.distrimarket.inventario.service.BaseServiceImpl;
 import com.distrimarket.inventario.service.DepositoService;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +18,7 @@ import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,11 +34,13 @@ public class DepositoServiceImpl extends BaseServiceImpl<Deposito, DepositoReque
 
     private final DepositoRepository depositoRepository;
     private final CacheManager cacheManager;
+    private final DepositoSpecification depositoSpecification;
 
-    public DepositoServiceImpl(DepositoRepository depositoRepository, DepositoMapper depositoMapper, CacheManager cacheManager) {
+    public DepositoServiceImpl(DepositoRepository depositoRepository, DepositoMapper depositoMapper, CacheManager cacheManager, DepositoSpecification depositoSpecification) {
         super(depositoRepository, depositoMapper);
         this.depositoRepository = depositoRepository;
         this.cacheManager = cacheManager;
+        this.depositoSpecification = depositoSpecification;
     }
 
     @Override
@@ -64,6 +68,15 @@ public class DepositoServiceImpl extends BaseServiceImpl<Deposito, DepositoReque
         }
 
         return paginaDepositos;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<DepositoResponseDTO> findAllWithSpecifications(String q, Pageable pageable) {
+        Specification<Deposito> spec = Specification
+                .where(depositoSpecification.search(q));
+
+        return depositoRepository.findAll(spec, pageable).map(mapper::toDTO);
     }
 
     @Override

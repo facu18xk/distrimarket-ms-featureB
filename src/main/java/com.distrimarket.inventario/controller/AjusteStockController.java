@@ -39,6 +39,8 @@ public class AjusteStockController extends BaseController<AjusteStock, AjusteSto
     @PreAuthorize("hasAnyRole('ADMIN', 'DEPOSITERO')")
     @Operation(summary = "Listar ajustes de stock con paginación y filtros opcionales por depósito o empleado")
     public ResponseEntity<Page<AjusteStockResponseDTO>> getAll(
+            @Parameter(description = "Búsqueda textual por depósito, motivo o responsable")
+            @RequestParam(name = "q", required = false) String q,
             @Parameter(description = "ID del depósito a filtrar (opcional)")
             @RequestParam(name = "depositoId", required = false) Long depositoId,
             @Parameter(description = "ID del empleado a filtrar (opcional)")
@@ -47,7 +49,7 @@ public class AjusteStockController extends BaseController<AjusteStock, AjusteSto
             @RequestParam(name = "q", required = false) String q,
             @PageableDefault(size = 10, sort = "fechaCreacion") Pageable pageable) {
 
-        return ResponseEntity.ok(ajusteStockService.findAllWithSpecifications(depositoId, empleadoId, q, pageable));
+        return ResponseEntity.ok(ajusteStockService.findAllWithSpecifications(q, depositoId, empleadoId, pageable));
     }
 
     @Override

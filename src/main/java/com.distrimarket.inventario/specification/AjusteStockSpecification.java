@@ -10,8 +10,10 @@ public class AjusteStockSpecification extends BaseSpecification<AjusteStock> {
     public Specification<AjusteStock> hasDepositoId(Long depositoId) {
         return hasRelationId("deposito", depositoId);
     }
-
     public Specification<AjusteStock> hasEmpleadoId(Long empleadoId) {
         return hasRelationId("empleado", empleadoId);
+    }
+    public Specification<AjusteStock> search(String q) {
+        return searchByNestedText(q, "motivo", "deposito.nombre", "empleado.persona.nombreCompleto");
     }
 }

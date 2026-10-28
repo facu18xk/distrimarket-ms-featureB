@@ -5,6 +5,7 @@ import com.distrimarket.commons.dto.DepositoResponseDTO;
 import com.distrimarket.commons.entity.Deposito;
 import com.distrimarket.inventario.service.DepositoService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
@@ -17,14 +18,18 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
 @RequestMapping("/depositos")
 @Tag(name = "Depósitos", description = "Endpoints para la gestión de depósitos de productos")
 public class DepositoController extends BaseController<Deposito, DepositoRequestDTO, DepositoResponseDTO> {
 
+    private final DepositoService depositoService;
+
     public DepositoController(DepositoService depositoService) {
         super(depositoService);
+        this.depositoService = depositoService;
     }
 
     @Override
@@ -36,11 +41,12 @@ public class DepositoController extends BaseController<Deposito, DepositoRequest
 
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'VENDEDOR', 'COMPRADOR', 'DEPOSITERO')")
-    @Operation(summary = "Listar todos los depósitos de forma paginada")
+    @Operation(summary = "Listar depósitos con paginación y filtro de texto (q)")
     public ResponseEntity<Page<DepositoResponseDTO>> getAll(
-            @org.springframework.web.bind.annotation.RequestParam(name = "q", required = false) String q,
-            @PageableDefault(size = 10, sort = "id") Pageable pageable) {
-        return ResponseEntity.ok(service.buscarTexto(q, pageable, "nombre", "ubicacion"));
+            @Parameter(description = "Búsqueda textual por nombre o descripción")
+            @RequestParam(name = "q", required = false) String q,
+            @PageableDefault(size = 10, sort = "nombre") Pageable pageable) {
+        return ResponseEntity.ok(depositoService.findAllWithSpecifications(q, pageable));
     }
 
     @Override

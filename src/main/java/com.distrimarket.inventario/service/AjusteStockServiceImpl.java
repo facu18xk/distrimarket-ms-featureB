@@ -190,11 +190,12 @@ public class AjusteStockServiceImpl
 
     @Override
     @Transactional(readOnly = true)
-    public Page<AjusteStockResponseDTO> findAllWithSpecifications(Long depositoId, Long empleadoId, String q, Pageable pageable) {
+    public Page<AjusteStockResponseDTO> findAllWithSpecifications(String q, Long depositoId, Long empleadoId, Pageable pageable) {
         log.debug("Consultando ajustes con filtros -> depósitoId: {}, empleadoId: {}, página: {}",
                 depositoId, empleadoId, pageable.getPageNumber());
         Specification<AjusteStock> spec = Specification
-                .where(ajusteStockSpecification.hasDepositoId(depositoId))
+                .where(ajusteStockSpecification.search(q))
+                .and(ajusteStockSpecification.hasDepositoId(depositoId))
                 .and(ajusteStockSpecification.hasEmpleadoId(empleadoId));
 
         // Desempate por id: hay ajustes con la misma fechaCreacion y sin él las páginas se repiten.

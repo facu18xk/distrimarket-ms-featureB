@@ -47,6 +47,8 @@ public class StockDepositoController extends BaseController<StockDeposito, Stock
     @PreAuthorize("hasAnyRole('ADMIN', 'VENDEDOR', 'COMPRADOR', 'DEPOSITERO')")
     @Operation(summary = "Listar stock con paginación y filtros opcionales por depósito o producto")
     public ResponseEntity<Page<StockDepositoResponseDTO>> getAll(
+            @Parameter(description = "Búsqueda textual por producto o depósito")
+            @RequestParam(name = "q", required = false) String q,
             @Parameter(description = "ID del depósito a filtrar (opcional)")
             @RequestParam(name = "depositoId", required = false) Long depositoId,
             @Parameter(description = "ID del producto a filtrar (opcional)")
@@ -55,7 +57,7 @@ public class StockDepositoController extends BaseController<StockDeposito, Stock
             @RequestParam(name = "q", required = false) String q,
             @PageableDefault(size = 10, sort = "id") Pageable pageable) {
 
-        return ResponseEntity.ok(stockDepositoService.findAllWithSpecifications(depositoId, productoId, q, pageable));
+        return ResponseEntity.ok(stockDepositoService.findAllWithSpecifications(q, depositoId, productoId, pageable));
     }
 
     @GetMapping("/deposito/{depositoId}/producto/{productoId}")

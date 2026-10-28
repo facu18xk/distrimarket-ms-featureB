@@ -91,12 +91,13 @@ public class ProductoServiceImpl extends BaseServiceImpl<Producto, ProductoReque
     }
 
     @Transactional(readOnly = true)
-    public Page<ProductoResponseDTO> findAllWithSpecifications(Long categoriaId, Long marcaId, String q, Pageable pageable) {
+    public Page<ProductoResponseDTO> findAllWithSpecifications(String q, Long categoriaId, Long marcaId, Pageable pageable) {
         log.debug("Consultando productos con filtros -> categoriaId: {}, marcaId: {}, página: {}, tamaño: {}",
                 categoriaId, marcaId, pageable.getPageNumber(), pageable.getPageSize());
 
         Specification<Producto> spec = Specification
-                .where(productoSpecification.hasCategoriaId(categoriaId))
+                .where(productoSpecification.search(q))
+                .and(productoSpecification.hasCategoriaId(categoriaId))
                 .and(productoSpecification.hasMarcaId(marcaId));
 
         // Ids de la base y cada producto desde la caché (GET); solo los que faltan van a la base (SET).

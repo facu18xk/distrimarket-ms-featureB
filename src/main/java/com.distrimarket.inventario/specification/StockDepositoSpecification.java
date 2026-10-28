@@ -12,4 +12,7 @@ public class StockDepositoSpecification extends BaseSpecification<StockDeposito>
     public Specification<StockDeposito> hasProductoId(Long productoId) {
         return hasRelationId("producto", productoId);
     }
+    public Specification<StockDeposito> search(String q) {
+        return searchByNestedText(q, "producto.nombre", "deposito.nombre");
+    }
 }

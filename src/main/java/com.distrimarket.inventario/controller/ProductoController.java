@@ -43,6 +43,8 @@ public class ProductoController extends BaseController<Producto, ProductoRequest
     @PreAuthorize("hasAnyRole('ADMIN', 'VENDEDOR', 'COMPRADOR', 'DEPOSITERO')")
     @Operation(summary = "Listar productos con paginación y filtros opcionales por categoría o marca")
     public ResponseEntity<Page<ProductoResponseDTO>> getAll(
+            @Parameter(description = "Búsqueda textual por nombre, código de barra o descripción")
+            @RequestParam(name = "q", required = false) String q,
             @Parameter(description = "ID de la categoría a filtrar (opcional)")
             @RequestParam(name = "categoriaId", required = false) Long categoriaId,
             @Parameter(description = "ID de la marca a filtrar (opcional)")
@@ -51,7 +53,7 @@ public class ProductoController extends BaseController<Producto, ProductoRequest
             @RequestParam(name = "q", required = false) String q,
             @PageableDefault(size = 10, sort = "id") Pageable pageable) {
 
-        return ResponseEntity.ok(productoService.findAllWithSpecifications(categoriaId, marcaId, q, pageable));
+        return ResponseEntity.ok(productoService.findAllWithSpecifications(q, categoriaId, marcaId, pageable));
     }
 
     @Override

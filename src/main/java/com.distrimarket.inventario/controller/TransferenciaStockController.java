@@ -47,6 +47,8 @@ public class TransferenciaStockController extends BaseController<TransferenciaSt
     @PreAuthorize("hasAnyRole('ADMIN', 'DEPOSITERO')")
     @Operation(summary = "Listar transferencias con paginación y filtros opcionales")
     public ResponseEntity<Page<TransferenciaStockResponseDTO>> getAll(
+            @Parameter(description = "Búsqueda textual por depósitos o responsable")
+            @RequestParam(name = "q", required = false) String q,
             @Parameter(description = "ID del depósito de origen")
             @RequestParam(name = "depositoOrigenId", required = false) Long depositoOrigenId,
             @Parameter(description = "ID del depósito de destino")
@@ -58,7 +60,7 @@ public class TransferenciaStockController extends BaseController<TransferenciaSt
             @PageableDefault(size = 10, sort = "fechaCreacion") Pageable pageable) {
 
         return ResponseEntity.ok(transferenciaStockService.findAllWithSpecifications(
-                depositoOrigenId, depositoDestinoId, empleadoId, q, pageable));
+                q, depositoOrigenId, depositoDestinoId, empleadoId, pageable));
     }
 
     @Override
