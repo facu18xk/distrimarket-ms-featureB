@@ -49,8 +49,6 @@ public class ProductoController extends BaseController<Producto, ProductoRequest
             @RequestParam(name = "categoriaId", required = false) Long categoriaId,
             @Parameter(description = "ID de la marca a filtrar (opcional)")
             @RequestParam(name = "marcaId", required = false) Long marcaId,
-            @Parameter(description = "Texto a buscar (opcional)")
-            @RequestParam(name = "q", required = false) String q,
             @PageableDefault(size = 10, sort = "id") Pageable pageable) {
 
         return ResponseEntity.ok(productoService.findAllWithSpecifications(q, categoriaId, marcaId, pageable));

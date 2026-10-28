@@ -55,8 +55,6 @@ public class TransferenciaStockController extends BaseController<TransferenciaSt
             @RequestParam(name = "depositoDestinoId", required = false) Long depositoDestinoId,
             @Parameter(description = "ID del empleado responsable")
             @RequestParam(name = "empleadoId", required = false) Long empleadoId,
-            @Parameter(description = "Texto a buscar (opcional)")
-            @RequestParam(name = "q", required = false) String q,
             @PageableDefault(size = 10, sort = "fechaCreacion") Pageable pageable) {
 
         return ResponseEntity.ok(transferenciaStockService.findAllWithSpecifications(

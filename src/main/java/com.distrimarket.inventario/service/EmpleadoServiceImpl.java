@@ -48,7 +48,6 @@ public class EmpleadoServiceImpl
     private final PersonaMapper personaMapper;
     private final EmpleadoSpecification empleadoSpecification;
     private final CacheManager cacheManager;
-    private final DepositoRepository depositoRepository;
 
     public EmpleadoServiceImpl(EmpleadoRepository empleadoRepository,
                                EmpleadoMapper empleadoMapper,
@@ -57,8 +56,7 @@ public class EmpleadoServiceImpl
                                PersonaService personaService,
                                PersonaMapper personaMapper,
                                EmpleadoSpecification empleadoSpecification,
-                               CacheManager cacheManager,
-                               DepositoRepository depositoRepository) {
+                               CacheManager cacheManager) {
         super(empleadoRepository, empleadoMapper);
         this.empleadoRepository = empleadoRepository;
         this.personaRepository = personaRepository;
@@ -67,7 +65,6 @@ public class EmpleadoServiceImpl
         this.personaMapper = personaMapper;
         this.empleadoSpecification = empleadoSpecification;
         this.cacheManager = cacheManager;
-        this.depositoRepository = depositoRepository;
     }
 
     /** Asigna el depósito donde trabaja el empleado (si se indicó): debe existir y estar activo. */
