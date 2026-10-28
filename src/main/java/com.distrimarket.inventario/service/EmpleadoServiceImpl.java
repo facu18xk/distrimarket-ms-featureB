@@ -3,6 +3,7 @@ package com.distrimarket.inventario.service;
 import com.distrimarket.commons.dto.EmpleadoRequestDTO;
 import com.distrimarket.commons.dto.EmpleadoResponseDTO;
 import com.distrimarket.commons.dto.PersonaResponseDTO;
+import com.distrimarket.commons.entity.Deposito;
 import com.distrimarket.commons.entity.Empleado;
 import com.distrimarket.commons.entity.Persona;
 import com.distrimarket.commons.enums.TipoPersona;
@@ -11,6 +12,7 @@ import com.distrimarket.inventario.exception.DuplicateResourceException;
 import com.distrimarket.inventario.exception.ResourceNotFoundException;
 import com.distrimarket.inventario.mapper.EmpleadoMapper;
 import com.distrimarket.inventario.mapper.PersonaMapper;
+import com.distrimarket.inventario.repository.DepositoRepository;
 import com.distrimarket.inventario.repository.EmpleadoRepository;
 import com.distrimarket.inventario.repository.PersonaRepository;
 import com.distrimarket.inventario.specification.EmpleadoSpecification;
@@ -34,6 +36,7 @@ public class EmpleadoServiceImpl
 
     private final EmpleadoRepository empleadoRepository;
     private final PersonaRepository personaRepository;
+    private final DepositoRepository depositoRepository;
     private final PersonaService personaService;
     private final PersonaMapper personaMapper;
     private final EmpleadoSpecification empleadoSpecification;
@@ -42,6 +45,7 @@ public class EmpleadoServiceImpl
     public EmpleadoServiceImpl(EmpleadoRepository empleadoRepository,
                                EmpleadoMapper empleadoMapper,
                                PersonaRepository personaRepository,
+                               DepositoRepository depositoRepository,
                                PersonaService personaService,
                                PersonaMapper personaMapper,
                                EmpleadoSpecification empleadoSpecification,
@@ -49,6 +53,7 @@ public class EmpleadoServiceImpl
         super(empleadoRepository, empleadoMapper);
         this.empleadoRepository = empleadoRepository;
         this.personaRepository = personaRepository;
+        this.depositoRepository = depositoRepository;
         this.personaService = personaService;
         this.personaMapper = personaMapper;
         this.empleadoSpecification = empleadoSpecification;
@@ -107,6 +112,15 @@ public class EmpleadoServiceImpl
 
         Empleado empleado = mapper.toEntity(createDTO);
         empleado.setPersona(persona);
+        empleado.setActivo(true);
+
+        if (createDTO.getIdDeposito() != null) {
+            Deposito deposito = depositoRepository.findById(createDTO.getIdDeposito())
+                    .orElseThrow(() -> new ResourceNotFoundException("Depósito no encontrado con ID: " + createDTO.getIdDeposito()));
+            empleado.setDeposito(deposito);
+        } else {
+            empleado.setDeposito(null);
+        }
 
         Empleado guardado = empleadoRepository.save(empleado);
         log.info("Empleado registrado exitosamente con ID: {} asociado a Persona ID: {}", guardado.getId(), persona.getId());
@@ -146,6 +160,15 @@ public class EmpleadoServiceImpl
         }
 
         mapper.updateEntityFromDto(updateDTO, empleadoExistente);
+
+        if (updateDTO.getIdDeposito() != null) {
+            Deposito deposito = depositoRepository.findById(updateDTO.getIdDeposito())
+                    .orElseThrow(() -> new ResourceNotFoundException("Depósito no encontrado con ID: " + updateDTO.getIdDeposito()));
+            empleadoExistente.setDeposito(deposito);
+        } else {
+            empleadoExistente.setDeposito(null);
+        }
+
         Empleado actualizado = empleadoRepository.save(empleadoExistente);
 
         log.info("Empleado ID: {} y datos de Persona ID: {} actualizados exitosamente", id, personaId);
