@@ -45,7 +45,7 @@ public class DepositoController extends BaseController<Deposito, DepositoRequest
     public ResponseEntity<Page<DepositoResponseDTO>> getAll(
             @Parameter(description = "Búsqueda textual por nombre o descripción")
             @RequestParam(name = "q", required = false) String q,
-            @PageableDefault(size = 10, sort = "nombre") Pageable pageable) {
+            @PageableDefault(size = 10, sort = "id") Pageable pageable) {
         return ResponseEntity.ok(depositoService.findAllWithSpecifications(q, pageable));
     }
 

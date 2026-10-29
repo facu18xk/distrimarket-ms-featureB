@@ -4,9 +4,11 @@ import com.distrimarket.commons.dto.DepositoRequestDTO;
 import com.distrimarket.commons.dto.DepositoResponseDTO;
 import com.distrimarket.commons.entity.Deposito;
 import com.distrimarket.inventario.config.CacheConfig;
+import com.distrimarket.inventario.exception.BadRequestException;
 import com.distrimarket.inventario.exception.DuplicateResourceException;
 import com.distrimarket.inventario.mapper.DepositoMapper;
 import com.distrimarket.inventario.repository.DepositoRepository;
+import com.distrimarket.inventario.repository.StockDepositoRepository;
 import com.distrimarket.inventario.specification.DepositoSpecification;
 import com.distrimarket.inventario.service.BaseServiceImpl;
 import com.distrimarket.inventario.service.DepositoService;
@@ -35,12 +37,15 @@ public class DepositoServiceImpl extends BaseServiceImpl<Deposito, DepositoReque
     private final DepositoRepository depositoRepository;
     private final CacheManager cacheManager;
     private final DepositoSpecification depositoSpecification;
+    private final StockDepositoRepository stockDepositoRepository;
 
-    public DepositoServiceImpl(DepositoRepository depositoRepository, DepositoMapper depositoMapper, CacheManager cacheManager, DepositoSpecification depositoSpecification) {
+    public DepositoServiceImpl(DepositoRepository depositoRepository, DepositoMapper depositoMapper, CacheManager cacheManager,
+                               DepositoSpecification depositoSpecification, StockDepositoRepository stockDepositoRepository) {
         super(depositoRepository, depositoMapper);
         this.depositoRepository = depositoRepository;
         this.cacheManager = cacheManager;
         this.depositoSpecification = depositoSpecification;
+        this.stockDepositoRepository = stockDepositoRepository;
     }
 
     @Override
@@ -76,7 +81,8 @@ public class DepositoServiceImpl extends BaseServiceImpl<Deposito, DepositoReque
         Specification<Deposito> spec = Specification
                 .where(depositoSpecification.search(q));
 
-        return depositoRepository.findAll(spec, pageable).map(mapper::toDTO);
+        // Ids de la base y cada depósito desde la caché (GET); solo los que faltan van a la base (SET).
+        return paginaDesdeCache(spec, pageable);
     }
 
     @Override
@@ -106,6 +112,12 @@ public class DepositoServiceImpl extends BaseServiceImpl<Deposito, DepositoReque
     @Transactional
     @CacheEvict(value = CacheConfig.DEPOSITO, key = "#id")
     public void deleteById(Long id) {
+        long existencias = stockDepositoRepository.countByDepositoId(id);
+        if (existencias > 0) {
+            throw new BadRequestException(String.format(
+                    "No se puede dar de baja el depósito ID %d porque tiene %d existencias activas. Transfiera el stock y dé de baja las existencias primero.",
+                    id, existencias));
+        }
         log.debug("Eliminando depósito ID {} y desalojando clave de Redis", id);
         super.deleteById(id);
     }

@@ -1,12 +1,9 @@
 package com.distrimarket.inventario.specification;
 
 import com.distrimarket.commons.entity.BaseEntity;
-import jakarta.persistence.criteria.Path;
+import com.distrimarket.commons.service.BusquedaTexto;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.jpa.domain.Specification;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public abstract class BaseSpecification<E extends BaseEntity> {
     // Filtro base para entidades SoftDeletable
@@ -42,56 +39,24 @@ public abstract class BaseSpecification<E extends BaseEntity> {
         };
     }
 
+    /**
+     * Búsqueda por texto (parámetro q): cada palabra tiene que aparecer en alguno de los campos,
+     * sin importar mayúsculas ni el orden ("leche 1L" encuentra "Leche Entera 1L").
+     * Usa la misma regla que el resto de los microservicios ({@link BusquedaTexto}).
+     */
     public Specification<E> searchByText(String q, String... fieldNames) {
-        return (root, query, criteriaBuilder) -> {
-            if (q == null || q.isBlank() || fieldNames == null || fieldNames.length == 0) {
-                return criteriaBuilder.conjunction();
-            }
-
-            String pattern = "%" + q.trim().toLowerCase() + "%";
-            List<Predicate> predicates = new ArrayList<>();
-
-            for (String fieldName : fieldNames) {
-                try {
-                    predicates.add(criteriaBuilder.like(
-                            criteriaBuilder.lower(root.get(fieldName).as(String.class)),
-                            pattern
-                    ));
-                } catch (IllegalArgumentException ex) {
-                    // Previene caídas si un atributo no existe en la entidad evaluada
-                }
-            }
-
-            if (predicates.isEmpty()) {
-                return criteriaBuilder.conjunction();
-            }
-
-            return criteriaBuilder.or(predicates.toArray(new Predicate[0]));
-        };
+        return searchByNestedText(q, fieldNames);
     }
 
+    /**
+     * Igual que {@link #searchByText}, con campos de relaciones ("deposito.nombre"). Las relaciones
+     * se unen con LEFT JOIN: una fila sin esa relación no desaparece de la búsqueda.
+     */
     public Specification<E> searchByNestedText(String q, String... paths) {
+        Specification<E> busqueda = BusquedaTexto.en(q, paths == null ? new String[0] : paths);
         return (root, query, cb) -> {
-            if (q == null || q.isBlank() || paths == null || paths.length == 0) {
-                return cb.conjunction();
-            }
-
-            String pattern = "%" + q.trim().toLowerCase() + "%";
-            List<Predicate> predicates = new ArrayList<>();
-
-            for (String path : paths) {
-                try {
-                    Path<?> current = root;
-                    for (String part : path.split("\\.")) {
-                        current = current.get(part);
-                    }
-                    predicates.add(cb.like(cb.lower(current.as(String.class)), pattern));
-                } catch (IllegalArgumentException ignored) {
-                    // Ignora propiedades no existentes
-                }
-            }
-
-            return predicates.isEmpty() ? cb.conjunction() : cb.or(predicates.toArray(new Predicate[0]));
+            Predicate predicado = busqueda.toPredicate(root, query, cb);
+            return predicado == null ? cb.conjunction() : predicado;
         };
     }
 }

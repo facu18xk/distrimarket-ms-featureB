@@ -1,6 +1,5 @@
 package com.distrimarket.inventario.service;
 
-import com.distrimarket.commons.service.BusquedaTexto;
 import com.distrimarket.commons.service.Paginas;
 import com.distrimarket.inventario.security.DepositoDelUsuario;
 import com.distrimarket.commons.dto.StockDepositoRequestDTO;
@@ -135,7 +134,7 @@ public class StockDepositoServiceImpl
                 .and(stockDepositoSpecification.hasDepositoId(depositoId))
                 .and(stockDepositoSpecification.hasProductoId(productoId));
 
-        return stockDepositoRepository.findAll(spec.and(BusquedaTexto.en(q, "producto.nombre", "producto.codigoBarra", "deposito.nombre")), Paginas.conDesempatePorId(pageable)).map(mapper::toDTO);
+        return stockDepositoRepository.findAll(spec, Paginas.conDesempatePorId(pageable)).map(mapper::toDTO);
     }
 
     @Override

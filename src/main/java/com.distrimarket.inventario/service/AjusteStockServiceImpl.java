@@ -1,6 +1,5 @@
 package com.distrimarket.inventario.service;
 
-import com.distrimarket.commons.service.BusquedaTexto;
 import com.distrimarket.commons.service.Paginas;
 import com.distrimarket.inventario.security.DepositoDelUsuario;
 import com.distrimarket.commons.dto.AjusteStockDetalleRequestDTO;
@@ -199,6 +198,6 @@ public class AjusteStockServiceImpl
                 .and(ajusteStockSpecification.hasEmpleadoId(empleadoId));
 
         // Desempate por id: hay ajustes con la misma fechaCreacion y sin él las páginas se repiten.
-        return ajusteStockRepository.findAll(spec.and(BusquedaTexto.en(q, "motivo", "deposito.nombre", "empleado.persona.nombreCompleto")), Paginas.conDesempatePorId(pageable)).map(mapper::toDTO);
+        return ajusteStockRepository.findAll(spec, Paginas.conDesempatePorId(pageable)).map(mapper::toDTO);
     }
 }

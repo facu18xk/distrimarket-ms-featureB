@@ -1,6 +1,5 @@
 package com.distrimarket.inventario.service;
 
-import com.distrimarket.commons.service.BusquedaTexto;
 import com.distrimarket.commons.service.Paginas;
 import com.distrimarket.commons.dto.TransferenciaStockDetalleRequestDTO;
 import com.distrimarket.commons.dto.TransferenciaStockRequestDTO;
@@ -156,7 +155,7 @@ public class TransferenciaStockServiceImpl
                 .and(specification.hasEmpleadoId(empleadoId));
 
         // Desempate por id: hay transferencias con la misma fechaCreacion y sin él las páginas se repiten.
-        return transferenciaStockRepository.findAll(spec.and(BusquedaTexto.en(q, "observacion", "depositoOrigen.nombre", "depositoDestino.nombre", "empleado.persona.nombreCompleto")), Paginas.conDesempatePorId(pageable)).map(mapper::toDTO);
+        return transferenciaStockRepository.findAll(spec, Paginas.conDesempatePorId(pageable)).map(mapper::toDTO);
     }
 
     @Override

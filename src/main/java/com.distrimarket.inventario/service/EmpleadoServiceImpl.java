@@ -67,14 +67,14 @@ public class EmpleadoServiceImpl
         this.cacheManager = cacheManager;
     }
 
-    /** Asigna el depósito donde trabaja el empleado (si se indicó): debe existir y estar activo. */
-    private void asignarDeposito(Empleado empleado, Long idDeposito) {
-        if (idDeposito == null) {
-            return;
-        }
-        empleado.setDeposito(depositoRepository.findById(idDeposito)
+    /**
+     * Depósito que se puede asignar a un empleado: tiene que existir y no estar eliminado
+     * (activo) ni deshabilitado (estado). Vale para crear y para modificar.
+     */
+    private Deposito depositoAsignable(Long idDeposito) {
+        return depositoRepository.findById(idDeposito)
                 .filter(d -> Boolean.TRUE.equals(d.getActivo()) && Boolean.TRUE.equals(d.getEstado()))
-                .orElseThrow(() -> new ResourceNotFoundException("Depósito no encontrado o inactivo con ID: " + idDeposito)));
+                .orElseThrow(() -> new ResourceNotFoundException("Depósito no encontrado o eliminado con ID: " + idDeposito));
     }
 
     @Override
@@ -136,8 +136,7 @@ public class EmpleadoServiceImpl
         empleado.setActivo(true);
 
         if (createDTO.getIdDeposito() != null) {
-            Deposito deposito = depositoRepository.findById(createDTO.getIdDeposito())
-                    .orElseThrow(() -> new ResourceNotFoundException("Depósito no encontrado con ID: " + createDTO.getIdDeposito()));
+            Deposito deposito = depositoAsignable(createDTO.getIdDeposito());
             empleado.setDeposito(deposito);
         } else {
             empleado.setDeposito(null);
@@ -183,8 +182,7 @@ public class EmpleadoServiceImpl
         mapper.updateEntityFromDto(updateDTO, empleadoExistente);
 
         if (updateDTO.getIdDeposito() != null) {
-            Deposito deposito = depositoRepository.findById(updateDTO.getIdDeposito())
-                    .orElseThrow(() -> new ResourceNotFoundException("Depósito no encontrado con ID: " + updateDTO.getIdDeposito()));
+            Deposito deposito = depositoAsignable(updateDTO.getIdDeposito());
             empleadoExistente.setDeposito(deposito);
         } else {
             empleadoExistente.setDeposito(null);

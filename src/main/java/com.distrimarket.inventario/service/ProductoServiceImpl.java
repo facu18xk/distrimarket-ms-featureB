@@ -1,7 +1,5 @@
 package com.distrimarket.inventario.service;
 
-import com.distrimarket.commons.service.BusquedaTexto;
-import com.distrimarket.commons.service.Paginas;
 import com.distrimarket.commons.dto.ProductoRequestDTO;
 import com.distrimarket.commons.dto.ProductoResponseDTO;
 import com.distrimarket.commons.entity.Producto;
@@ -101,7 +99,7 @@ public class ProductoServiceImpl extends BaseServiceImpl<Producto, ProductoReque
                 .and(productoSpecification.hasMarcaId(marcaId));
 
         // Ids de la base y cada producto desde la caché (GET); solo los que faltan van a la base (SET).
-        return paginaDesdeCache(spec.and(BusquedaTexto.en(q, "nombre", "codigoBarra", "descripcion")), pageable);
+        return paginaDesdeCache(spec, pageable);
     }
 
     private void cachearProductosPage(Page<ProductoResponseDTO> page, String tipoConsulta) {
