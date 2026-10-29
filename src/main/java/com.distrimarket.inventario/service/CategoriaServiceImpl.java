@@ -26,6 +26,12 @@ import java.util.List;
 @Service
 public class CategoriaServiceImpl extends BaseServiceImpl<Categoria, CategoriaRequestDTO, CategoriaResponseDTO> implements CategoriaService {
 
+    /** Los listados se arman desde la caché de este dominio, objeto por objeto. */
+    @Override
+    protected String dominioCache() {
+        return CacheConfig.CATEGORIA;
+    }
+
     private final CategoriaRepository categoriaRepository;
     private final CacheManager cacheManager;
 

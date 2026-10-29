@@ -9,5 +9,5 @@ import org.springframework.data.domain.Pageable;
 
 public interface EmpleadoService extends BaseService<Empleado, EmpleadoRequestDTO, EmpleadoResponseDTO> {
     EmpleadoResponseDTO findByPersonaId(Long personaId);
-    Page<EmpleadoResponseDTO> findAllWithSpecifications(String cargo, Boolean estado, Pageable pageable);
+    Page<EmpleadoResponseDTO> findAllWithSpecifications(String cargo, Boolean estado, String q, Pageable pageable);
 }

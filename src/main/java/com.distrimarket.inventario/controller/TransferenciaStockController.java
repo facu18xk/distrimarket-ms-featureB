@@ -47,6 +47,8 @@ public class TransferenciaStockController extends BaseController<TransferenciaSt
     @PreAuthorize("hasAnyRole('ADMIN', 'DEPOSITERO')")
     @Operation(summary = "Listar transferencias con paginación y filtros opcionales")
     public ResponseEntity<Page<TransferenciaStockResponseDTO>> getAll(
+            @Parameter(description = "Búsqueda textual por depósitos o responsable")
+            @RequestParam(name = "q", required = false) String q,
             @Parameter(description = "ID del depósito de origen")
             @RequestParam(name = "depositoOrigenId", required = false) Long depositoOrigenId,
             @Parameter(description = "ID del depósito de destino")
@@ -56,12 +58,12 @@ public class TransferenciaStockController extends BaseController<TransferenciaSt
             @PageableDefault(size = 10, sort = "fechaCreacion") Pageable pageable) {
 
         return ResponseEntity.ok(transferenciaStockService.findAllWithSpecifications(
-                depositoOrigenId, depositoDestinoId, empleadoId, pageable));
+                q, depositoOrigenId, depositoDestinoId, empleadoId, pageable));
     }
 
     @Override
     @PostMapping
-    @PreAuthorize("hasAnyRole('ADMIN', 'DEPOSITERO')")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Registrar una nueva transferencia de stock entre depósitos")
     public ResponseEntity<TransferenciaStockResponseDTO> create(@Valid @RequestBody TransferenciaStockRequestDTO createDTO) {
         return ResponseEntity.status(HttpStatus.CREATED).body(transferenciaStockService.create(createDTO));
@@ -69,7 +71,7 @@ public class TransferenciaStockController extends BaseController<TransferenciaSt
 
     @Override
     @PutMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'DEPOSITERO')")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Operación no permitida (las transferencias son inmutables)")
     public ResponseEntity<TransferenciaStockResponseDTO> update(@PathVariable Long id, @Valid @RequestBody TransferenciaStockRequestDTO createDTO) {
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).build();
@@ -77,7 +79,7 @@ public class TransferenciaStockController extends BaseController<TransferenciaSt
 
     @Override
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'DEPOSITERO')")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Anular una transferencia de stock y revertir el movimiento entre depósitos")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         transferenciaStockService.deleteById(id);
@@ -85,7 +87,7 @@ public class TransferenciaStockController extends BaseController<TransferenciaSt
     }
 
     @Override
-    @PreAuthorize("hasAnyRole('ADMIN', 'DEPOSITERO')")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Operación no permitida (las transferencias no se reactivan)")
     public ResponseEntity<Void> reactivar(@PathVariable Long id) {
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).build();

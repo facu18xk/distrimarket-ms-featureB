@@ -47,9 +47,11 @@ public class EmpleadoController extends BaseController<Empleado, EmpleadoRequest
             @RequestParam(name = "cargo", required = false) String cargo,
             @Parameter(description = "Estado del empleado (opcional)")
             @RequestParam(name = "estado", required = false) Boolean estado,
+            @Parameter(description = "Texto a buscar (opcional)")
+            @RequestParam(name = "q", required = false) String q,
             @PageableDefault(size = 10, sort = "id") Pageable pageable) {
 
-        return ResponseEntity.ok(empleadoService.findAllWithSpecifications(cargo, estado, pageable));
+        return ResponseEntity.ok(empleadoService.findAllWithSpecifications(cargo, estado, q, pageable));
     }
 
     @GetMapping("/persona/{personaId}")

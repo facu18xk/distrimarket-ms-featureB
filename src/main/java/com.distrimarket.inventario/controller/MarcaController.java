@@ -38,8 +38,9 @@ public class MarcaController extends BaseController<Marca, MarcaRequestDTO, Marc
     @PreAuthorize("hasAnyRole('ADMIN', 'VENDEDOR', 'COMPRADOR', 'DEPOSITERO')")
     @Operation(summary = "Listar todas las marcas de forma paginada")
     public ResponseEntity<Page<MarcaResponseDTO>> getAll(
+            @org.springframework.web.bind.annotation.RequestParam(name = "q", required = false) String q,
             @PageableDefault(size = 10, sort = "id") Pageable pageable) {
-        return doGetAll(pageable);
+        return ResponseEntity.ok(service.buscarTexto(q, pageable, "nombre"));
     }
 
     @Override

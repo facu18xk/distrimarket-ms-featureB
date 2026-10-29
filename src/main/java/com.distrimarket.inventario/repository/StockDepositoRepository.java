@@ -15,6 +15,8 @@ import java.util.Optional;
 public interface StockDepositoRepository extends BaseRepository<StockDeposito> {
     boolean existsByDepositoIdAndProductoId(Long depositoId, Long productoId);
     boolean existsByDepositoIdAndProductoIdAndIdNot(Long depositoId, Long productoId, Long id);
+    /** Cuenta solo existencias activas (la entidad filtra activo = true). */
+    long countByDepositoId(Long depositoId);
 
     /**
      * @EntityGraph precarga en un solo SELECT con LEFT JOIN el depósito y el producto

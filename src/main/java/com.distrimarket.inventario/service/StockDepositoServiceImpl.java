@@ -1,5 +1,7 @@
 package com.distrimarket.inventario.service;
 
+import com.distrimarket.commons.service.Paginas;
+import com.distrimarket.inventario.security.DepositoDelUsuario;
 import com.distrimarket.commons.dto.StockDepositoRequestDTO;
 import com.distrimarket.commons.dto.StockDepositoResponseDTO;
 import com.distrimarket.commons.entity.Deposito;
@@ -53,6 +55,7 @@ public class StockDepositoServiceImpl
     @Override
     @Transactional
     public StockDepositoResponseDTO create(StockDepositoRequestDTO createDTO) {
+        createDTO.setIdDeposito(DepositoDelUsuario.resolver(createDTO.getIdDeposito()));
         log.info("Creando registro de stock para depósito ID: {} y producto ID: {} con cantidad inicial: {}",
                 createDTO.getIdDeposito(), createDTO.getIdProducto(), createDTO.getCantidad());
 
@@ -98,6 +101,8 @@ public class StockDepositoServiceImpl
         log.info("Actualizando registro de stock con ID: {}", id);
         StockDeposito stockExistente = stockDepositoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Registro de stock no encontrado con ID: " + id));
+        DepositoDelUsuario.exigirPropio(stockExistente.getDeposito().getId());
+        updateDTO.setIdDeposito(DepositoDelUsuario.resolver(updateDTO.getIdDeposito()));
 
         // Se cargan las entidades padre directamente sin ejecutar existsById previos redundantes.
         Deposito deposito = depositoRepository.findById(updateDTO.getIdDeposito())
@@ -121,14 +126,15 @@ public class StockDepositoServiceImpl
 
     @Override
     @Transactional(readOnly = true)
-    public Page<StockDepositoResponseDTO> findAllWithSpecifications(Long depositoId, Long productoId, Pageable pageable) {
+    public Page<StockDepositoResponseDTO> findAllWithSpecifications(String q, Long depositoId, Long productoId, Pageable pageable) {
         log.debug("Consultando stock con filtros -> depositoId: {}, productoId: {}, página: {}, tamaño: {}",
                 depositoId, productoId, pageable.getPageNumber(), pageable.getPageSize());
         Specification<StockDeposito> spec = Specification
-                .where(stockDepositoSpecification.hasDepositoId(depositoId))
+                .where(stockDepositoSpecification.search(q))
+                .and(stockDepositoSpecification.hasDepositoId(depositoId))
                 .and(stockDepositoSpecification.hasProductoId(productoId));
 
-        return stockDepositoRepository.findAll(spec, pageable).map(mapper::toDTO);
+        return stockDepositoRepository.findAll(spec, Paginas.conDesempatePorId(pageable)).map(mapper::toDTO);
     }
 
     @Override
@@ -190,6 +196,7 @@ public class StockDepositoServiceImpl
         if (dto.getDetalles() == null || dto.getDetalles().isEmpty()) {
             throw new IllegalArgumentException("El movimiento debe contener al menos un detalle de producto.");
         }
+        dto.setIdDeposito(DepositoDelUsuario.resolver(dto.getIdDeposito()));
         log.info("Aplicando movimiento de stock ({}) en depósito ID {} con {} detalle(s). Motivo: {}",
                 dto.getOrigen(), dto.getIdDeposito(), dto.getDetalles().size(), dto.getMotivo());
 
@@ -243,6 +250,7 @@ public class StockDepositoServiceImpl
         log.info("Solicitud de borrado lógico para StockDeposito con ID: {}", id);
         StockDeposito stock = stockDepositoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("No se encuentra el registro de stock con ID: " + id));
+        DepositoDelUsuario.exigirPropio(stock.getDeposito().getId());
 
         // Regla contable: No se puede desactivar una posición con saldo disponible
         if (stock.getCantidad() != null && stock.getCantidad() > 0) {

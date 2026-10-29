@@ -167,7 +167,7 @@ security:
       methods: [GET]
       roles: [ADMIN, VENDEDOR, COMPRADOR, DEPOSITERO]
     - pattern: /depositos/**
-      roles: [ADMIN, DEPOSITERO]
+      roles: [ADMIN]
 
     # 4. Movimientos y existencias de stock
     - pattern: /stock-depositos/**
@@ -183,8 +183,12 @@ security:
     - pattern: /ajustes-stock/**
       roles: [ADMIN, DEPOSITERO]
 
+    # Transferencias entre depósitos: solo ADMIN (el depositero ve las de su depósito).
     - pattern: /transferencias-stock/**
+      methods: [GET]
       roles: [ADMIN, DEPOSITERO]
+    - pattern: /transferencias-stock/**
+      roles: [ADMIN]
 
     # 5. Personas y Empleados: datos sensibles / RRHH
     - pattern: /personas/**

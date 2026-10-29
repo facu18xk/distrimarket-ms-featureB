@@ -16,4 +16,7 @@ public class ProductoSpecification extends BaseSpecification<Producto> {
     public Specification<Producto> withEstado(Boolean estado) {
         return fieldEquals("estado", estado);
     }
+    public Specification<Producto> search(String q) {
+        return searchByText(q, "nombre", "codigoBarra", "descripcion");
+    }
 }

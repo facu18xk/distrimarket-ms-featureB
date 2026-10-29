@@ -4,9 +4,12 @@ import com.distrimarket.commons.dto.DepositoRequestDTO;
 import com.distrimarket.commons.dto.DepositoResponseDTO;
 import com.distrimarket.commons.entity.Deposito;
 import com.distrimarket.inventario.config.CacheConfig;
+import com.distrimarket.inventario.exception.BadRequestException;
 import com.distrimarket.inventario.exception.DuplicateResourceException;
 import com.distrimarket.inventario.mapper.DepositoMapper;
 import com.distrimarket.inventario.repository.DepositoRepository;
+import com.distrimarket.inventario.repository.StockDepositoRepository;
+import com.distrimarket.inventario.specification.DepositoSpecification;
 import com.distrimarket.inventario.service.BaseServiceImpl;
 import com.distrimarket.inventario.service.DepositoService;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +20,7 @@ import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,13 +28,24 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class DepositoServiceImpl extends BaseServiceImpl<Deposito, DepositoRequestDTO, DepositoResponseDTO> implements DepositoService {
 
+    /** Los listados se arman desde la caché de este dominio, objeto por objeto. */
+    @Override
+    protected String dominioCache() {
+        return CacheConfig.DEPOSITO;
+    }
+
     private final DepositoRepository depositoRepository;
     private final CacheManager cacheManager;
+    private final DepositoSpecification depositoSpecification;
+    private final StockDepositoRepository stockDepositoRepository;
 
-    public DepositoServiceImpl(DepositoRepository depositoRepository, DepositoMapper depositoMapper, CacheManager cacheManager) {
+    public DepositoServiceImpl(DepositoRepository depositoRepository, DepositoMapper depositoMapper, CacheManager cacheManager,
+                               DepositoSpecification depositoSpecification, StockDepositoRepository stockDepositoRepository) {
         super(depositoRepository, depositoMapper);
         this.depositoRepository = depositoRepository;
         this.cacheManager = cacheManager;
+        this.depositoSpecification = depositoSpecification;
+        this.stockDepositoRepository = stockDepositoRepository;
     }
 
     @Override
@@ -61,6 +76,16 @@ public class DepositoServiceImpl extends BaseServiceImpl<Deposito, DepositoReque
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public Page<DepositoResponseDTO> findAllWithSpecifications(String q, Pageable pageable) {
+        Specification<Deposito> spec = Specification
+                .where(depositoSpecification.search(q));
+
+        // Ids de la base y cada depósito desde la caché (GET); solo los que faltan van a la base (SET).
+        return paginaDesdeCache(spec, pageable);
+    }
+
+    @Override
     @Transactional
     @CachePut(value = CacheConfig.DEPOSITO, key = "#result.id", condition = "#result != null && #result.id != null")
     public DepositoResponseDTO create(DepositoRequestDTO createDTO) {
@@ -87,6 +112,12 @@ public class DepositoServiceImpl extends BaseServiceImpl<Deposito, DepositoReque
     @Transactional
     @CacheEvict(value = CacheConfig.DEPOSITO, key = "#id")
     public void deleteById(Long id) {
+        long existencias = stockDepositoRepository.countByDepositoId(id);
+        if (existencias > 0) {
+            throw new BadRequestException(String.format(
+                    "No se puede dar de baja el depósito ID %d porque tiene %d existencias activas. Transfiera el stock y dé de baja las existencias primero.",
+                    id, existencias));
+        }
         log.debug("Eliminando depósito ID {} y desalojando clave de Redis", id);
         super.deleteById(id);
     }
