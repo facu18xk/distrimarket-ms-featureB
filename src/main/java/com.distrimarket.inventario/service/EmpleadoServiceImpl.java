@@ -227,16 +227,18 @@ public class EmpleadoServiceImpl
 
     @Override
     @Transactional(readOnly = true)
-    public Page<EmpleadoResponseDTO> findAllWithSpecifications(String cargo, Boolean estado, String q, Pageable pageable) {
-        log.debug("Consultando empleados con filtros -> cargo: {}, estado: {}, página: {}",
-                cargo, estado, pageable.getPageNumber());
+    public Page<EmpleadoResponseDTO> findAllWithSpecifications(String q, String cargo, Boolean estado, Pageable pageable) {
+        log.debug("Consultando empleados con filtros -> q: {}, cargo: {}, estado: {}, página: {}",
+                q, cargo, estado, pageable.getPageNumber());
 
         Specification<Empleado> spec = Specification
-                .where(empleadoSpecification.withCargo(cargo))
+                .where(empleadoSpecification.search(q))
+                .and(empleadoSpecification.withCargo(cargo))
                 .and(empleadoSpecification.withEstado(estado));
 
-        // Ids de la base y cada empleado desde la caché (GET); solo los que faltan van a la base (SET).
-        return paginaDesdeCache(spec.and(BusquedaTexto.en(q, "persona.nombreCompleto", "persona.ci", "cargo")), pageable);
+        Page<EmpleadoResponseDTO> dtoPage = empleadoRepository.findAll(spec, pageable).map(mapper::toDTO);
+        cachearEmpleados(dtoPage);
+        return dtoPage;
     }
 
     private void cachearEmpleados(Page<EmpleadoResponseDTO> page) {

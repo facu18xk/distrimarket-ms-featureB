@@ -43,15 +43,15 @@ public class EmpleadoController extends BaseController<Empleado, EmpleadoRequest
     @PreAuthorize("hasAnyRole('ADMIN', 'VENDEDOR', 'DEPOSITERO')")
     @Operation(summary = "Listar empleados con paginación y filtros opcionales por cargo o estado")
     public ResponseEntity<Page<EmpleadoResponseDTO>> getAll(
+            @Parameter(description = "Búsqueda textual por nombre, CI o cargo")
+            @RequestParam(name = "q", required = false) String q,
             @Parameter(description = "Cargo del empleado (opcional)")
             @RequestParam(name = "cargo", required = false) String cargo,
             @Parameter(description = "Estado del empleado (opcional)")
             @RequestParam(name = "estado", required = false) Boolean estado,
-            @Parameter(description = "Texto a buscar (opcional)")
-            @RequestParam(name = "q", required = false) String q,
             @PageableDefault(size = 10, sort = "id") Pageable pageable) {
 
-        return ResponseEntity.ok(empleadoService.findAllWithSpecifications(cargo, estado, q, pageable));
+        return ResponseEntity.ok(empleadoService.findAllWithSpecifications(q, cargo, estado, pageable));
     }
 
     @GetMapping("/persona/{personaId}")
