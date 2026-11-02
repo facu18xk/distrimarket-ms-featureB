@@ -17,6 +17,8 @@ public class ProductoSpecification extends BaseSpecification<Producto> {
         return fieldEquals("estado", estado);
     }
     public Specification<Producto> search(String q) {
-        return searchByText(q, "nombre", "codigoBarra", "descripcion");
+        // También por categoría y marca (los filtros de la tabla están ocultos). Cada palabra debe
+        // aparecer en algún campo; las relaciones van con LEFT JOIN (un producto sin marca no se pierde).
+        return searchByNestedText(q, "nombre", "codigoBarra", "descripcion", "categoria.nombre", "marca.nombre");
     }
 }
