@@ -1,6 +1,5 @@
 package com.distrimarket.inventario.service;
 
-import com.distrimarket.commons.service.Paginas;
 import com.distrimarket.inventario.security.DepositoDelUsuario;
 import com.distrimarket.commons.dto.StockDepositoRequestDTO;
 import com.distrimarket.commons.dto.StockDepositoResponseDTO;
@@ -34,6 +33,11 @@ import java.util.stream.Collectors;
 public class StockDepositoServiceImpl
         extends BaseServiceImpl<StockDeposito, StockDepositoRequestDTO, StockDepositoResponseDTO>
         implements StockDepositoService {
+
+    @Override
+    protected Collection<String> propiedadesOrdenPermitidas() {
+        return Set.of("id", "cantidad");
+    }
 
     private final StockDepositoRepository stockDepositoRepository;
     private final DepositoRepository depositoRepository;
@@ -134,7 +138,7 @@ public class StockDepositoServiceImpl
                 .and(stockDepositoSpecification.hasDepositoId(depositoId))
                 .and(stockDepositoSpecification.hasProductoId(productoId));
 
-        return stockDepositoRepository.findAll(spec, Paginas.conDesempatePorId(pageable)).map(mapper::toDTO);
+        return stockDepositoRepository.findAll(spec, normalizarOrden(pageable)).map(mapper::toDTO);
     }
 
     @Override

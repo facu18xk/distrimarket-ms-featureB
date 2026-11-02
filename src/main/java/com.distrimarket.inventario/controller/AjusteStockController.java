@@ -45,7 +45,7 @@ public class AjusteStockController extends BaseController<AjusteStock, AjusteSto
             @RequestParam(name = "depositoId", required = false) Long depositoId,
             @Parameter(description = "ID del empleado a filtrar (opcional)")
             @RequestParam(name = "empleadoId", required = false) Long empleadoId,
-            @PageableDefault(size = 10, sort = "fechaCreacion") Pageable pageable) {
+            @PageableDefault(size = 10) Pageable pageable) {
 
         return ResponseEntity.ok(ajusteStockService.findAllWithSpecifications(q, depositoId, empleadoId, pageable));
     }

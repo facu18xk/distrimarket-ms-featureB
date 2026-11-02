@@ -1,6 +1,5 @@
 package com.distrimarket.inventario.service;
 
-import com.distrimarket.commons.service.Paginas;
 import com.distrimarket.inventario.security.DepositoDelUsuario;
 import com.distrimarket.commons.dto.AjusteStockDetalleRequestDTO;
 import com.distrimarket.commons.dto.AjusteStockRequestDTO;
@@ -15,11 +14,13 @@ import com.distrimarket.inventario.repository.*;
 import com.distrimarket.inventario.specification.AjusteStockSpecification;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -32,6 +33,16 @@ import java.util.stream.Collectors;
 public class AjusteStockServiceImpl
         extends BaseServiceImpl<AjusteStock, AjusteStockRequestDTO, AjusteStockResponseDTO>
         implements AjusteStockService {
+
+    @Override
+    protected Collection<String> propiedadesOrdenPermitidas() {
+        return Set.of("id", "tipoAjuste", "motivo", "fechaCreacion");
+    }
+
+    @Override
+    protected Sort ordenPorDefecto() {
+        return Sort.by(Sort.Direction.DESC, "fechaCreacion").and(Sort.by(Sort.Direction.DESC, "id"));
+    }
 
     private final AjusteStockRepository ajusteStockRepository;
     private final DepositoRepository depositoRepository;
@@ -138,7 +149,7 @@ public class AjusteStockServiceImpl
     @Transactional(readOnly = true)
     public Page<AjusteStockResponseDTO> findAllByDepositoId(Long depositoId, Pageable pageable) {
         log.debug("Consultando ajustes de stock para depósito ID: {}, página: {}", depositoId, pageable.getPageNumber());
-        return ajusteStockRepository.findByDepositoId(depositoId, pageable).map(mapper::toDTO);
+        return ajusteStockRepository.findByDepositoId(depositoId, normalizarOrden(pageable)).map(mapper::toDTO);
     }
 
     @Override
@@ -198,6 +209,6 @@ public class AjusteStockServiceImpl
                 .and(ajusteStockSpecification.hasEmpleadoId(empleadoId));
 
         // Desempate por id: hay ajustes con la misma fechaCreacion y sin él las páginas se repiten.
-        return ajusteStockRepository.findAll(spec, Paginas.conDesempatePorId(pageable)).map(mapper::toDTO);
+        return ajusteStockRepository.findAll(spec, normalizarOrden(pageable)).map(mapper::toDTO);
     }
 }

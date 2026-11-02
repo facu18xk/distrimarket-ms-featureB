@@ -18,6 +18,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
+import java.util.Set;
+
 @Slf4j
 @Service
 public class MarcaServiceImpl extends BaseServiceImpl<Marca, MarcaRequestDTO, MarcaResponseDTO> implements MarcaService {
@@ -26,6 +29,11 @@ public class MarcaServiceImpl extends BaseServiceImpl<Marca, MarcaRequestDTO, Ma
     @Override
     protected String dominioCache() {
         return CacheConfig.MARCA;
+    }
+
+    @Override
+    protected Collection<String> propiedadesOrdenPermitidas() {
+        return Set.of("id", "nombre", "fechaCreacion", "fechaModificacion");
     }
 
     private final MarcaRepository marcaRepository;

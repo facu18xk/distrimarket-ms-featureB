@@ -22,6 +22,9 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
+import java.util.Set;
+
 @Slf4j
 @Service
 public class ProductoServiceImpl extends BaseServiceImpl<Producto, ProductoRequestDTO, ProductoResponseDTO> implements ProductoService {
@@ -29,6 +32,11 @@ public class ProductoServiceImpl extends BaseServiceImpl<Producto, ProductoReque
     @Override
     protected String dominioCache() {
         return CacheConfig.PRODUCTO;
+    }
+
+    @Override
+    protected Collection<String> propiedadesOrdenPermitidas() {
+        return Set.of("id", "nombre", "codigoBarra", "precioVenta", "porcentajeIva", "estado");
     }
 
     private final ProductoRepository productoRepository;
@@ -88,15 +96,23 @@ public class ProductoServiceImpl extends BaseServiceImpl<Producto, ProductoReque
         return entityPage;
     }
 
+    @Override
     @Transactional(readOnly = true)
     public Page<ProductoResponseDTO> findAllWithSpecifications(String q, Long categoriaId, Long marcaId, Pageable pageable) {
-        log.debug("Consultando productos con filtros -> categoriaId: {}, marcaId: {}, página: {}, tamaño: {}",
-                categoriaId, marcaId, pageable.getPageNumber(), pageable.getPageSize());
+        return findAllWithSpecifications(q, categoriaId, marcaId, null, pageable);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<ProductoResponseDTO> findAllWithSpecifications(String q, Long categoriaId, Long marcaId, Boolean estado, Pageable pageable) {
+        log.debug("Consultando productos con filtros -> categoriaId: {}, marcaId: {}, estado: {}, página: {}, tamaño: {}",
+                categoriaId, marcaId, estado, pageable.getPageNumber(), pageable.getPageSize());
 
         Specification<Producto> spec = Specification
                 .where(productoSpecification.search(q))
                 .and(productoSpecification.hasCategoriaId(categoriaId))
-                .and(productoSpecification.hasMarcaId(marcaId));
+                .and(productoSpecification.hasMarcaId(marcaId))
+                .and(productoSpecification.withEstado(estado));
 
         // Ids de la base y cada producto desde la caché (GET); solo los que faltan van a la base (SET).
         return paginaDesdeCache(spec, pageable);

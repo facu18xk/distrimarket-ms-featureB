@@ -23,7 +23,7 @@ import java.util.List;
 public class GlobalExceptionHandler {
 
     // --- 400 BAD REQUEST ---
-    @ExceptionHandler({BadRequestException.class, IllegalArgumentException.class})
+    @ExceptionHandler({BadRequestException.class, IllegalArgumentException.class, java.lang.IllegalArgumentException.class})
     public ResponseEntity<ErrorResponseDTO> handleBadRequest(RuntimeException ex, HttpServletRequest request) {
         log.warn("Solicitud inválida [400 BAD REQUEST] en {} {}: {}",
                 request.getMethod(), request.getRequestURI(), ex.getMessage());

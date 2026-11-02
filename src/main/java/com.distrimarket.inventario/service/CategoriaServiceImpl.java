@@ -20,7 +20,9 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @Service
@@ -30,6 +32,11 @@ public class CategoriaServiceImpl extends BaseServiceImpl<Categoria, CategoriaRe
     @Override
     protected String dominioCache() {
         return CacheConfig.CATEGORIA;
+    }
+
+    @Override
+    protected Collection<String> propiedadesOrdenPermitidas() {
+        return Set.of("id", "nombre", "descripcion", "fechaCreacion", "fechaModificacion");
     }
 
     private final CategoriaRepository categoriaRepository;

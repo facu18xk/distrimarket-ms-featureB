@@ -24,6 +24,9 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
+import java.util.Set;
+
 @Slf4j
 @Service
 public class DepositoServiceImpl extends BaseServiceImpl<Deposito, DepositoRequestDTO, DepositoResponseDTO> implements DepositoService {
@@ -32,6 +35,11 @@ public class DepositoServiceImpl extends BaseServiceImpl<Deposito, DepositoReque
     @Override
     protected String dominioCache() {
         return CacheConfig.DEPOSITO;
+    }
+
+    @Override
+    protected Collection<String> propiedadesOrdenPermitidas() {
+        return Set.of("id", "nombre", "ubicacion", "estado");
     }
 
     private final DepositoRepository depositoRepository;

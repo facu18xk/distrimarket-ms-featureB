@@ -17,10 +17,13 @@ import org.springframework.core.GenericTypeResolver;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 @Slf4j
 public abstract class BaseServiceImpl<E extends BaseEntity, CREATE_DTO, RESPONSE_DTO>
@@ -49,17 +52,42 @@ public abstract class BaseServiceImpl<E extends BaseEntity, CREATE_DTO, RESPONSE
     }
 
     /**
+     * Propiedades escalares por las que el cliente puede ordenar los listados de este servicio.
+     * Cada servicio concreto la sobrescribe con la allowlist de su recurso; por defecto solo id.
+     */
+    protected Collection<String> propiedadesOrdenPermitidas() {
+        return Set.of("id");
+    }
+
+    /**
+     * Orden aplicado cuando el cliente no envía uno. Por defecto id ASC, que es el orden estable de
+     * los catálogos. Los movimientos (ajustes y transferencias) usan fechaCreacion DESC, id DESC.
+     */
+    protected Sort ordenPorDefecto() {
+        return Sort.by(Sort.Direction.ASC, "id");
+    }
+
+    /**
+     * Valida el orden pedido contra la allowlist del recurso y agrega el desempate por id para que
+     * la paginación sea estable. Un orden no permitido falla con IllegalArgumentException.
+     */
+    protected Pageable normalizarOrden(Pageable pageable) {
+        return Paginas.conOrdenPermitido(pageable, propiedadesOrdenPermitidas(), ordenPorDefecto());
+    }
+
+    /**
      * Página desde la caché, objeto por objeto: de la base solo los ids (filtro y orden), cada objeto
      * de Redis por id (GET) y los que faltan de la base en UNA consulta (SET). La página no se
      * guarda: la segunda vez que se pide, todo sale de Redis con HIT y sin SET.
      */
     protected Page<RESPONSE_DTO> paginaDesdeCache(Specification<E> filtro, Pageable pageable) {
+        Pageable paginado = normalizarOrden(pageable);
         String dominio = dominioCache();
         if (dominio == null || cacheManagerBase == null) {
-            return repository.findAll(filtro, Paginas.conDesempatePorId(pageable)).map(mapper::toDTO);
+            return repository.findAll(filtro, paginado).map(mapper::toDTO);
         }
         Class<E> tipo = tipoEntidad();
-        Page<Long> ids = ConsultaIds.pagina(entityManagerBase, tipo, filtro, pageable);
+        Page<Long> ids = ConsultaIds.pagina(entityManagerBase, tipo, filtro, paginado);
         return CacheEnLote.pagina(ids, cacheManagerBase.getCache(dominio),
                 faltan -> repository.findAll(ConsultaIds.<E>idEn(faltan), Pageable.unpaged()).map(mapper::toDTO).getContent(),
                 dto -> ConsultaIds.idDe(dto, tipo));
@@ -94,7 +122,7 @@ public abstract class BaseServiceImpl<E extends BaseEntity, CREATE_DTO, RESPONSE
     @Transactional(readOnly = true)
     public Page<RESPONSE_DTO> findAll(Pageable pageable) {
         log.debug("[{}] Consultando página {} con tamaño {}", getServiceName(), pageable.getPageNumber(), pageable.getPageSize());
-        Page<E> entityPage = repository.findAll(Paginas.conDesempatePorId(pageable));
+        Page<E> entityPage = repository.findAll(normalizarOrden(pageable));
         return entityPage.map(mapper::toDTO);
     }
 

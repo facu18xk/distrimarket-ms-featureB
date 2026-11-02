@@ -1,7 +1,6 @@
 package com.distrimarket.inventario.service;
 
 import com.distrimarket.commons.service.BusquedaTexto;
-import com.distrimarket.commons.service.Paginas;
 import com.distrimarket.commons.dto.EmpleadoRequestDTO;
 import com.distrimarket.commons.dto.EmpleadoResponseDTO;
 import com.distrimarket.commons.dto.PersonaResponseDTO;
@@ -30,6 +29,9 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
+import java.util.Set;
+
 @Slf4j
 @Service
 public class EmpleadoServiceImpl
@@ -39,6 +41,11 @@ public class EmpleadoServiceImpl
     @Override
     protected String dominioCache() {
         return CacheConfig.EMPLEADO;
+    }
+
+    @Override
+    protected Collection<String> propiedadesOrdenPermitidas() {
+        return Set.of("id", "cargo", "fechaIngreso", "estado");
     }
 
     private final EmpleadoRepository empleadoRepository;

@@ -1,6 +1,5 @@
 package com.distrimarket.inventario.service;
 
-import com.distrimarket.commons.service.Paginas;
 import com.distrimarket.commons.dto.TransferenciaStockDetalleRequestDTO;
 import com.distrimarket.commons.dto.TransferenciaStockRequestDTO;
 import com.distrimarket.commons.dto.TransferenciaStockResponseDTO;
@@ -14,11 +13,13 @@ import com.distrimarket.inventario.repository.*;
 import com.distrimarket.inventario.specification.TransferenciaStockSpecification;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -30,6 +31,16 @@ import java.util.stream.Collectors;
 public class TransferenciaStockServiceImpl
         extends BaseServiceImpl<TransferenciaStock, TransferenciaStockRequestDTO, TransferenciaStockResponseDTO>
         implements TransferenciaStockService {
+
+    @Override
+    protected Collection<String> propiedadesOrdenPermitidas() {
+        return Set.of("id", "estado", "fechaCreacion");
+    }
+
+    @Override
+    protected Sort ordenPorDefecto() {
+        return Sort.by(Sort.Direction.DESC, "fechaCreacion").and(Sort.by(Sort.Direction.DESC, "id"));
+    }
 
     private final TransferenciaStockRepository transferenciaStockRepository;
     private final DepositoRepository depositoRepository;
@@ -155,7 +166,7 @@ public class TransferenciaStockServiceImpl
                 .and(specification.hasEmpleadoId(empleadoId));
 
         // Desempate por id: hay transferencias con la misma fechaCreacion y sin él las páginas se repiten.
-        return transferenciaStockRepository.findAll(spec, Paginas.conDesempatePorId(pageable)).map(mapper::toDTO);
+        return transferenciaStockRepository.findAll(spec, normalizarOrden(pageable)).map(mapper::toDTO);
     }
 
     @Override

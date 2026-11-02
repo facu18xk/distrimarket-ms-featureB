@@ -21,6 +21,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
+import java.util.Set;
+
 @Slf4j
 @Service
 public class PersonaServiceImpl extends BaseServiceImpl<Persona, PersonaRequestDTO, PersonaResponseDTO> implements PersonaService {
@@ -32,6 +35,12 @@ public class PersonaServiceImpl extends BaseServiceImpl<Persona, PersonaRequestD
         super(personaRepository, personaMapper);
         this.personaRepository = personaRepository;
         this.cacheManager = cacheManager;
+    }
+
+    @Override
+    protected Collection<String> propiedadesOrdenPermitidas() {
+        return Set.of("id", "tipoPersona", "ci", "ruc", "nombreCompleto", "telefono", "correo",
+                "direccion", "fechaCreacion", "fechaModificacion");
     }
 
     @Override
