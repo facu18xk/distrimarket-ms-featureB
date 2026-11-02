@@ -13,4 +13,7 @@ public class EmpleadoSpecification extends BaseSpecification<Empleado> {
     public Specification<Empleado> withCargo(String cargo) {
         return fieldEquals("cargo", cargo);
     }
+    public Specification<Empleado> search(String q) {
+        return searchByNestedText(q, "cargo", "persona.nombreCompleto", "persona.ci");
+    }
 }
