@@ -59,4 +59,86 @@ public abstract class BaseSpecification<E extends BaseEntity> {
             return predicado == null ? cb.conjunction() : predicado;
         };
     }
+
+    /**
+     * Búsqueda híbrida: si 'q' coincide con un prefijo de código (ej: "TRA-0012", "AJU-5")
+     * o es un número puro, evalúa el ID de la entidad. Además, ejecuta la búsqueda
+     * textual sobre los campos anidados indicados.
+     *
+     * @param q término de búsqueda ingresado por el usuario
+     * @param prefijo prefijo esperado para el código (ej: "TRA", "AJU")
+     * @param nestedPaths atributos o rutas anidadas para la búsqueda de texto
+     */
+    public Specification<E> searchWithCodePrefix(String q, String prefijo, String... nestedPaths) {
+        return (root, query, cb) -> {
+            if (q == null || q.isBlank()) {
+                return cb.conjunction();
+            }
+
+            String limpio = q.trim();
+            Long idBuscado = extraerIdCodigo(limpio, prefijo);
+
+            //Si coincide explícitamente con el patrón del prefijo (ej: TRA-0012 o aju-45)
+            if (idBuscado != null && esPatronCodigo(limpio, prefijo)) {
+                return cb.equal(root.get("id"), idBuscado);
+            }
+
+            //Búsqueda por texto en las propiedades anidadas
+            Specification<E> textoSpec = searchByNestedText(limpio, nestedPaths);
+            Predicate textoPredicate = textoSpec.toPredicate(root, query, cb);
+
+            //Si era un número puro (ej: "12"), une coincidencia de ID con texto (OR)
+            if (idBuscado != null) {
+                Predicate idPredicate = cb.equal(root.get("id"), idBuscado);
+                return textoPredicate != null ? cb.or(idPredicate, textoPredicate) : idPredicate;
+            }
+
+            return textoPredicate != null ? textoPredicate : cb.conjunction();
+        };
+    }
+
+    /**
+     * Comprueba si el texto comienza con el prefijo esperado con o sin guión (ej: "TRA-" o "TRA").
+     */
+    public boolean esPatronCodigo(String q, String prefijo) {
+        if (q == null || prefijo == null) {
+            return false;
+        }
+        String s = q.trim().toUpperCase();
+        String p = prefijo.trim().toUpperCase();
+        return s.startsWith(p + "-") || s.startsWith(p);
+    }
+
+    /**
+     * Extrae el ID numérico descartando el prefijo y los ceros a la izquierda.
+     * Funciona tanto para "TRA-0045", "tra45" como para "45".
+     */
+    public Long extraerIdCodigo(String q, String prefijo) {
+        if (q == null || q.isBlank()) {
+            return null;
+        }
+
+        String limpio = q.trim().toUpperCase();
+        String p = prefijo != null ? prefijo.trim().toUpperCase() : "";
+
+        if (!p.isEmpty()) {
+            if (limpio.startsWith(p + "-")) {
+                limpio = limpio.substring(p.length() + 1);
+            } else if (limpio.startsWith(p)) {
+                limpio = limpio.substring(p.length());
+            }
+        }
+
+        limpio = limpio.replaceFirst("^0+", "");
+
+        if (!limpio.isEmpty() && limpio.matches("\\d+")) {
+            try {
+                return Long.valueOf(limpio);
+            } catch (NumberFormatException ignored) {
+                return null;
+            }
+        }
+
+        return null;
+    }
 }
