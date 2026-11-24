@@ -79,13 +79,13 @@ public class CacheConfig implements CachingConfigurer {
     public CacheManager cacheManager(Properties properties, ObjectProvider<RedisConnectionFactory> connectionFactory) {
         if (!properties.enabled()) {
             log.warn("Caché deshabilitada (distrimarket.cache.enabled=false): todas las lecturas van a la base");
-            return new LoggingCache.Manager(new NoOpCacheManager(), properties);
+            return new NoOpCacheManager();
         }
 
         RedisConnectionFactory factory = connectionFactory.getIfAvailable();
         if (factory == null) {
             log.warn("No se encontró RedisConnectionFactory disponible. Usando NoOpCacheManager.");
-            return new LoggingCache.Manager(new NoOpCacheManager(), properties);
+            return new NoOpCacheManager();
         }
 
         RedisCacheConfiguration base = RedisCacheConfiguration.defaultCacheConfig()
