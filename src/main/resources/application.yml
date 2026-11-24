@@ -140,7 +140,7 @@ eureka:
   instance:
     ip-address: ${EUREKA_INSTANCE_IP_ADDRESS:127.0.0.1}
     prefer-ip-address: ${EUREKA_INSTANCE_PREFER_IP_ADDRESS:true}
-    non-secure-port: ${EUREKA_INSTANCE_NON_SECURE_PORT:8090}
+    non-secure-port: ${EUREKA_INSTANCE_NON_SECURE_PORT:${server.port}}
     instance-id: ${spring.application.name}:${eureka.instance.ip-address}:${eureka.instance.non-secure-port}
 
 
